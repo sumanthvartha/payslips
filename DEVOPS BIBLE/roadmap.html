@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vartha's DevOps Learning Path</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  
+  :root {
+    --bg: #0a0e17;
+    --surface: #111827;
+    --surface2: #1a2332;
+    --border: #1e2d3d;
+    --text: #e2e8f0;
+    --text-dim: #8892a4;
+    --accent-green: #22c55e;
+    --accent-blue: #3b82f6;
+    --accent-purple: #a855f7;
+    --accent-orange: #f59e0b;
+    --accent-red: #ef4444;
+    --accent-cyan: #06b6d4;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    line-height: 1.7;
+    min-height: 100vh;
+  }
+
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 40px 24px;
+  }
+
+  .header {
+    text-align: center;
+    margin-bottom: 48px;
+    position: relative;
+  }
+
+  .header::after {
+    content: '';
+    display: block;
+    width: 80px;
+    height: 3px;
+    background: linear-gradient(90deg, var(--accent-green), var(--accent-blue));
+    margin: 20px auto 0;
+    border-radius: 2px;
+  }
+
+  .header h1 {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 28px;
+    font-weight: 700;
+    background: linear-gradient(135deg, var(--accent-green), var(--accent-cyan));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 8px;
+  }
+
+  .header p {
+    color: var(--text-dim);
+    font-size: 15px;
+  }
+
+  .timeline {
+    position: relative;
+    padding-left: 32px;
+  }
+
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 11px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: linear-gradient(180deg, var(--accent-green), var(--accent-blue), var(--accent-purple), var(--accent-orange), var(--accent-red));
+    border-radius: 1px;
+  }
+
+  .phase {
+    position: relative;
+    margin-bottom: 40px;
+  }
+
+  .phase-dot {
+    position: absolute;
+    left: -28px;
+    top: 6px;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    border: 3px solid;
+    background: var(--bg);
+    z-index: 1;
+  }
+
+  .phase-header {
+    cursor: pointer;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px 24px;
+    transition: all 0.2s ease;
+    user-select: none;
+  }
+
+  .phase-header:hover {
+    border-color: #2a3a4d;
+    background: var(--surface2);
+  }
+
+  .phase-header-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .phase-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 3px 10px;
+    border-radius: 4px;
+    display: inline-block;
+    margin-bottom: 8px;
+  }
+
+  .phase-title {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+
+  .phase-duration {
+    font-size: 13px;
+    color: var(--text-dim);
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .phase-arrow {
+    font-size: 18px;
+    color: var(--text-dim);
+    transition: transform 0.3s ease;
+    flex-shrink: 0;
+  }
+
+  .phase.open .phase-arrow {
+    transform: rotate(180deg);
+  }
+
+  .phase-content {
+    display: none;
+    padding: 20px 24px 24px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-top: none;
+    border-radius: 0 0 12px 12px;
+    margin-top: -12px;
+  }
+
+  .phase.open .phase-content {
+    display: block;
+  }
+
+  .phase.open .phase-header {
+    border-radius: 12px 12px 0 0;
+  }
+
+  .section-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin: 20px 0 12px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .section-title:first-child {
+    margin-top: 8px;
+  }
+
+  .resource {
+    background: var(--surface2);
+    border-radius: 8px;
+    padding: 14px 16px;
+    margin-bottom: 8px;
+    border-left: 3px solid;
+  }
+
+  .resource-name {
+    font-weight: 600;
+    font-size: 15px;
+    margin-bottom: 2px;
+  }
+
+  .resource-meta {
+    font-size: 13px;
+    color: var(--text-dim);
+  }
+
+  .resource-tag {
+    display: inline-block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 3px;
+    margin-right: 6px;
+    letter-spacing: 0.5px;
+  }
+
+  .tag-udemy { background: rgba(168,85,247,0.15); color: var(--accent-purple); }
+  .tag-youtube { background: rgba(239,68,68,0.15); color: var(--accent-red); }
+  .tag-free { background: rgba(34,197,94,0.15); color: var(--accent-green); }
+  .tag-cert { background: rgba(245,158,11,0.15); color: var(--accent-orange); }
+  .tag-mentor { background: rgba(6,182,212,0.15); color: var(--accent-cyan); }
+
+  .goal-box {
+    background: rgba(34,197,94,0.06);
+    border: 1px solid rgba(34,197,94,0.2);
+    border-radius: 8px;
+    padding: 14px 16px;
+    margin-top: 16px;
+    font-size: 14px;
+  }
+
+  .goal-box strong {
+    color: var(--accent-green);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    display: block;
+    margin-bottom: 6px;
+  }
+
+  .youtube-channels {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    margin-top: 48px;
+  }
+
+  .youtube-channels h2 {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 18px;
+    margin-bottom: 16px;
+    color: var(--accent-red);
+  }
+
+  .yt-channel {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .yt-channel:last-child { border-bottom: none; }
+
+  .yt-icon {
+    width: 36px;
+    height: 36px;
+    background: rgba(239,68,68,0.1);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-size: 16px;
+    margin-top: 2px;
+  }
+
+  .yt-name { font-weight: 600; font-size: 15px; }
+  .yt-desc { font-size: 13px; color: var(--text-dim); }
+
+  .rules-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    margin-top: 32px;
+  }
+
+  .rules-box h2 {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 18px;
+    margin-bottom: 16px;
+    color: var(--accent-cyan);
+  }
+
+  .rule {
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 15px;
+  }
+
+  .rule:last-child { border-bottom: none; }
+
+  .rule-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+    color: var(--accent-cyan);
+    margin-right: 8px;
+  }
+
+  .status-now {
+    display: inline-block;
+    background: rgba(34,197,94,0.15);
+    color: var(--accent-green);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 4px;
+    letter-spacing: 1px;
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.6; }
+  }
+
+  .footer-note {
+    text-align: center;
+    margin-top: 48px;
+    padding: 24px;
+    color: var(--text-dim);
+    font-size: 14px;
+    border-top: 1px solid var(--border);
+  }
+
+  .footer-note span {
+    color: var(--accent-green);
+    font-weight: 600;
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <div class="header">
+    <h1>// Vartha's DevOps Learning Path</h1>
+    <p>A structured, phase-by-phase journey from where you are to DevOps engineer</p>
+  </div>
+
+  <div class="timeline" id="timeline">
+
+    <!-- PHASE 1 -->
+    <div class="phase open" data-phase="1">
+      <div class="phase-dot" style="border-color: var(--accent-green);"></div>
+      <div class="phase-header" onclick="toggle(1)">
+        <div class="phase-header-top">
+          <div>
+            <span class="phase-label" style="background: rgba(34,197,94,0.12); color: var(--accent-green);">Phase 1 &mdash; Currently Here</span>
+            <span class="status-now">YOU ARE HERE</span>
+            <div class="phase-title">GitHub Actions & CI/CD Mastery</div>
+            <div class="phase-duration">Duration: 3-4 weeks</div>
+          </div>
+          <span class="phase-arrow">▼</span>
+        </div>
+      </div>
+      <div class="phase-content">
+        <div class="section-title">📚 Primary Course (Udemy)</div>
+        <div class="resource" style="border-left-color: var(--accent-purple);">
+          <div class="resource-name">"GitHub Actions – The Complete Guide"</div>
+          <div class="resource-meta">
+            <span class="resource-tag tag-udemy">UDEMY</span>
+            Academind / Maximilian Schwarzmüller &bull; Beginner to Advanced &bull; Hands-on with real workflows
+          </div>
+        </div>
+
+        <div class="section-title">▶️ YouTube Supplement</div>
+        <div class="resource" style="border-left-color: var(--accent-red);">
+          <div class="resource-name">TechWorld with Nana — CI/CD & GitHub Actions videos</div>
+          <div class="resource-meta">
+            <span class="resource-tag tag-youtube">YOUTUBE</span>
+            <span class="resource-tag tag-free">FREE</span>
+            Clear visual explanations of CI/CD concepts
+          </div>
+        </div>
+
+        <div class="section-title">🧑‍🏫 Mentor Sessions (Claude)</div>
+        <div class="resource" style="border-left-color: var(--accent-cyan);">
+          <div class="resource-name">After each course section, come for quiz & doubt-clearing</div>
+          <div class="resource-meta">
+            <span class="resource-tag tag-mentor">MENTOR</span>
+            Triggers, jobs, steps, conditionals, secrets, matrix builds, reusable workflows
+          </div>
+        </div>
+
+        <div class="goal-box">
+          <strong>✅ Phase Complete When You Can:</strong>
+          Write any GitHub Actions workflow from scratch without copying. Understand triggers, jobs, steps, secrets, environment variables, and conditional execution.
+        </div>
+      </div>
+    </div>
+
+    <!-- PHASE 2 -->
+    <div class="phase" data-phase="2">
+      <div class="phase-dot" style="border-color: var(--accent-blue);"></div>
+      <div class="phase-header" onclick="toggle(2)">
+        <div class="phase-header-top">
+          <div>
+            <span class="phase-label" style="background: rgba(59,130,246,0.12); color: var(--accent-blue);">Phase 2</span>
+            <div class="phase-title">Linux Fundamentals</div>
+            <div class="phase-duration">Duration: 3-4 weeks</div>
+          </div>
+          <span class="phase-arrow">▼</span>
+        </div>
+      </div>
+      <div class="phase-content">
+        <div class="section-title">📚 Primary Course (Udemy)</div>
+        <div class="resource" style="border-left-color: var(--accent-purple);">
+          <div class="resource-name">"Linux Administration: The Complete Linux Bootcamp"</div>
+          <div class="resource-meta">
+            <span class="resource-tag tag-udemy">UDEMY</span>
+            Andrei Dumitrescu &bull; Covers fundamentals through shell scripting &bull; DevOps-focused
+          </div>
+        </div>
+
+        <div class="section-title">▶️ YouTube Supplement</div>
+        <div class="resource" style="border-left-color: var(--accent-red);">
+          <div class="resource-name">Abhishek Veeramalla — Linux for DevOps playlist</div>
+          <div class="resource-meta">
+            <span class="resource-tag tag-youtube">YOUTUBE</span>
+            <span class="resource-tag tag-free">FREE</span>
+            Practical Linux for DevOps context, not general sysadmin
+          </div>
+        </div>
+        <div class="resource" style="border-left-color: var(--accent-red);">
+          <div class="resource-name">TechWorld with Nana — Linux Basics for DevOps</div>
+          <div class="resource-meta">
+            <span class="resource-tag tag-youtube">YOUTUBE</span>
+            <span class="resource-tag tag-free">FREE</span>
+            Great visual explanations of Linux concepts
+          </div>
+        </div>
+
+        <div class="section-title">🧑‍🏫 Mentor Sessions (Claude)</div>
+        <div class="resource" style="border-left-color: var(--accent-cyan);">
+          <div class="resource-name">Practice shell scripting exercises together</div>
+          <div class="resource-meta">
+            <span class="resource-tag tag-mentor">MENTOR</span>
+            File permissions, processes, networking, bash scripting, cron jobs, SSH
+          </div>
+        </div>
+
+        <div class="goal-box">
+          <strong>✅ Phase Complete When You Can:</strong>
+          Navigate Linux comfortably, write basic bash scripts, manage users & permissions, understand processes, and use SSH to connect to remote servers.
+        </div>
+      </div>
+    </div>
+
+    <!-- PHASE 3 -->
+    <div class="phase" data-phase="3">
+      <div class="phase-dot" style="border-color: var(--accent-purple);"></div>
+      <div class="phase-header" onclick="toggle(3)">
+        <div class="phase-header-top">
+          <div>
+            <span class="phase-label" style="background: rgba(168,85,247,0.12); color: var(--accent-purple);">Phase 3</span>
+            <div class="phase-title">Docker & Containerization</div>
+            <div class="phase-duration">Duration: 4-5 weeks</div>
+          </div>
+          <span class="phase-arrow">▼</span>
+        </div>
+      </div>
+      <div class="phase-content">
+        <div class="section-title">📚 Primary Course (Udemy)</div>
+        <div class="resource" style="border-left-color: var(--accent-purple);">
+          <div class="resource-name">"Docker & Kubernetes: The Practical Guide"</div>
+          <div class="resource-meta">
+            <span class="resource-tag tag-udemy">UDEMY</span>
+            Maximilian Schwarzmüller (Academind) &bull; 4.7★ &bull; 186K+ students &bull; 23+ hours &bull; Focus on Docker part first, save K8s for Phase 5
+          </div>
+        </div>
+
+        <div class="section-title">▶️ YouTube Supplement</div>
+        <div class="resource" style="border-left-color: var(--accent-red);">
+          <div class="resource-name">TechWorld with Nana — Docker Tutorial for Beginners (full course)</div>
+          <div class="resource-meta">
+            <span class="resource-tag tag-youtube">YOUTUBE</span>
+            <span class="resource-tag tag-free">FREE</span>
+            ~3 hour complete Docker walkthrough with diagrams
+          </div>
+        </div>
+        <div class="resource" style="border-left-color: var(--accent-red);">
+          <div class="resource-name">KodeKloud — Docker for Absolute Beginners</div>
+          <div class="resource-meta">
+            <span class="resource-tag tag-youtube">YOUTUBE</span>
+            <span class="resource-tag tag-free">FREE</span>
+            Mumshad Mannambeth's beginner-friendly Docker content
+          </div>
+        </div>
+
+        <div class="section-title">🧑‍🏫 Mentor Sessions (Claude)</div>
+        <div class="resource" style="border-left-color: var(--accent-cyan);">
+          <div class="resource-name">Build a Dockerized version of your Flask/Python project</div>
+          <div class="resource-meta">
+            <span class="resource-tag tag-mentor">MENTOR</span>
+            Images, containers, Dockerfile, volumes, networks, Docker Compose, multi-container apps
+          </div>
+        </div>
+
+        <div class="goal-box">
+          <strong>✅ Phase Complete When You Can:</strong>
+          Write a Dockerfile from scratch, build images, run containers, use Docker Compose for multi-container apps, and push images to Docker Hub.
+        </div>
+      </div>
+    </div>
+
+    <!-- PHASE 4 -->
+    <div class="phase" data-phase="4">
+      <div class="phase-dot" style="border-color: var(--accent-orange);"></div>
+      <div class="phase-header" onclick="toggle(4)">
+        <div class="phase-header-top">
+          <div>
+            <span class="phase-label" style="background: rgba(245,158,11,0.12); color: var(--accent-orange);">Phase 4</span>
+            <div class="phase-title">AWS Cloud Fundamentals</div>
+            <div class="phase-duration">Duration: 5-6 weeks &bull; Leads to certification</div>
+          </div>
+          <span class="phase-arrow">▼</span>
+        </div>
+      </div>
+      <div class="phase-content">
+        <div class="section-title">📚 Primary Course (Udemy)</div>
+        <div class="resource" style="border-left-color: var(--accent-purple);">
+          <div class="resource-name">"Ultimate AWS Certified Cloud Practitioner CLF-C02"</div>
+          <div class="resource-meta">
+            <span class="resource-tag tag-udemy">UDEMY</span>
+            <span class="resource-tag tag-cert">CERTIFICATION</span>
+            Stéphane Maarek &bull; 4.7★ &bull; 285K+ ratings &bull; THE gold standard for AWS beginners
+          </div>
+        </div>
+
+        <div class="section-title">📚 After Cloud Practitioner, Next</div>
+        <div class="resource" style="border-left-color: var(--accent-purple);">
+          <div class="resource-name">"Ultimate AWS Certified Solutions Architect Associate SAA-C03"</div>
+          <div class="resource-meta">
+            <span class="resource-tag tag-udemy">UDEMY</span>
+            <span class="resource-tag tag-cert">CERTIFICATION</span>
+            Stéphane Maarek &bull; Deep dive into EC2, S3, VPC, IAM, Lambda, RDS, ELB, and more
+          </div>
+        </div>
+
+        <div class="section-title">▶️ YouTube Supplement</div>
+        <div class="resource" style="border-left-color: var(--accent-red);">
+          <div class="resource-name">FreeCodeCamp — AWS Certified Cloud Practitioner (full course)</div>
+          <div class="resource-meta">
+            <span class="resource-tag tag-youtube">YOUTUBE</span>
+            <span class="resource-tag tag-free">FREE</span>
+            Complete free video course covering entire CCP exam
+          </div>
+        </div>
+
+        <div class="section-title">🧑‍🏫 Mentor Sessions (Claude)</div>
+        <div class="resource" style="border-left-color: var(--accent-cyan);">
+          <div class="resource-name">AWS concepts explained + exam prep quizzes</div>
+          <div class="resource-meta">
+            <span class="resource-tag tag-mentor">MENTOR</span>
+            IAM, EC2, S3, VPC, CloudWatch, Route 53, Lambda — practical scenarios
+          </div>
+        </div>
+
+        <div class="goal-box">
+          <strong>✅ Phase Complete When You Can:</strong>
+          Pass the AWS Cloud Practitioner exam (your first real certification!). Understand core AWS services and when to use each one. Create EC2 instances, S3 buckets, and basic VPCs.
+        </div>
+      </div>
+    </div>
+
+    <!-- PHASE 5 -->
+    <div class="phase" data-phase="5">
+      <div class="phase-dot" style="border-color: var(--accent-cyan);"></div>
+      <div class="phase-header" onclick="toggle(5)">
+        <div class="phase-header-top">
+          <div>
+            <span class="phase-label" style="background: rgba(6,182,212,0.12); color: var(--accent-cyan);">Phase 5</span>
+            <div class="phase-title">Kubernetes</div>
+            <div class="phase-duration">Duration: 5-6 weeks &bull; Leads to CKA certification</div>
+          </div>
+          <span class="phase-arrow">▼</span>
+        </div>
+      </div>
+      <div class="phase-content">
+        <div class="section-title">📚 Primary Courses (Udemy — in order)</div>
+        <div class="resource" style="border-left-color: var(--accent-purple);">
+          <div class="resource-name">"Kubernetes for the Absolute Beginners — Hands-on"</div>
+          <div class="resource-meta">
+            <span class="resource-tag tag-udemy">UDEMY</span>
+            Mumshad Mannambeth (KodeKloud) &bull; 6.5 hours &bull; Start here for K8s basics
+          </div>
+        </div>
+        <div class="resource" style="border-left-color: var(--accent-purple);">
+          <div class="resource-name">"Certified Kubernetes Administrator (CKA) with Practice Tests"</div>
+          <div class="resource-meta">
+            <span class="resource-tag tag-udemy">UDEMY</span>
+            <span class="resource-tag tag-cert">CERTIFICATION</span>
+            Mumshad Mannambeth &bull; 4.7★ &bull; 90K+ ratings &bull; Hands-on labs in browser
+          </div>
+        </div>
+
+        <div class="section-title">▶️ YouTube Supplement</div>
+        <div class="resource" style="border-left-color: var(--accent-red);">
+          <div class="resource-name">TechWorld with Nana — Kubernetes Tutorial for Beginners (full course)</div>
+          <div class="resource-meta">
+            <span class="resource-tag tag-youtube">YOUTUBE</span>
+            <span class="resource-tag tag-free">FREE</span>
+            ~4 hour complete K8s walkthrough with excellent diagrams
+          </div>
+        </div>
+        <div class="resource" style="border-left-color: var(--accent-red);">
+          <div class="resource-name">KodeKloud — Kubernetes for Beginners playlist</div>
+          <div class="resource-meta">
+            <span class="resource-tag tag-youtube">YOUTUBE</span>
+            <span class="resource-tag tag-free">FREE</span>
+            Lab-focused tutorials with real commands
+          </div>
+        </div>
+
+        <div class="section-title">🧑‍🏫 Mentor Sessions (Claude)</div>
+        <div class="resource" style="border-left-color: var(--accent-cyan);">
+          <div class="resource-name">Deploy your Dockerized app on Kubernetes</div>
+          <div class="resource-meta">
+            <span class="resource-tag tag-mentor">MENTOR</span>
+            Pods, Deployments, Services, ConfigMaps, Ingress, RBAC, CKA exam prep
+          </div>
+        </div>
+
+        <div class="goal-box">
+          <strong>✅ Phase Complete When You Can:</strong>
+          Deploy and manage applications on Kubernetes. Understand Pods, Services, Deployments, and Networking. Pass the CKA certification exam (huge resume boost!).
+        </div>
+      </div>
+    </div>
+
+    <!-- PHASE 6 -->
+    <div class="phase" data-phase="6">
+      <div class="phase-dot" style="border-color: var(--accent-red);"></div>
+      <div class="phase-header" onclick="toggle(6)">
+        <div class="phase-header-top">
+          <div>
+            <span class="phase-label" style="background: rgba(239,68,68,0.12); color: var(--accent-red);">Phase 6</span>
+            <div class="phase-title">Terraform (Infrastructure as Code)</div>
+            <div class="phase-duration">Duration: 4-5 weeks &bull; Leads to certification</div>
+          </div>
+          <span class="phase-arrow">▼</span>
+        </div>
+      </div>
+      <div class="phase-content">
+        <div class="section-title">📚 Primary Course (Udemy)</div>
+        <div class="resource" style="border-left-color: var(--accent-purple);">
+          <div class="resource-name">"HashiCorp Certified: Terraform Associate 2026"</div>
+          <div class="resource-meta">
+            <span class="resource-tag tag-udemy">UDEMY</span>
+            <span class="resource-tag tag-cert">CERTIFICATION</span>
+            Zeal Vora &bull; 4.7★ &bull; 30K+ ratings &bull; Hands-on with AWS
+          </div>
+        </div>
+
+        <div class="section-title">📚 Alternative / Supplement</div>
+        <div class="resource" style="border-left-color: var(--accent-purple);">
+          <div class="resource-name">"HashiCorp Terraform: The Ultimate Beginner's Guide with Labs"</div>
+          <div class="resource-meta">
+            <span class="resource-tag tag-udemy">UDEMY</span>
+            Bryan Krausen (HashiCorp Ambassador & Exam Contributor) &bull; Labs on AWS, Azure, GitHub
+          </div>
+        </div>
+
+        <div class="section-title">▶️ YouTube Supplement</div>
+        <div class="resource" style="border-left-color: var(--accent-red);">
+          <div class="resource-name">TechWorld with Nana — Terraform Tutorial</div>
+          <div class="resource-meta">
+            <span class="resource-tag tag-youtube">YOUTUBE</span>
+            <span class="resource-tag tag-free">FREE</span>
+            Complete Terraform basics with clear visuals
+          </div>
+        </div>
+
+        <div class="section-title">🧑‍🏫 Mentor Sessions (Claude)</div>
+        <div class="resource" style="border-left-color: var(--accent-cyan);">
+          <div class="resource-name">Build real AWS infrastructure with Terraform</div>
+          <div class="resource-meta">
+            <span class="resource-tag tag-mentor">MENTOR</span>
+            Providers, resources, variables, state, modules, workspaces, exam prep
+          </div>
+        </div>
+
+        <div class="goal-box">
+          <strong>✅ Phase Complete When You Can:</strong>
+          Write Terraform code to provision AWS infrastructure from scratch. Understand state management, modules, and remote backends. Pass the Terraform Associate certification.
+        </div>
+      </div>
+    </div>
+
+    <!-- PHASE 7 -->
+    <div class="phase" data-phase="7">
+      <div class="phase-dot" style="border-color: var(--accent-green);"></div>
+      <div class="phase-header" onclick="toggle(7)">
+        <div class="phase-header-top">
+          <div>
+            <span class="phase-label" style="background: rgba(34,197,94,0.12); color: var(--accent-green);">Phase 7 — Capstone</span>
+            <div class="phase-title">Full DevOps Project + Job Readiness</div>
+            <div class="phase-duration">Duration: 4-6 weeks</div>
+          </div>
+          <span class="phase-arrow">▼</span>
+        </div>
+      </div>
+      <div class="phase-content">
+        <div class="section-title">📚 Primary Course (Udemy)</div>
+        <div class="resource" style="border-left-color: var(--accent-purple);">
+          <div class="resource-name">"Decoding DevOps – From Basics to Advanced Projects with AI"</div>
+          <div class="resource-meta">
+            <span class="resource-tag tag-udemy">UDEMY</span>
+            Imran Teli &bull; 4.6★ &bull; 46K+ ratings &bull; Bestseller &bull; Focus on the PROJECT sections (VProfile app)
+          </div>
+        </div>
+
+        <div class="section-title">🧑‍🏫 Mentor Sessions (Claude)</div>
+        <div class="resource" style="border-left-color: var(--accent-cyan);">
+          <div class="resource-name">Build your end-to-end DevOps portfolio project</div>
+          <div class="resource-meta">
+            <span class="resource-tag tag-mentor">MENTOR</span>
+            Full pipeline: Code → GitHub → CI/CD → Docker → Kubernetes → AWS → Terraform → Monitoring
+          </div>
+        </div>
+
+        <div class="goal-box">
+          <strong>✅ Phase Complete When You Can:</strong>
+          Demonstrate an end-to-end DevOps pipeline on your GitHub. A real app with CI/CD, containerized, deployed on K8s/AWS, infrastructure managed by Terraform. This is your interview weapon.
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- YouTube Channels -->
+  <div class="youtube-channels">
+    <h2>▶️ YouTube Channels to Subscribe Now</h2>
+    <p style="color: var(--text-dim); font-size: 14px; margin-bottom: 16px;">Watch these alongside your Udemy courses. They explain concepts visually and are completely free.</p>
+
+    <div class="yt-channel">
+      <div class="yt-icon">🎯</div>
+      <div>
+        <div class="yt-name">TechWorld with Nana</div>
+        <div class="yt-desc">Your #1 channel. Best visual explanations of Docker, K8s, Terraform, CI/CD. Watch her topic playlists alongside each phase.</div>
+      </div>
+    </div>
+    <div class="yt-channel">
+      <div class="yt-icon">🧪</div>
+      <div>
+        <div class="yt-name">Abhishek Veeramalla</div>
+        <div class="yt-desc">Free "DevOps Zero to Hero" series. Complete course available free on YouTube. Excellent for Indian DevOps context.</div>
+      </div>
+    </div>
+    <div class="yt-channel">
+      <div class="yt-icon">🔬</div>
+      <div>
+        <div class="yt-name">KodeKloud (Mumshad Mannambeth)</div>
+        <div class="yt-desc">Lab-focused tutorials. Especially strong for Kubernetes and Docker. Same instructor as the CKA course.</div>
+      </div>
+    </div>
+    <div class="yt-channel">
+      <div class="yt-icon">☁️</div>
+      <div>
+        <div class="yt-name">FreeCodeCamp</div>
+        <div class="yt-desc">Long-form full courses (3-8 hours) on Docker, Kubernetes, AWS, and CI/CD. Completely free.</div>
+      </div>
+    </div>
+    <div class="yt-channel">
+      <div class="yt-icon">🐳</div>
+      <div>
+        <div class="yt-name">Bret Fisher (Docker Captain)</div>
+        <div class="yt-desc">The Docker authority. Live streams, Q&A, deep dives on container best practices.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Rules -->
+  <div class="rules-box">
+    <h2>⚡ The Rules (Non-Negotiable)</h2>
+    <div class="rule"><span class="rule-num">01</span> One phase at a time. Never jump ahead. Finish GitHub Actions before touching Linux.</div>
+    <div class="rule"><span class="rule-num">02</span> One Udemy course per topic. Don't buy 3 Docker courses "just in case." Pick one, finish it.</div>
+    <div class="rule"><span class="rule-num">03</span> After each course section, come to Claude for quiz/doubts before moving to next section.</div>
+    <div class="rule"><span class="rule-num">04</span> YouTube is supplement, not replacement. Watch Nana's video on a topic AFTER the Udemy section, not instead of it.</div>
+    <div class="rule"><span class="rule-num">05</span> Practice > watching. If you watch 2 hours, you should practice for 2 hours. Minimum.</div>
+    <div class="rule"><span class="rule-num">06</span> Push everything to GitHub. Every exercise, every project. This becomes your portfolio.</div>
+    <div class="rule"><span class="rule-num">07</span> Get certified. AWS Cloud Practitioner and CKA are your two biggest resume boosters. Don't skip them.</div>
+  </div>
+
+  <div class="footer-note">
+    Total estimated timeline: <span>7-9 months</span> of consistent learning<br>
+    Cost: <span>₹0</span> (Cognizant Udemy Business + YouTube + Claude)<br>
+    Only paid items: AWS certification exam fees (~$100 each) when you're ready
+  </div>
+
+</div>
+
+<script>
+function toggle(phase) {
+  const el = document.querySelector(`[data-phase="${phase}"]`);
+  el.classList.toggle('open');
+}
+</script>
+
+</body>
+</html>

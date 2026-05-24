@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kubernetes Zero to Hero Roadmap</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Syne:wght@400;600;700;800&display=swap');
+
+  :root {
+    --bg: #0a0e14; --bg2: #111720; --bg3: #1a2333; --surface: #1e2d42;
+    --border: #2a3f5f; --border2: #3a5278;
+    --text: #e2eaf4; --muted: #7a96b8;
+    --accent: #326CE5; --accent2: #00D4FF;
+    --green: #2dce89; --amber: #ffa530; --red: #f55b5b; --purple: #a78bfa;
+    --mono: 'JetBrains Mono', monospace;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Syne', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+  .hero { border-bottom: 1px solid var(--border); padding: 44px 40px 36px; position: relative; overflow: hidden; }
+  .hero::before { content:''; position:absolute; top:-120px; left:50%; transform:translateX(-50%); width:700px; height:400px; background:radial-gradient(ellipse,rgba(50,108,229,0.16) 0%,transparent 70%); pointer-events:none; }
+  .hero-inner { max-width: 900px; margin: 0 auto; position: relative; z-index: 1; }
+  .k8s-logo { display:flex; align-items:center; gap:14px; margin-bottom:18px; }
+  .wheel { width:48px; height:48px; border:2.5px solid var(--accent); border-radius:50%; display:flex; align-items:center; justify-content:center; position:relative; animation:spin 18s linear infinite; flex-shrink:0; }
+  .wheel-hub { width:10px; height:10px; background:var(--accent); border-radius:50%; }
+  .wheel::before,.wheel::after { content:''; position:absolute; width:2px; height:100%; background:var(--accent); border-radius:1px; }
+  .wheel::after { transform:rotate(60deg); }
+  .wheel-spoke { position:absolute; width:2px; height:100%; background:var(--accent); border-radius:1px; transform:rotate(120deg); }
+  @keyframes spin { to { transform:rotate(360deg); } }
+  .hero-title { font-size:36px; font-weight:800; letter-spacing:-1px; line-height:1.1; }
+  .hero-title span { color:var(--accent); }
+  .hero-sub { color:var(--muted); font-size:14px; margin-top:8px; }
+  .hero-stats { display:flex; gap:20px; margin-top:24px; flex-wrap:wrap; }
+  .stat { background:var(--bg2); border:1px solid var(--border); border-radius:10px; padding:12px 18px; }
+  .stat-num { font-size:20px; font-weight:700; color:var(--accent2); }
+  .stat-label { font-size:11px; color:var(--muted); margin-top:2px; }
+
+  .progress-bar-wrap { max-width:900px; margin:0 auto; padding:22px 40px 0; }
+  .progress-label { font-size:12px; color:var(--muted); margin-bottom:8px; display:flex; justify-content:space-between; }
+  .progress-track { height:6px; background:var(--bg3); border-radius:3px; display:flex; gap:2px; }
+  .progress-seg { height:100%; border-radius:3px; flex:1; opacity:0.25; transition:opacity 0.3s; }
+  .progress-seg.done { opacity:1; }
+
+  .main { max-width:900px; margin:0 auto; padding:28px 40px 64px; }
+
+  .phase { border:1px solid var(--border); border-radius:16px; background:var(--bg2); margin-bottom:18px; overflow:hidden; transition:border-color 0.2s; }
+  .phase:hover { border-color:var(--border2); }
+  .phase.open { border-color:var(--border2); }
+  .phase-header { display:flex; align-items:center; gap:14px; padding:18px 22px; cursor:pointer; user-select:none; }
+  .phase-num { width:38px; height:38px; border-radius:9px; display:flex; align-items:center; justify-content:center; font-size:15px; font-weight:700; flex-shrink:0; }
+  .phase-meta { flex:1; }
+  .phase-title { font-size:16px; font-weight:700; }
+  .phase-tagline { font-size:12px; color:var(--muted); margin-top:2px; }
+  .phase-badges { display:flex; gap:7px; align-items:center; flex-wrap:wrap; }
+  .badge { font-size:10px; font-weight:600; padding:3px 9px; border-radius:20px; background:var(--bg3); border:1px solid var(--border); color:var(--muted); white-space:nowrap; }
+  .badge.time { color:var(--amber); border-color:rgba(255,165,48,0.3); background:rgba(255,165,48,0.08); }
+  .badge.level { color:var(--green); border-color:rgba(45,206,137,0.3); background:rgba(45,206,137,0.08); }
+  .chevron { width:18px; height:18px; border-right:2px solid var(--muted); border-bottom:2px solid var(--muted); transform:rotate(45deg); transition:transform 0.25s; flex-shrink:0; margin-top:-3px; }
+  .phase.open .chevron { transform:rotate(225deg); margin-top:3px; }
+  .phase-body { display:none; padding:0 22px 22px; }
+  .phase.open .phase-body { display:block; }
+  .section-label { font-size:10px; font-weight:700; letter-spacing:1.5px; color:var(--muted); text-transform:uppercase; margin:18px 0 10px; }
+
+  /* TOPICS */
+  .topics-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(195px,1fr)); gap:8px; }
+
+  .topic { background:var(--bg3); border:1px solid var(--border); border-radius:10px; cursor:pointer; transition:border-color 0.2s, background 0.2s; overflow:hidden; }
+  .topic:hover { border-color:var(--border2); background:var(--surface); }
+  .topic.done { border-color:rgba(45,206,137,0.35); background:rgba(45,206,137,0.04); }
+  .topic.expanded { border-color:var(--border2); background:var(--surface); grid-column: 1 / -1; }
+  .topic.done.expanded { border-color:rgba(45,206,137,0.5); }
+
+  .topic-header { display:flex; align-items:flex-start; gap:10px; padding:11px 13px; }
+  .topic-check { width:17px; height:17px; border-radius:5px; border:1.5px solid var(--border2); flex-shrink:0; display:flex; align-items:center; justify-content:center; margin-top:2px; transition: background 0.2s, border-color 0.2s; }
+  .topic.done .topic-check { background:var(--green); border-color:var(--green); }
+  .topic.done .topic-check::after { content:''; width:4px; height:8px; border-right:2px solid #fff; border-bottom:2px solid #fff; transform:rotate(45deg) translate(-1px,-1px); display:block; }
+  .topic-title-wrap { flex:1; min-width:0; }
+  .topic-text { font-size:12px; font-weight:700; line-height:1.4; }
+  .topic-sub { font-size:11px; color:var(--muted); margin-top:2px; font-weight:400; }
+  .topic-arrow { font-size:10px; color:var(--muted); flex-shrink:0; margin-top:3px; transition:transform 0.2s; line-height:1; }
+  .topic.expanded .topic-arrow { transform:rotate(180deg); }
+
+  /* EXPANDED BODY */
+  .topic-body { display:none; padding:0 14px 14px 14px; border-top:1px solid var(--border); }
+  .topic.expanded .topic-body { display:block; }
+
+  .topic-inner { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:14px; }
+  @media(max-width:600px){ .topic-inner { grid-template-columns:1fr; } }
+
+  .topic-col {}
+  .topic-section-title { font-size:10px; font-weight:700; letter-spacing:1.2px; color:var(--muted); text-transform:uppercase; margin-bottom:7px; }
+  .topic-desc { font-size:12px; color:var(--muted); line-height:1.7; }
+
+  .concept-pills { display:flex; flex-wrap:wrap; gap:5px; }
+  .pill { font-size:11px; padding:3px 9px; border-radius:20px; background:var(--bg); border:1px solid var(--border); color:var(--muted); font-family:var(--mono); line-height:1.4; }
+
+  .cmd-list { display:flex; flex-direction:column; gap:4px; }
+  .cmd { font-family:var(--mono); font-size:11px; background:var(--bg); border:1px solid var(--border); border-radius:6px; padding:5px 10px; color:var(--accent2); white-space:pre-wrap; word-break:break-all; line-height:1.5; }
+
+  .tip-box { background:rgba(50,108,229,0.08); border:1px solid rgba(50,108,229,0.22); border-radius:7px; padding:9px 12px; margin-top:12px; font-size:12px; color:var(--muted); line-height:1.6; }
+  .tip-box b { color:var(--accent2); font-weight:600; }
+
+  .topic-actions { display:flex; align-items:center; gap:10px; margin-top:12px; }
+  .mark-done-btn { display:inline-flex; align-items:center; gap:6px; font-size:11px; font-weight:600; padding:5px 13px; border-radius:20px; border:1px solid var(--border2); background:transparent; color:var(--muted); cursor:pointer; transition:all 0.2s; font-family:'Syne',sans-serif; }
+  .mark-done-btn:hover { border-color:var(--green); color:var(--green); }
+  .topic.done .mark-done-btn { border-color:var(--green); color:var(--green); background:rgba(45,206,137,0.08); }
+
+  .projects { display:flex; flex-direction:column; gap:8px; }
+  .project-card { background:var(--bg3); border:1px solid var(--border); border-radius:10px; padding:12px 14px; }
+  .project-top { display:flex; align-items:center; gap:9px; margin-bottom:5px; }
+  .project-icon { width:26px; height:26px; border-radius:6px; display:flex; align-items:center; justify-content:center; font-size:13px; flex-shrink:0; }
+  .project-name { font-size:13px; font-weight:700; }
+  .project-desc { font-size:12px; color:var(--muted); line-height:1.5; }
+
+  .resources { display:flex; flex-wrap:wrap; gap:7px; }
+  .resource { font-size:11px; padding:4px 11px; border-radius:20px; border:1px solid var(--border); background:var(--bg3); color:var(--muted); display:flex; align-items:center; gap:5px; }
+  .resource-dot { width:5px; height:5px; border-radius:50%; flex-shrink:0; }
+
+  .connector { width:2px; height:14px; background:var(--border); margin:0 auto -2px; border-radius:1px; }
+
+  .footer-note { text-align:center; color:var(--muted); font-size:13px; margin-top:36px; padding-top:28px; border-top:1px solid var(--border); line-height:1.6; }
+  .footer-note strong { color:var(--text); }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-inner">
+    <div class="k8s-logo">
+      <div class="wheel"><div class="wheel-hub"></div><div class="wheel-spoke"></div></div>
+      <span style="font-size:12px;color:var(--muted);font-family:var(--mono)">kubernetes / zero → hero</span>
+    </div>
+    <h1 class="hero-title">Your K8s <span>Learning Journey</span></h1>
+    <p class="hero-sub">Click any topic block to expand — see what to learn, key concepts, commands &amp; study tips</p>
+    <div class="hero-stats">
+      <div class="stat"><div class="stat-num">6</div><div class="stat-label">Phases</div></div>
+      <div class="stat"><div class="stat-num" id="total-topics">0</div><div class="stat-label">Topics</div></div>
+      <div class="stat"><div class="stat-num" id="done-count">0</div><div class="stat-label">Completed</div></div>
+      <div class="stat"><div class="stat-num">5–7 mo</div><div class="stat-label">Timeline</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="progress-bar-wrap">
+  <div class="progress-label"><span>Overall progress</span><span id="pct-label">0%</span></div>
+  <div class="progress-track" id="progress-track"></div>
+</div>
+
+<div class="main" id="roadmap"></div>
+
+<script>
+const phases = [
+  {
+    color:'#326CE5', num:'01',
+    title:'Foundations — Linux, Containers & Networking',
+    tagline:'Master the building blocks before touching K8s',
+    time:'3–4 weeks', level:'Beginner',
+    topics:[
+      { name:'Linux CLI basics', sub:'Files, processes, permissions',
+        desc:'Everything in Kubernetes runs on Linux. Be comfortable navigating the filesystem, managing processes, reading logs, and setting file permissions before you touch a cluster.',
+        concepts:['ls / cd / cp / mv / rm','chmod / chown','ps aux / kill / top','grep / awk / sed / tail','systemctl start/stop','ssh & scp basics'],
+        cmds:['ls -la /etc/kubernetes','tail -f /var/log/syslog','ps aux | grep kubelet','chmod 600 ~/.kube/config','ssh user@node -i key.pem'],
+        tip:'Practice on killercoda.com free Linux playgrounds — real terminal, no install needed.' },
+      { name:'bash scripting', sub:'Variables, loops, conditionals',
+        desc:'Bash scripts are everywhere in DevOps — health-check loops, deployment helpers, CI steps. Even basic scripting makes you dramatically more productive.',
+        concepts:['Variables & exports','if/else conditionals','for & while loops','Functions','$? exit codes','Here-docs & piping'],
+        cmds:['#!/bin/bash','if [ $? -eq 0 ]; then echo ok; fi','for pod in $(kubectl get pods -o name); do echo $pod; done','chmod +x script.sh && ./script.sh'],
+        tip:'Write a script that watches kubectl get pods and alerts when any pod is in CrashLoopBackOff. Real practice, real skill.' },
+      { name:'Networking essentials', sub:'TCP/IP, DNS, ports, subnets',
+        desc:'K8s networking builds on fundamentals. Understand IPs, ports, DNS resolution, and routing before Service types make sense.',
+        concepts:['IP addressing & CIDR','TCP 3-way handshake','DNS resolution chain','NAT & routing','Ports & sockets','iptables basics'],
+        cmds:['curl -v https://example.com','nslookup kubernetes.default.svc.cluster.local','netstat -tulpn','traceroute 8.8.8.8','ping -c 4 google.com'],
+        tip:'Use tcpdump inside a pod to see actual traffic — watching packets is the fastest way to understand networking.' },
+      { name:'Docker fundamentals', sub:'Images, containers, volumes',
+        desc:'Kubernetes orchestrates containers. Understand what a container IS — how it isolates processes, how images are layered, how volumes persist data — before K8s makes sense.',
+        concepts:['Image vs container difference','Layers & union filesystem','docker run flags (-d, -p, -v)','Port mapping','Volume mounts','Container lifecycle states'],
+        cmds:['docker run -d -p 8080:80 nginx','docker exec -it <id> bash','docker logs -f <id>','docker inspect <id>','docker stop <id> && docker rm <id>'],
+        tip:'Break things deliberately: run a container, kill it, see data is gone. Add a volume and repeat. This is how volumes click.' },
+      { name:'Dockerfile authoring', sub:'Multi-stage builds, best practices',
+        desc:'Every app you deploy to K8s starts as a Dockerfile. Writing lean, secure, reproducible images is a core skill — a bloated image slows pulls and increases attack surface.',
+        concepts:['FROM / RUN / COPY / CMD / EXPOSE','Layer caching order matters','Multi-stage builds','.dockerignore file','Non-root USER instruction','ARG vs ENV'],
+        cmds:['docker build -t myapp:v1 .','docker image ls','docker history myapp:v1','docker build --no-cache -t myapp:v2 .'],
+        tip:'Compare image sizes: a naive Node.js image vs a multi-stage build. The difference is often 900 MB → 80 MB. Eye-opening.' },
+      { name:'docker-compose', sub:'Multi-container local apps',
+        desc:'Before Helm charts, docker-compose teaches you to declare multi-service apps in YAML — the same mental model K8s uses, just simpler.',
+        concepts:['services / networks / volumes blocks','depends_on ordering','env_file loading','-d detach flag','Named vs anonymous volumes','Build vs pull image'],
+        cmds:['docker-compose up -d','docker-compose logs -f app','docker-compose down -v','docker-compose ps','docker-compose exec app bash'],
+        tip:'Build a compose file: app + postgres + redis. This exact 3-service pattern becomes a Helm chart in Phase 4.' },
+      { name:'Container registries', sub:'Docker Hub, ECR, push/pull',
+        desc:'K8s pulls images from registries. Know how to tag, push, and authenticate — especially for private ECR registries on AWS EKS.',
+        concepts:['docker tag convention','docker push / pull','imagePullSecrets in K8s','ECR login command','OCI image spec','Image digest vs mutable tag'],
+        cmds:['docker tag myapp:v1 myuser/myapp:v1','docker push myuser/myapp:v1','aws ecr get-login-password | docker login --username AWS --password-stdin <ecr-url>','docker pull myuser/myapp@sha256:<digest>'],
+        tip:'Always use image digests (sha256:...) in production, not floating tags like :latest — tags can be overwritten silently without warning.' },
+      { name:'YAML syntax', sub:'Anchors, maps, sequences',
+        desc:'Every K8s manifest is YAML. Getting comfortable with indentation, anchors, and multi-line strings saves hours of debugging mysterious parse errors.',
+        concepts:['Scalars / maps / sequences','Indentation: spaces not tabs','Anchors & aliases (& and *)','Multi-line: | (literal) and > (folded)','Null / boolean gotchas','JSON is valid YAML'],
+        cmds:['python3 -c "import yaml,sys; yaml.safe_load(sys.stdin)" < manifest.yaml','kubectl apply --dry-run=client -f manifest.yaml','yamllint manifest.yaml'],
+        tip:'Install the VS Code YAML extension with K8s schema validation. It underlines mistakes before kubectl ever sees the file.' },
+    ],
+    projects:[
+      { icon:'🐳', name:'Containerise a Node.js app', desc:'Write a Dockerfile, push to Docker Hub, run with docker-compose alongside a Postgres DB.' },
+      { icon:'🌐', name:'Networking lab', desc:'Two containers communicate across a custom network; inspect traffic with tcpdump and curl.' },
+    ],
+    resources:['Docker official docs','Linux Journey (linuxjourney.com)','TechWorld Nana Docker course','NetworkChuck YouTube'],
+  },
+  {
+    color:'#00b4d8', num:'02',
+    title:'Kubernetes Core Concepts',
+    tagline:'Learn the K8s API and what every object does',
+    time:'4–5 weeks', level:'Beginner–Intermediate',
+    topics:[
+      { name:'K8s architecture', sub:'Control plane, worker nodes, etcd',
+        desc:'Understand WHAT Kubernetes is before writing manifests: a distributed system with a control plane making decisions and worker nodes running workloads.',
+        concepts:['kube-apiserver (gateway)','etcd (source of truth)','kube-scheduler (placement)','controller-manager (reconcile loops)','kubelet (node agent)','kube-proxy (networking)'],
+        cmds:['kubectl cluster-info','kubectl get nodes -o wide','kubectl get componentstatuses','kubectl describe node <name>','kubectl get pods -n kube-system'],
+        tip:'Draw the architecture from memory once. Knowing where each component runs tells you WHERE to look when something breaks.' },
+      { name:'Pods', sub:'Lifecycle, multi-container patterns',
+        desc:'The Pod is the smallest deployable unit — one or more containers sharing network and storage. Almost everything else in K8s manages Pods.',
+        concepts:['Single vs multi-container pods','Sidecar pattern','Init containers','Pod phases: Pending/Running/Succeeded/Failed','restartPolicy: Always/OnFailure/Never','Pod IP lifetime'],
+        cmds:['kubectl run nginx --image=nginx --restart=Never','kubectl exec -it <pod> -- bash','kubectl logs <pod> -c <container>','kubectl describe pod <pod>','kubectl get pod <n> -o yaml'],
+        tip:'Run kubectl get pod <name> -o yaml and read every field. This teaches you 80% of the K8s object model in one exercise.' },
+      { name:'ReplicaSets & Deployments', sub:'Rolling updates, rollbacks',
+        desc:'Deployments manage ReplicaSets which manage Pods. They ensure desired replicas run and handle rolling updates without downtime.',
+        concepts:['ReplicaSet desired/current/ready','RollingUpdate strategy','maxSurge & maxUnavailable','Revision history limit','Pausing a rollout','kubectl rollout commands'],
+        cmds:['kubectl create deploy nginx --image=nginx:1.25 --replicas=3','kubectl set image deploy/nginx nginx=nginx:1.26','kubectl rollout status deploy/nginx','kubectl rollout history deploy/nginx','kubectl rollout undo deploy/nginx'],
+        tip:'Deploy a bad image tag on purpose, watch pods fail, then kubectl rollout undo. This muscle memory saves you in production incidents.' },
+      { name:'Services', sub:'ClusterIP, NodePort, LoadBalancer',
+        desc:'Services give Pods a stable DNS name and IP. Without Services, your app cannot be reliably reached — Pod IPs change every restart.',
+        concepts:['ClusterIP — internal only','NodePort — exposed on every node','LoadBalancer — cloud LB provisioned','Service selector matching labels','Endpoints object','DNS: <svc>.<ns>.svc.cluster.local'],
+        cmds:['kubectl expose deploy/nginx --port=80 --type=ClusterIP','kubectl get svc','kubectl get endpoints nginx','kubectl port-forward svc/nginx 8080:80'],
+        tip:'When a Service shows no endpoints (kubectl get endpoints returns none), 99% of the time the label selector does not match Pod labels. Check both.' },
+      { name:'ConfigMaps & Secrets', sub:'Environment config, base64',
+        desc:'Never hardcode config in images. ConfigMaps hold non-sensitive config; Secrets hold credentials. Both can be mounted as env vars or files.',
+        concepts:['kubectl create configmap','kubectl create secret generic','envFrom vs single env','Volume mount as files','Immutable ConfigMaps','base64 is encoding, not encryption'],
+        cmds:['kubectl create configmap app-config --from-literal=DB_HOST=postgres','kubectl create secret generic db-creds --from-literal=password=s3cr3t','kubectl get secret db-creds -o jsonpath=\'{.data.password}\' | base64 -d'],
+        tip:'Secrets are only base64 encoded by default — NOT encrypted at rest. In production use Sealed Secrets or External Secrets Operator.' },
+      { name:'Namespaces', sub:'Resource isolation per team',
+        desc:'Namespaces let multiple teams or environments share a cluster without stepping on each other — each gets its own RBAC and quota.',
+        concepts:['Default namespaces (default, kube-system, kube-public)','ResourceQuota per namespace','LimitRange defaults','Cross-namespace DNS format','kubens switching tool','Context + namespace pairing'],
+        cmds:['kubectl create namespace staging','kubectl get all -n kube-system','kubectl config set-context --current --namespace=staging','kubens staging  # install kubens from krew'],
+        tip:'Install kubectx and kubens immediately — switching contexts and namespaces without them wastes 5 minutes per day of frustration.' },
+      { name:'kubectl', sub:'get, describe, logs, exec, apply',
+        desc:'kubectl is your primary interface to every cluster. Becoming fast with it is the single highest-ROI skill in all of Kubernetes.',
+        concepts:['apply (declarative) vs create (imperative)','--dry-run=client -o yaml pattern','Output: -o wide / json / jsonpath','watch: kubectl get pods -w','Field selectors','Sorting with --sort-by'],
+        cmds:['kubectl apply -f .','kubectl get pods -A -o wide','kubectl describe pod <name>','kubectl delete pod <name> --force','kubectl diff -f manifest.yaml'],
+        tip:'Master --dry-run=client -o yaml. In the CKA exam you generate YAML skeletons with it then edit — saves 80% of typing time.' },
+      { name:'Labels & Selectors', sub:'Targeting resources precisely',
+        desc:'Labels are key=value tags on any object. Selectors use them to target groups. Services find Pods via labels — a selector mismatch means zero traffic delivered.',
+        concepts:['Label key/value format rules','Equality-based: env=prod','Set-based: env in (prod,staging)','Annotations vs labels distinction','kubectl label add/remove','Service selector pitfalls'],
+        cmds:['kubectl label pod nginx env=prod','kubectl get pods -l env=prod','kubectl get pods -l \'env in (prod,staging)\'','kubectl annotate pod nginx note="checked"'],
+        tip:'When traffic does not reach a pod, first check: kubectl get endpoints <service-name>. If empty, the label selector does not match.' },
+      { name:'Probes', sub:'Liveness, readiness, startup',
+        desc:'Probes tell K8s whether your container is alive and ready to serve traffic. Wrong probe config causes needless restarts or sends traffic to unready pods.',
+        concepts:['livenessProbe — restart if fails','readinessProbe — remove from Service if fails','startupProbe — allow slow start','HTTP / TCP / exec probe types','initialDelaySeconds','failureThreshold & periodSeconds'],
+        cmds:['kubectl describe pod <n> | grep -A 10 Liveness','kubectl get events --sort-by=.metadata.creationTimestamp','kubectl get pod <n> -o json | jq .status.containerStatuses'],
+        tip:'CrashLoopBackOff with short intervals = liveness probe fires before app is ready. Always add startupProbe for slow-starting apps.' },
+      { name:'Resource limits', sub:'requests, limits, QoS classes',
+        desc:'Without resource requests/limits, one noisy pod can starve the whole node. Requests are used for scheduling; limits enforce caps at runtime.',
+        concepts:['requests — scheduler guarantee','limits — runtime cap','CPU in millicores (500m = 0.5 CPU)','Memory in Mi/Gi','QoS: Guaranteed / Burstable / BestEffort','OOMKilled exit code 137'],
+        cmds:['kubectl describe node <n> | grep -A 10 "Allocated resources"','kubectl top pods --sort-by=memory','kubectl top nodes'],
+        tip:'Always set requests. Without them the scheduler places pods randomly and nodes get OOM-killed under production load on a random Friday night.' },
+    ],
+    projects:[
+      { icon:'🚀', name:'Deploy app to minikube', desc:'Deployment + Service YAML, NodePort expose, roll out new image, rollback.' },
+      { icon:'🔐', name:'Secrets & config lab', desc:'ConfigMap as volume mount, Secret as env var, verify values inside the running pod.' },
+    ],
+    resources:['Kubernetes.io official docs','KodeKloud K8s for Beginners','TechWorld Nana K8s full course','killercoda.com interactive labs'],
+  },
+  {
+    color:'#2dce89', num:'03',
+    title:'Intermediate K8s — Storage, Networking & RBAC',
+    tagline:'Go beyond hello-world to production patterns',
+    time:'4–5 weeks', level:'Intermediate',
+    topics:[
+      { name:'PersistentVolumes & PVCs', sub:'Dynamic provisioning, StorageClasses',
+        desc:'Pods are ephemeral — their filesystem vanishes on restart. PVs and PVCs give pods durable storage that outlives them.',
+        concepts:['PV access modes: RWO / RWX / ROX','PVC requesting storage size','StorageClass & dynamic provisioning','Reclaim policy: Retain / Delete','VolumeBindingMode: Immediate / WaitForFirstConsumer','CSI driver model'],
+        cmds:['kubectl get pv,pvc','kubectl describe pvc my-pvc','kubectl get storageclass','kubectl patch pv <n> -p \'{"spec":{"persistentVolumeReclaimPolicy":"Retain"}}\''],
+        tip:'Always use dynamic provisioning via StorageClass in real clusters. Manually creating PVs is only for learning the binding concept.' },
+      { name:'StatefulSets', sub:'Ordered pods, stable network IDs',
+        desc:'StatefulSets manage pods that need stable identity — databases, message queues. Each pod gets a persistent hostname and its own PVC that survives rescheduling.',
+        concepts:['Stable pod names: pod-0, pod-1','Headless service for DNS','Ordered startup and shutdown','VolumeClaimTemplates','podManagementPolicy: Ordered/Parallel','Update strategies'],
+        cmds:['kubectl get statefulset','kubectl scale sts mysql --replicas=3','kubectl delete pod mysql-1','kubectl rollout status sts mysql'],
+        tip:'Never use a Deployment for a database. StatefulSet gives mysql-0.mysql stable DNS so replicas can always find the primary.' },
+      { name:'DaemonSets & Jobs', sub:'Node agents, batch workloads',
+        desc:'DaemonSets run exactly one pod per node — perfect for log collectors, monitoring agents. Jobs run tasks to completion; CronJobs run on a schedule.',
+        concepts:['DaemonSet guaranteed per-node coverage','tolerations for system nodes','Job completions & parallelism','CronJob schedule syntax (cron format)','ttlSecondsAfterFinished cleanup','Job backoffLimit for retries'],
+        cmds:['kubectl get daemonset -A','kubectl create job pi --image=perl -- perl -Mbignum=bpi -wle "print bpi(2000)"','kubectl get cronjob','kubectl create cronjob backup --image=busybox --schedule="0 2 * * *" -- sh -c "backup.sh"'],
+        tip:'Fluentd, Datadog agent, and Calico node all run as DaemonSets. Understanding this explains 90% of the pods in kube-system.' },
+      { name:'Ingress & Ingress controllers', sub:'NGINX, path/host routing, TLS',
+        desc:'Ingress exposes HTTP/HTTPS routes from outside the cluster to Services. One entry point for all web traffic — far more practical than one LoadBalancer per Service.',
+        concepts:['Ingress resource vs Ingress controller distinction','Host-based routing (virtual hosts)','Path-based routing','TLS termination with certificates','Ingress annotations for NGINX','cert-manager for automatic TLS'],
+        cmds:['kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/cloud/deploy.yaml','kubectl get ingress','kubectl describe ingress <name>','kubectl get ingressclass'],
+        tip:'The Ingress resource does NOTHING without a controller running. Install NGINX ingress controller first, then apply Ingress rules.' },
+      { name:'NetworkPolicies', sub:'Pod-to-pod firewall rules',
+        desc:'By default all pods can talk to all pods. NetworkPolicies are K8s firewall rules — they restrict ingress/egress at the pod level.',
+        concepts:['Default allow-all behaviour','ingress rules block','egress rules block','podSelector for target pods','namespaceSelector cross-namespace','ipBlock for external CIDRs'],
+        cmds:['kubectl apply -f default-deny-all.yaml','kubectl describe networkpolicy','kubectl get netpol -A'],
+        tip:'Start with a default-deny-all policy, then add explicit allow rules. Forces you to think about every traffic path — the right security posture.' },
+      { name:'RBAC', sub:'Roles, ClusterRoles, Bindings',
+        desc:'RBAC controls who or what can do what in the cluster. Without it, every service account has full cluster access — a major security risk in production.',
+        concepts:['Role — namespace-scoped permissions','ClusterRole — cluster-wide','RoleBinding binds role to subject','ClusterRoleBinding cluster-wide bind','Verbs: get/list/watch/create/delete/patch','Principle of least privilege'],
+        cmds:['kubectl auth can-i list pods --as=dev-user -n dev','kubectl create role pod-reader --verb=get,list,watch --resource=pods -n dev','kubectl create rolebinding dev-pod-reader --role=pod-reader --user=dev-user -n dev','kubectl describe clusterrole view'],
+        tip:'Use "kubectl auth can-i" constantly during debugging. It tells you exactly what any user or ServiceAccount is allowed to do.' },
+      { name:'ServiceAccounts', sub:'Pod identities, token projection',
+        desc:'Every pod runs as a ServiceAccount. When your app calls the K8s API, it authenticates as that SA. AWS IRSA extends this to IAM roles.',
+        concepts:['Default service account per namespace','Token auto-mounting','Projected volume tokens (short-lived)','ImagePullSecrets on SA','IRSA on EKS via annotation','Disabling auto-mount for security'],
+        cmds:['kubectl get serviceaccount -A','kubectl describe sa default','kubectl create sa app-runner','kubectl set serviceaccount deploy/myapp app-runner'],
+        tip:'Always create a dedicated ServiceAccount per application. Never use the default SA — it often inherits permissions you did not intend to grant.' },
+      { name:'Taints, Tolerations, Affinity', sub:'Pod scheduling control',
+        desc:'Control which pods land on which nodes. Taints repel pods; tolerations allow pods onto tainted nodes; affinity rules pull pods toward or away from labels.',
+        concepts:['kubectl taint nodes key=val:Effect','Effects: NoSchedule / NoExecute / PreferNoSchedule','tolerations in pod spec','nodeAffinity required vs preferred','podAntiAffinity for spreading replicas','topologySpreadConstraints for AZ spread'],
+        cmds:['kubectl taint nodes node1 dedicated=gpu:NoSchedule','kubectl describe node | grep Taints','kubectl get pods -o wide','kubectl taint nodes node1 dedicated-'],
+        tip:'Use podAntiAffinity to spread replicas across availability zones. Without it, all 3 replicas may land on one node and one AZ outage kills your service.' },
+      { name:'HorizontalPodAutoscaler', sub:'CPU/custom metric scaling',
+        desc:'HPA automatically scales your Deployment based on CPU, memory, or custom metrics. Essential for handling variable traffic without over-provisioning.',
+        concepts:['metrics-server dependency','targetCPUUtilizationPercentage','behavior: scaleDown cooldown period','Custom metrics via Prometheus adapter','KEDA for event-driven autoscaling','minReplicas / maxReplicas bounds'],
+        cmds:['kubectl autoscale deploy nginx --cpu-percent=50 --min=2 --max=10','kubectl get hpa','kubectl describe hpa nginx','minikube addons enable metrics-server'],
+        tip:'HPA needs metrics-server. Without it you see <unknown> for current metrics and it never scales. Enable the addon first.' },
+      { name:'kubectl advanced', sub:'jsonpath, custom columns, kustomize',
+        desc:'Basic kubectl gets you started; advanced kubectl makes you dangerous. JSONPath queries and diff workflows are daily tools for senior engineers.',
+        concepts:['-o jsonpath queries','custom-columns output format','kubectl diff before apply','kustomize overlays','kubectl patch (strategic/merge/json)','krew plugin manager'],
+        cmds:['kubectl get pods -o jsonpath=\'{.items[*].metadata.name}\'','kubectl get nodes -o custom-columns=NAME:.metadata.name,CPU:.status.capacity.cpu','kubectl kustomize ./overlays/prod | kubectl apply -f -','kubectl patch deploy nginx -p \'{"spec":{"replicas":5}}\''],
+        tip:'Install krew then: kubectx, kubens, stern (multi-pod log tail), k9s (terminal UI). These tools turn 10-command workflows into one keypress.' },
+    ],
+    projects:[
+      { icon:'💾', name:'Stateful MySQL on K8s', desc:'StatefulSet + PVC + headless Service. Verify data survives pod deletion.' },
+      { icon:'🔒', name:'RBAC mini-project', desc:'Developer ServiceAccount: read pods/logs only in dev namespace, nothing else.' },
+    ],
+    resources:['Mumshad Mannambeth CKA course','K8s docs — Concepts section','killercoda.com labs','KodeKloud CKA prep'],
+  },
+  {
+    color:'#ffa530', num:'04',
+    title:'Helm, GitOps & CI/CD',
+    tagline:'Automate everything — delivery to the cluster',
+    time:'4–5 weeks', level:'Intermediate',
+    topics:[
+      { name:'Helm basics', sub:'Charts, values, templates, releases',
+        desc:'Helm is the package manager for Kubernetes. Instead of raw YAML, you use parameterised charts that can be installed, upgraded, and rolled back with a single command.',
+        concepts:['Chart structure: Chart.yaml, templates/, values.yaml','helm install / upgrade / rollback','Release history tracking','helm repo add & update','--dry-run for inspection','helm template local rendering'],
+        cmds:['helm repo add bitnami https://charts.bitnami.com/bitnami','helm install my-nginx bitnami/nginx','helm list','helm rollback my-nginx 1','helm uninstall my-nginx'],
+        tip:'Always run "helm install --dry-run --debug" first. It renders the final YAML so you inspect exactly what will be applied before touching the cluster.' },
+      { name:'Writing Helm charts', sub:'helpers, conditionals, loops',
+        desc:'Writing your own chart turns your app from a pile of YAML into a reusable, versioned package deployable to any environment with different values.',
+        concepts:['{{ .Values.replicaCount }} templating','_helpers.tpl named templates','{{- if .Values.ingress.enabled }} conditionals','{{- range .Values.env }} loops','required and default functions','Chart.yaml apiVersion v2'],
+        cmds:['helm create myapp','helm lint myapp/','helm template myapp/ -f values-prod.yaml','helm package myapp/','helm install myapp ./myapp -f values-prod.yaml'],
+        tip:'Run "helm lint" before every commit. It catches template syntax errors, missing required fields, and YAML structure issues automatically.' },
+      { name:'ArgoCD', sub:'App of Apps, sync waves, health checks',
+        desc:'ArgoCD implements GitOps: Git is the single source of truth, ArgoCD continuously reconciles the cluster to match it. It detects drift and auto-heals.',
+        concepts:['Application CRD','Sync: manual vs automated','Self-heal and prune options','App of Apps pattern','Sync waves & resource hooks','Health assessment for custom resources'],
+        cmds:['argocd app create myapp --repo <url> --path helm/myapp --dest-server https://kubernetes.default.svc --dest-namespace prod','argocd app sync myapp','argocd app get myapp','argocd app diff myapp'],
+        tip:'Enable auto-sync + self-heal on non-production. Any manual kubectl apply gets auto-reverted — this enforces GitOps discipline on the whole team.' },
+      { name:'GitHub Actions CI', sub:'Build → test → push image pipeline',
+        desc:'CI builds and tests your code on every push. A GitHub Actions workflow that builds your Docker image and pushes to a registry is the trigger for the entire GitOps pipeline.',
+        concepts:['Workflow YAML: on / jobs / steps','on: push and pull_request triggers','docker/build-push-action','Secrets in GitHub repo settings','OIDC for keyless ECR authentication','Matrix builds for multi-arch'],
+        cmds:['# .github/workflows/ci.yaml','- uses: docker/build-push-action@v5\n  with:\n    push: true\n    tags: ${{ env.IMAGE_TAG }}','gh workflow run ci.yaml'],
+        tip:'Use GitHub OIDC + IAM role to push to ECR — no long-lived AWS access keys ever stored in GitHub secrets.' },
+      { name:'GitOps principles', sub:'Declarative state, drift detection',
+        desc:'GitOps means Git is the only way to change cluster state. No human runs kubectl apply in production — only the automation does, triggered by Git commits.',
+        concepts:['Declarative config in Git','Continuous reconciliation loop','Drift detection and alerting','Pull model vs push model','Separate app repo and config repo','Audit trail via Git history'],
+        cmds:['# Git commit IS the deployment command','git commit -m "bump image to v1.3.0"','git push origin main  # ArgoCD picks this up automatically'],
+        tip:'Maintain a separate gitops repo for K8s manifests. Devs open PRs; ArgoCD watches the main branch. No one SSHes into production servers.' },
+      { name:'Kustomize', sub:'Overlays for dev/staging/prod',
+        desc:'Kustomize lets you maintain a base set of manifests and layer environment-specific patches on top — no templating language needed, pure YAML.',
+        concepts:['base/ and overlays/ structure','kustomization.yaml manifest','namePrefix / commonLabels / namespace','Strategic merge patch','JSON Patch 6902','secretGenerator for secrets'],
+        cmds:['kubectl kustomize overlays/prod','kubectl apply -k overlays/staging','kustomize build overlays/prod | kubectl diff -f -'],
+        tip:'Kustomize is built into kubectl (kubectl apply -k). No separate install needed. Great for simple env differences; use Helm for complex templating logic.' },
+      { name:'Helm repositories', sub:'Artifact Hub, OCI registries',
+        desc:'Sharing Helm charts across teams requires a chart repository. OCI registries are now the modern standard for hosting and versioning charts.',
+        concepts:['helm repo add / update / search','Artifact Hub for public discovery','OCI chart push/pull','Chart versioning with semver','helm pull --untar for inspection','Private repo authentication'],
+        cmds:['helm repo update','helm search repo nginx','helm pull bitnami/nginx --version 15.0.0 --untar','helm push myapp-0.1.0.tgz oci://registry/charts'],
+        tip:'Pin chart versions in all environments. "helm upgrade" with a floating latest is how you accidentally break production on a Monday.' },
+      { name:'Image promotion strategy', sub:'Tagging, environments, gates',
+        desc:'A clear image tagging strategy prevents confusion and enables reliable rollbacks. How an image travels from developer laptop to production matters.',
+        concepts:['Semantic versioning tags (v1.2.3)','Git SHA tags for traceability',':latest anti-pattern in production','Environment promotion gates','Approval workflows in ArgoCD','ArgoCD Image Updater automation'],
+        cmds:['docker tag myapp:abc1234 myapp:v1.3.0','# ArgoCD Image Updater patches values.yaml in Git automatically'],
+        tip:'Pattern: git SHA tag → integration tests pass → promote to :staging → manual approval gate → promote to :prod. Never deploy :latest to production.' },
+      { name:'FluxCD', sub:'Kustomization, HelmRelease CRDs',
+        desc:'FluxCD is the other major GitOps operator. More Kubernetes-native and CRD-heavy than ArgoCD. Common in enterprises for multi-tenancy scenarios.',
+        concepts:['GitRepository source CRD','Kustomization controller CRD','HelmRelease CRD for Helm deployment','Image Automation controller','Flux vs ArgoCD tradeoffs','flux CLI for management'],
+        cmds:['flux install','flux create source git myapp --url=<url> --branch=main','flux get all','flux reconcile source git myapp'],
+        tip:'You do not need to master both. Pick ArgoCD first — it is more beginner-friendly with its UI. Learn Flux later if your org uses it.' },
+    ],
+    projects:[
+      { icon:'⛵', name:'Package app as Helm chart', desc:'Parameterise image, replicas, ingress. Deploy to dev/prod with different values files.' },
+      { icon:'🔄', name:'GitOps pipeline with ArgoCD', desc:'Git push → GH Actions builds image → ArgoCD auto-syncs the cluster. Zero manual kubectl in prod.' },
+    ],
+    resources:['Helm.sh official docs','ArgoCD getting started guide','TechWorld Nana Helm tutorial','GitOps with Argo by Viktor Farcic'],
+  },
+  {
+    color:'#a78bfa', num:'05',
+    title:'Observability, Security & Cluster Operations',
+    tagline:'Run K8s in production with confidence',
+    time:'4–5 weeks', level:'Advanced',
+    topics:[
+      { name:'Prometheus & Grafana', sub:'Scrape configs, PromQL, dashboards',
+        desc:'Prometheus scrapes metrics from every pod and node; Grafana visualises them. Together they are the industry-standard monitoring stack for Kubernetes.',
+        concepts:['ServiceMonitor CRD for scrape config','PromQL: rate(), sum(), by()','Recording rules for expensive queries','kube-prometheus-stack Helm chart (all-in-one)','Grafana datasources and dashboard import','Alert rules in PrometheusRule CRD'],
+        cmds:['helm install kube-prom prometheus-community/kube-prometheus-stack','kubectl port-forward svc/kube-prom-grafana 3000:80','kubectl get servicemonitor -A','kubectl get prometheusrule -A'],
+        tip:'Install kube-prometheus-stack. One helm install gives you Prometheus + Grafana + AlertManager + 30+ pre-built dashboards for free.' },
+      { name:'Loki + Promtail', sub:'Log aggregation, label-based queries',
+        desc:'Loki aggregates logs from all pods cluster-wide. Unlike Elasticsearch, it indexes labels not content — lightweight and K8s-native.',
+        concepts:['Promtail DaemonSet scrapes pod logs','LogQL query language','Log labels from pod metadata','Grafana Loki datasource integration','Log retention and compaction policies','Structured JSON logging best practice'],
+        cmds:['helm install loki grafana/loki-stack','# In Grafana LogQL: {namespace="prod", app="myapp"} |= "error"','kubectl logs <pod> --previous  # crashed pod logs'],
+        tip:'Pattern: {app="myapp"} | json | level="error" — structured JSON logs make Loki 10x more powerful for filtering and alerting.' },
+      { name:'Alertmanager', sub:'Routes, receivers, silence strategies',
+        desc:'Alertmanager routes alerts from Prometheus to the right team via Slack, PagerDuty, or email. Handles deduplication, grouping, and silencing.',
+        concepts:['Route tree with matchers','Receivers: Slack / PagerDuty / email','Inhibition rules (suppress child alerts)','Silence matchers with duration','Alert severity labels: critical/warning','Dead man switch pattern'],
+        cmds:['kubectl get secret alertmanager-kube-prom-kube-prometheus-alertmanager -o yaml','amtool alert query','amtool silence add alertname="KubePodCrashLooping" --duration=2h'],
+        tip:'Set up a Slack webhook first. Instant phone alerts when pods crash is the fastest feedback loop while learning production K8s.' },
+      { name:'OpenTelemetry', sub:'Traces, metrics, logs unification',
+        desc:'OpenTelemetry is the emerging standard for collecting traces, metrics, and logs in a vendor-neutral way — one SDK, any backend.',
+        concepts:['Traces and spans basics','Context propagation across services','OTel Collector DaemonSet deployment','Backends: Jaeger / Grafana Tempo','Exemplars linking metrics to traces','Auto-instrumentation agents'],
+        cmds:['kubectl apply -f otel-collector-daemonset.yaml','kubectl get pods -n observability','# View traces in Grafana Explore → Tempo datasource'],
+        tip:'Start with just traces. Instrument one endpoint with OTel SDK, ship to Jaeger, trace a single request end-to-end. The insight is immediate.' },
+      { name:'Pod Security Standards', sub:'Restricted, Baseline, Privileged',
+        desc:'Pod Security Standards replaced the deprecated PodSecurityPolicy. Three profiles enforced at namespace level via labels.',
+        concepts:['Privileged: no restrictions','Baseline: prevent known escalations','Restricted: hardened, non-root required','Modes: warn / audit / enforce','runAsNonRoot requirement','Dropping Linux capabilities'],
+        cmds:['kubectl label namespace prod pod-security.kubernetes.io/enforce=restricted','kubectl label namespace dev pod-security.kubernetes.io/warn=baseline','kubectl get ns prod -o yaml | grep pod-security'],
+        tip:'Start with warn mode on dev namespaces — it shows violations without blocking deployments. Then move to enforce on production gradually.' },
+      { name:'OPA / Kyverno policies', sub:'Admission control, policy-as-code',
+        desc:'Admission controllers intercept every API request and can block or mutate it. Kyverno writes K8s-native policies to enforce standards cluster-wide.',
+        concepts:['Validating vs mutating webhooks','Kyverno ClusterPolicy CRD','Block privileged containers','Require resource limits on all pods','Auto-add labels via mutation','PolicyReport for audit results'],
+        cmds:['kubectl apply -f require-resource-limits-policy.yaml','kubectl get clusterpolicy','kubectl get policyreport -A','kubectl describe clusterpolicy require-limits'],
+        tip:'Learn Kyverno first (plain YAML policies, K8s-native). Then explore OPA/Gatekeeper for complex rego logic in regulated environments.' },
+      { name:'Falco runtime security', sub:'Syscall monitoring, threat alerts',
+        desc:'Falco monitors container syscalls at runtime and alerts on suspicious behaviour — a shell spawned in a container, sensitive file reads, network scanning.',
+        concepts:['eBPF-based syscall capture','Falco rules YAML language','Default ruleset coverage','Custom rule writing','falcosidekick for alert routing','K8s audit log integration'],
+        cmds:['helm install falco falcosecurity/falco -n falco','kubectl logs -l app=falco -n falco | grep Warning','kubectl exec -it nginx -- bash  # triggers a Falco alert immediately'],
+        tip:'Install Falco, then exec into any running pod. You immediately see an alert: "Shell spawned in container". Powerful 2-minute demo of runtime security.' },
+      { name:'Secrets management', sub:'Vault, External Secrets Operator',
+        desc:'K8s Secrets are only base64 encoded. In production you need real secrets management integrated via External Secrets Operator.',
+        concepts:['External Secrets Operator (ESO) CRD','SecretStore defines backend connection','ExternalSecret defines which secrets to sync','AWS Secrets Manager / SSM integration','Vault Agent Injector pattern','Sealed Secrets for GitOps-safe secrets'],
+        cmds:['kubectl apply -f externalsecretstore.yaml','kubectl get externalsecret','kubectl describe externalsecret db-creds','kubectl get secret db-creds  # auto-created by ESO'],
+        tip:'ESO + AWS Secrets Manager is the most common production pattern on EKS. The operator syncs secrets automatically — no secrets ever stored in Git.' },
+      { name:'Cluster upgrades', sub:'kubeadm, node drain, surge strategy',
+        desc:'K8s releases every 4 months. Staying within 2 minor versions of latest is critical for security. Upgrades require draining nodes one by one.',
+        concepts:['kubectl drain — evict pods gracefully','kubectl cordon — stop scheduling','kubeadm upgrade plan — show available versions','Control plane first, workers after','PodDisruptionBudget prevents downtime','Surge upgrade: new node before draining old'],
+        cmds:['kubeadm upgrade plan','kubectl cordon node1','kubectl drain node1 --ignore-daemonsets --delete-emptydir-data','kubeadm upgrade node','kubectl uncordon node1'],
+        tip:'Always upgrade control plane first, then workers one at a time. PodDisruptionBudgets prevent your app going down during the node drain.' },
+      { name:'etcd backup & restore', sub:'Snapshotting, disaster recovery',
+        desc:'etcd holds ALL cluster state. Losing it without a backup means starting completely from scratch. Backup etcd daily in production.',
+        concepts:['etcdctl snapshot save command','Snapshot restore procedure','etcd encryption at rest','ETCDCTL_API=3 requirement','Compaction and defragmentation','External etcd topology for HA'],
+        cmds:['ETCDCTL_API=3 etcdctl snapshot save /backup/etcd.db --endpoints=https://127.0.0.1:2379 --cacert=/etc/etcd/ca.crt --cert=/etc/etcd/server.crt --key=/etc/etcd/server.key','ETCDCTL_API=3 etcdctl snapshot status /backup/etcd.db'],
+        tip:'The CKA exam always has an etcd backup/restore question. Practice this command until it is pure muscle memory — you cannot google it during the exam.' },
+    ],
+    projects:[
+      { icon:'📊', name:'Full observability stack', desc:'kube-prometheus-stack via Helm, custom Grafana dashboard for app SLIs, Slack alerts wired up.' },
+      { icon:'🛡️', name:'Policy-as-code lab', desc:'Kyverno: block privileged containers, require resource limits, enforce image registry allowlist.' },
+    ],
+    resources:['Prometheus docs','Grafana Labs tutorials','kube-prometheus-stack Helm chart','Falco documentation'],
+  },
+  {
+    color:'#f55b5b', num:'06',
+    title:'Cloud K8s (EKS), CKA Certification & Beyond',
+    tagline:'Go fully production on AWS and get certified',
+    time:'4–5 weeks', level:'Advanced',
+    topics:[
+      { name:'Amazon EKS setup', sub:'eksctl, managed node groups, Fargate',
+        desc:'EKS is AWS-managed Kubernetes — AWS runs the control plane; you manage worker nodes. eksctl makes provisioning a production-grade cluster a single command.',
+        concepts:['eksctl cluster config YAML','Managed node groups (AWS-patched AMIs)','Fargate profiles (serverless, no nodes)','EKS add-ons: CoreDNS, kube-proxy, VPC CNI','aws-auth ConfigMap for IAM users','CloudTrail audit logging'],
+        cmds:['eksctl create cluster -f cluster.yaml','aws eks update-kubeconfig --region ap-south-1 --name my-cluster','eksctl get nodegroup --cluster my-cluster','eksctl scale nodegroup --cluster my-cluster --nodes=5 --name=workers'],
+        tip:'Start with managed node groups, not Fargate. Fargate has restrictions on DaemonSets and PVCs that trip up beginners in unexpected ways.' },
+      { name:'IAM Roles for Service Accounts', sub:'IRSA, OIDC federation',
+        desc:'IRSA lets pods assume IAM roles without long-lived credentials. Your S3-reading pod gets an auto-rotated token — no AWS keys stored anywhere.',
+        concepts:['OIDC identity provider setup','IAM role trust policy for OIDC','ServiceAccount annotation: eks.amazonaws.com/role-arn','AWS SDK auto-detects the projected token','eksctl create iamserviceaccount shortcut','Pod-level IAM isolation'],
+        cmds:['eksctl utils associate-iam-oidc-provider --cluster my-cluster --approve','eksctl create iamserviceaccount --cluster my-cluster --name s3-reader --namespace app --attach-policy-arn arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess --approve','kubectl describe sa s3-reader -n app'],
+        tip:'IRSA is the CORRECT way to give pods AWS access on EKS. Never use node instance profiles for app-level access — every pod on that node gets the same IAM permissions.' },
+      { name:'EKS Networking', sub:'VPC CNI, security groups for pods',
+        desc:'EKS uses the AWS VPC CNI — pods get real VPC IPs. Security groups, route tables, and VPC IP limits directly impact your cluster capacity.',
+        concepts:['VPC CNI assigns real VPC IPs to pods','ENI limits per EC2 instance type','Security groups for pods (individual pod SGs)','aws-node DaemonSet manages ENIs','IPv4 prefix delegation for IP density','Cross-AZ traffic costs'],
+        cmds:['kubectl get daemonset aws-node -n kube-system','kubectl describe node | grep -i capacity','aws ec2 describe-instance-types --filters Name=instance-type,Values=m5.large | jq \'.[][].NetworkInfo\''],
+        tip:'m5.large supports only ~29 pods by default (3 ENIs × 10 IPs). Enable prefix delegation to get 10x more pod IPs without changing instance types.' },
+      { name:'ALB Ingress Controller', sub:'AWS Load Balancer Controller',
+        desc:'The AWS Load Balancer Controller provisions Application Load Balancers for Ingress resources and Network Load Balancers for Services automatically.',
+        concepts:['IngressClass: alb annotation','ALB scheme: internet-facing vs internal','Target type: ip (direct to pod) vs instance','WAF integration via annotations','ACM certificate attachment','TargetGroupBinding for reuse'],
+        cmds:['helm install aws-load-balancer-controller eks/aws-load-balancer-controller -n kube-system --set clusterName=my-cluster','kubectl get ingressclass','kubectl describe ingress myapp | grep Address'],
+        tip:'Use target-type: ip for faster routing — traffic goes directly to pod IP instead of bouncing through a NodePort on the worker node.' },
+      { name:'EBS / EFS CSI drivers', sub:'Persistent storage on AWS',
+        desc:'EBS gives high-performance block storage per pod (RWO). EFS gives shared filesystem storage mountable by multiple pods simultaneously (RWX).',
+        concepts:['EBS CSI driver as EKS add-on','EFS CSI driver installation','StorageClass gp3 for EBS','EFS access points per team','RWO for databases, RWX for shared files','VolumeSnapshot support'],
+        cmds:['eksctl create addon --name aws-ebs-csi-driver --cluster my-cluster','kubectl get storageclass','kubectl apply -f pvc-gp3.yaml','kubectl describe pvc my-pvc'],
+        tip:'EBS = databases and stateful apps (fast, exclusive access). EFS = shared config, user uploads, ML model files accessed by many pods at once.' },
+      { name:'Cluster Autoscaler / Karpenter', sub:'Cost-efficient node scaling',
+        desc:'Node autoscaling adds/removes EC2 instances based on pending pod demand. Karpenter is the modern replacement — faster provisioning and smarter cost optimisation.',
+        concepts:['Cluster Autoscaler: watches pending pods, scales ASG','Karpenter NodePool CRD replaces Cluster Autoscaler','Spot instance selection from multiple pools','Bin packing for dense node utilisation','Consolidation: replaces over-provisioned nodes','Scale-down grace period'],
+        cmds:['helm install karpenter oci://public.ecr.aws/karpenter/karpenter --version 1.0.0','kubectl get nodepool','kubectl get nodeclaim','kubectl describe nodepool default'],
+        tip:'Karpenter provisions nodes in under 60 seconds vs 3-5 min for Cluster Autoscaler and automatically picks the cheapest instance type that fits your pods.' },
+      { name:'Multi-cluster patterns', sub:'Federation, Argo ApplicationSets',
+        desc:'Large organisations run many clusters — per region, per team, per environment. Managing them consistently requires multi-cluster tooling.',
+        concepts:['ArgoCD managing multiple clusters','ApplicationSet controller for fleet management','Cluster secrets stored in ArgoCD','Cross-cluster service discovery options','Hub-and-spoke topology','Config sync at scale'],
+        cmds:['argocd cluster add <context>','argocd appset create -f appset.yaml','kubectl config get-contexts','argocd cluster list'],
+        tip:'Model multi-cluster with ArgoCD ApplicationSets before exploring heavier federation tools. 80% of use cases are covered by one ArgoCD managing N clusters.' },
+      { name:'Service meshes', sub:'Istio/Linkerd basics, mTLS, traffic mgmt',
+        desc:'A service mesh adds a proxy sidecar to every pod, enabling mTLS, traffic splitting, retries, timeouts, and deep L7 observability between services.',
+        concepts:['Sidecar proxy (Envoy) injection','Control plane vs data plane','mTLS automatic between all services','VirtualService for traffic routing','DestinationRule for circuit breaking','Canary releases via traffic weight'],
+        cmds:['istioctl install --set profile=demo','kubectl label namespace default istio-injection=enabled','kubectl apply -f virtualservice-canary.yaml','istioctl analyze','istioctl proxy-status'],
+        tip:'Only add a service mesh when you have concrete requirements: mTLS compliance mandate, canary releases, or deep L7 observability needs. Not by default.' },
+      { name:'Cost optimisation', sub:'Spot instances, right-sizing, Kubecost',
+        desc:'Cloud K8s can get expensive fast. Combining spot instances, right-sized pod resources, and visibility tooling cuts bills 40-70% without impacting reliability.',
+        concepts:['Spot vs On-Demand instance mixing','Spot interruption handling (2-min notice)','Karpenter spot consolidation','Kubecost for per-namespace/pod billing','VPA Vertical Pod Autoscaler for right-sizing','Resource waste detection dashboards'],
+        cmds:['# Karpenter NodePool with spot + on-demand weights','kubectl get vpa -A','kubectl cost namespace  # Kubecost CLI plugin'],
+        tip:'Install Kubecost free tier on your EKS cluster. In 10 minutes it shows which namespaces and deployments are wasting the most money.' },
+      { name:'CKA exam prep', sub:'Time management, imperative kubectl',
+        desc:'The CKA is a 2-hour hands-on exam in a live cluster. Speed is everything — 15-20 tasks, mostly solved with imperative kubectl commands.',
+        concepts:['17 curriculum domains with weightings','Imperative kubectl for speed','Bookmarking kubernetes.io docs only','--dry-run=client -o yaml workflow','etcd backup always appears in exam','6-8 minutes per question budget'],
+        cmds:['alias k=kubectl','export do="--dry-run=client -o yaml"','k run pod --image=nginx $do > pod.yaml','k create deploy --image=nginx --replicas=3 $do','k config use-context <cluster>  # switch clusters in exam'],
+        tip:'Do 2 full killer.sh sessions scoring 80%+ BEFORE booking the real exam. killer.sh is harder than the actual exam — pass it and you will pass CKA.' },
+    ],
+    projects:[
+      { icon:'☁️', name:'Production EKS cluster', desc:'Terraform + eksctl + GitOps + observability + Karpenter autoscaling end to end on AWS.' },
+      { icon:'🏅', name:'CKA Certification', desc:'Two killer.sh sessions at 80%+ then book the real exam. Target it after completing Phase 5.' },
+    ],
+    resources:['eksctl.io docs','AWS EKS workshop (workshop.aws)','Killer.sh CKA simulator','KodeKloud CKA ultimate mock exams'],
+  },
+];
+
+const container = document.getElementById('roadmap');
+let allTopics = [];
+
+phases.forEach((phase, pi) => {
+  if (pi > 0) {
+    const conn = document.createElement('div');
+    conn.className = 'connector';
+    container.appendChild(conn);
+  }
+
+  const el = document.createElement('div');
+  el.className = 'phase';
+  el.innerHTML = `
+    <div class="phase-header" onclick="togglePhase(this.parentElement)">
+      <div class="phase-num" style="background:${phase.color}22;color:${phase.color};border:1px solid ${phase.color}44">${phase.num}</div>
+      <div class="phase-meta">
+        <div class="phase-title" style="color:${phase.color}">${phase.title}</div>
+        <div class="phase-tagline">${phase.tagline}</div>
+      </div>
+      <div class="phase-badges">
+        <span class="badge time">&#9200; ${phase.time}</span>
+        <span class="badge level">${phase.level}</span>
+      </div>
+      <div class="chevron"></div>
+    </div>
+    <div class="phase-body">
+      <div class="section-label">Topics &mdash; click any block to expand details</div>
+      <div class="topics-grid" id="topics-${pi}"></div>
+      <div class="section-label">Hands-on Projects</div>
+      <div class="projects" id="projects-${pi}"></div>
+      <div class="section-label">Resources</div>
+      <div class="resources" id="resources-${pi}"></div>
+    </div>
+  `;
+  container.appendChild(el);
+
+  const topicGrid = el.querySelector(`#topics-${pi}`);
+
+  phase.topics.forEach((t, ti) => {
+    const id = `t-${pi}-${ti}`;
+    allTopics.push(id);
+
+    const pillsHTML = (t.concepts||[]).map(c=>`<span class="pill">${c}</span>`).join('');
+    const cmdsHTML = (t.cmds||[]).map(c=>`<div class="cmd">${c}</div>`).join('');
+
+    const div = document.createElement('div');
+    div.className = 'topic';
+    div.id = id;
+    div.innerHTML = `
+      <div class="topic-header">
+        <div class="topic-check"></div>
+        <div class="topic-title-wrap">
+          <div class="topic-text">${t.name}</div>
+          <div class="topic-sub">${t.sub}</div>
+        </div>
+        <div class="topic-arrow">&#9660;</div>
+      </div>
+      <div class="topic-body">
+        <div class="topic-inner">
+          <div class="topic-col">
+            <div class="topic-section-title">What to learn</div>
+            <div class="topic-desc">${t.desc}</div>
+            ${pillsHTML ? `<div style="margin-top:12px"><div class="topic-section-title">Key concepts</div><div class="concept-pills">${pillsHTML}</div></div>` : ''}
+          </div>
+          <div class="topic-col">
+            ${cmdsHTML ? `<div class="topic-section-title">Key commands</div><div class="cmd-list">${cmdsHTML}</div>` : ''}
+          </div>
+        </div>
+        ${t.tip ? `<div class="tip-box"><b>&#128161; Study tip:</b> ${t.tip}</div>` : ''}
+        <div class="topic-actions">
+          <button class="mark-done-btn" id="btn-${id}" onclick="event.stopPropagation(); toggleDone('${id}', '${phase.color}')">Mark as done</button>
+        </div>
+      </div>
+    `;
+
+    div.querySelector('.topic-header').addEventListener('click', (e) => {
+      e.stopPropagation();
+      const isOpen = div.classList.contains('expanded');
+      // Close others in same grid
+      topicGrid.querySelectorAll('.topic.expanded').forEach(other => {
+        if (other !== div) other.classList.remove('expanded');
+      });
+      div.classList.toggle('expanded', !isOpen);
+    });
+
+    topicGrid.appendChild(div);
+  });
+
+  const projGrid = el.querySelector(`#projects-${pi}`);
+  phase.projects.forEach(p => {
+    const div = document.createElement('div');
+    div.className = 'project-card';
+    div.innerHTML = `
+      <div class="project-top">
+        <div class="project-icon" style="background:${phase.color}22;">${p.icon}</div>
+        <div class="project-name">${p.name}</div>
+      </div>
+      <div class="project-desc">${p.desc}</div>
+    `;
+    projGrid.appendChild(div);
+  });
+
+  const resWrap = el.querySelector(`#resources-${pi}`);
+  phase.resources.forEach(r => {
+    const span = document.createElement('span');
+    span.className = 'resource';
+    span.innerHTML = `<span class="resource-dot" style="background:${phase.color}"></span>${r}`;
+    resWrap.appendChild(span);
+  });
+});
+
+document.getElementById('total-topics').textContent = allTopics.length;
+
+const track = document.getElementById('progress-track');
+allTopics.forEach((_, i) => {
+  const seg = document.createElement('div');
+  seg.className = 'progress-seg';
+  seg.id = `seg-${i}`;
+  const phaseIdx = Math.min(Math.floor(i / 10), phases.length - 1);
+  seg.style.background = phases[phaseIdx].color;
+  track.appendChild(seg);
+});
+
+function toggleDone(id, color) {
+  const el = document.getElementById(id);
+  el.classList.toggle('done');
+  const btn = document.getElementById(`btn-${id}`);
+  btn.textContent = el.classList.contains('done') ? '&#10003; Completed' : 'Mark as done';
+  updateProgress();
+}
+
+function updateProgress() {
+  const done = document.querySelectorAll('.topic.done').length;
+  const total = allTopics.length;
+  document.getElementById('done-count').textContent = done;
+  const pct = Math.round((done / total) * 100);
+  document.getElementById('pct-label').textContent = pct + '%';
+  document.querySelectorAll('.progress-seg').forEach((seg, i) => {
+    seg.classList.toggle('done', i < done);
+  });
+}
+
+function togglePhase(el) { el.classList.toggle('open'); }
+
+document.querySelector('.phase').classList.add('open');
+
+const footer = document.createElement('div');
+footer.className = 'footer-note';
+footer.innerHTML = `<strong>Pro tip:</strong> Don't rush phases. Master one concept before moving to the next.<br>Build real projects at every stage — theory without practice fades fast.<br>Target <strong>CKA certification</strong> after Phase 5. It validates everything you have learned.`;
+document.querySelector('.main').appendChild(footer);
+
+updateProgress();
+</script>
+</body>
+</html>

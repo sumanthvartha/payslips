@@ -1,0 +1,2181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Git Zero to Hero — Complete Learning Roadmap</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;600;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0c10;
+    --surface: #111318;
+    --surface2: #1a1d24;
+    --border: #2a2d36;
+    --accent: #f97316;
+    --accent2: #fb923c;
+    --gold: #fbbf24;
+    --green: #22c55e;
+    --blue: #3b82f6;
+    --purple: #a855f7;
+    --pink: #ec4899;
+    --red: #ef4444;
+    --text: #e8eaf0;
+    --muted: #6b7280;
+    --mono: 'JetBrains Mono', monospace;
+    --sans: 'Syne', sans-serif;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── HEADER ── */
+  header {
+    position: relative;
+    padding: 60px 40px 40px;
+    border-bottom: 1px solid var(--border);
+    overflow: hidden;
+  }
+  header::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(249,115,22,.15) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .header-grid {
+    position: absolute;
+    inset: 0;
+    background-image: linear-gradient(var(--border) 1px, transparent 1px),
+                      linear-gradient(90deg, var(--border) 1px, transparent 1px);
+    background-size: 40px 40px;
+    opacity: 0.3;
+  }
+  .header-content { position: relative; max-width: 1200px; margin: 0 auto; }
+  .badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: rgba(249,115,22,.12); border: 1px solid rgba(249,115,22,.3);
+    color: var(--accent); padding: 4px 12px; border-radius: 20px;
+    font-family: var(--mono); font-size: 11px; letter-spacing: 1px;
+    text-transform: uppercase; margin-bottom: 20px;
+  }
+  h1 {
+    font-size: clamp(2.2rem, 5vw, 4rem); font-weight: 800; line-height: 1.1;
+    letter-spacing: -1px;
+  }
+  h1 span { color: var(--accent); }
+  .subtitle {
+    font-family: var(--mono); color: var(--muted); font-size: 14px;
+    margin-top: 12px; max-width: 600px;
+  }
+  .stats-row {
+    display: flex; gap: 32px; margin-top: 32px; flex-wrap: wrap;
+  }
+  .stat { display: flex; flex-direction: column; gap: 2px; }
+  .stat-val {
+    font-size: 28px; font-weight: 800; color: var(--accent);
+    font-family: var(--mono);
+  }
+  .stat-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; }
+
+  /* ── PROGRESS BAR ── */
+  .progress-section {
+    max-width: 1200px; margin: 0 auto; padding: 24px 40px;
+    border-bottom: 1px solid var(--border);
+  }
+  .progress-header {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 10px;
+  }
+  .progress-label { font-family: var(--mono); font-size: 12px; color: var(--muted); }
+  .progress-pct { font-family: var(--mono); font-size: 18px; font-weight: 700; color: var(--green); }
+  .progress-track {
+    height: 6px; background: var(--border); border-radius: 3px; overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%; background: linear-gradient(90deg, var(--accent), var(--gold));
+    border-radius: 3px; transition: width .5s ease;
+  }
+
+  /* ── LAYOUT ── */
+  .container { max-width: 1200px; margin: 0 auto; padding: 40px; }
+
+  /* ── BLOCK ── */
+  .block {
+    margin-bottom: 48px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    background: var(--surface);
+  }
+  .block-header {
+    display: flex; align-items: center; gap: 16px;
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    user-select: none;
+    background: var(--surface2);
+    transition: background .2s;
+  }
+  .block-header:hover { background: #1e2128; }
+  .block-num {
+    width: 36px; height: 36px; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--mono); font-size: 13px; font-weight: 700;
+    flex-shrink: 0;
+  }
+  .block-title { flex: 1; }
+  .block-title h2 { font-size: 18px; font-weight: 700; }
+  .block-title p { font-size: 12px; color: var(--muted); margin-top: 2px; font-family: var(--mono); }
+  .block-meta { display: flex; align-items: center; gap: 12px; }
+  .block-progress-ring { position: relative; width: 44px; height: 44px; }
+  .ring-svg { transform: rotate(-90deg); }
+  .ring-bg { fill: none; stroke: var(--border); stroke-width: 3; }
+  .ring-fg { fill: none; stroke-width: 3; stroke-linecap: round; transition: stroke-dashoffset .5s ease; }
+  .ring-label {
+    position: absolute; inset: 0; display: flex; align-items: center;
+    justify-content: center; font-family: var(--mono); font-size: 9px; font-weight: 700;
+  }
+  .toggle-icon { color: var(--muted); font-size: 18px; transition: transform .3s; }
+  .block.collapsed .toggle-icon { transform: rotate(-90deg); }
+
+  /* ── TOPICS ── */
+  .block-body { padding: 20px 24px; }
+  .topics-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 12px;
+  }
+  .topic {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: border-color .2s, transform .15s;
+  }
+  .topic:hover { border-color: var(--muted); transform: translateY(-1px); }
+  .topic.done { border-color: rgba(34,197,94,.4); background: rgba(34,197,94,.04); }
+  .topic.active { border-color: var(--accent); }
+  .topic-head {
+    display: flex; align-items: flex-start; gap: 12px; padding: 14px 16px;
+  }
+  .topic-check {
+    width: 20px; height: 20px; border-radius: 50%;
+    border: 2px solid var(--border); flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px; transition: all .2s; margin-top: 2px;
+    background: transparent;
+    cursor: pointer;
+  }
+  .topic.done .topic-check {
+    background: var(--green); border-color: var(--green); color: #fff;
+  }
+  .topic-info { flex: 1; }
+  .topic-name { font-size: 13px; font-weight: 700; }
+  .topic-desc { font-size: 11px; color: var(--muted); margin-top: 3px; line-height: 1.5; font-family: var(--mono); }
+  .topic-tag {
+    padding: 2px 8px; border-radius: 4px; font-size: 10px;
+    font-family: var(--mono); font-weight: 600; flex-shrink: 0;
+  }
+
+  /* ── CONTENT PANEL ── */
+  .content-panel {
+    display: none;
+    border-top: 1px solid var(--border);
+    padding: 16px;
+    background: #0d0f14;
+  }
+  .topic.active .content-panel { display: block; }
+  .content-panel h4 {
+    font-family: var(--mono); font-size: 12px; color: var(--accent);
+    text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px;
+  }
+  .concept { margin-bottom: 14px; }
+  .concept-title { font-size: 13px; font-weight: 700; margin-bottom: 4px; }
+  .concept-body { font-size: 12px; color: #a0a8b8; line-height: 1.7; font-family: var(--mono); }
+  .code-block {
+    background: #0a0c10; border: 1px solid var(--border);
+    border-radius: 6px; padding: 12px 14px;
+    font-family: var(--mono); font-size: 12px;
+    line-height: 1.8; margin: 8px 0;
+    overflow-x: auto; position: relative;
+  }
+  .code-block .comment { color: #4b5563; }
+  .code-block .cmd { color: var(--accent2); }
+  .code-block .arg { color: var(--gold); }
+  .code-block .str { color: var(--green); }
+  .code-block .kw { color: var(--purple); }
+  .copy-btn {
+    position: absolute; top: 8px; right: 8px;
+    background: var(--surface); border: 1px solid var(--border);
+    color: var(--muted); padding: 3px 8px; border-radius: 4px;
+    font-family: var(--mono); font-size: 10px; cursor: pointer;
+    transition: color .2s;
+  }
+  .copy-btn:hover { color: var(--accent); }
+  .tip {
+    background: rgba(251,191,36,.06); border: 1px solid rgba(251,191,36,.2);
+    border-left: 3px solid var(--gold); border-radius: 4px;
+    padding: 10px 12px; margin: 8px 0;
+    font-family: var(--mono); font-size: 11px; color: #d1b96a; line-height: 1.6;
+  }
+  .tip::before { content: '💡 '; }
+  .warn {
+    background: rgba(239,68,68,.06); border: 1px solid rgba(239,68,68,.2);
+    border-left: 3px solid var(--red); border-radius: 4px;
+    padding: 10px 12px; margin: 8px 0;
+    font-family: var(--mono); font-size: 11px; color: #f87171; line-height: 1.6;
+  }
+  .warn::before { content: '⚠️ '; }
+  .mark-done-btn {
+    margin-top: 14px;
+    background: var(--green); color: #fff;
+    border: none; padding: 8px 18px; border-radius: 6px;
+    font-family: var(--mono); font-size: 12px; font-weight: 700;
+    cursor: pointer; transition: opacity .2s;
+  }
+  .mark-done-btn:hover { opacity: .85; }
+  .mark-done-btn.undo { background: var(--surface2); color: var(--muted); border: 1px solid var(--border); }
+
+  /* ── LEGEND ── */
+  .legend {
+    display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 24px;
+  }
+  .legend-item { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--muted); font-family: var(--mono); }
+  .legend-dot { width: 10px; height: 10px; border-radius: 2px; }
+
+  /* ── BLOCK COLORS ── */
+  .b1 .block-num { background: rgba(59,130,246,.15); color: var(--blue); }
+  .b1 .ring-fg { stroke: var(--blue); }
+  .b2 .block-num { background: rgba(168,85,247,.15); color: var(--purple); }
+  .b2 .ring-fg { stroke: var(--purple); }
+  .b3 .block-num { background: rgba(249,115,22,.15); color: var(--accent); }
+  .b3 .ring-fg { stroke: var(--accent); }
+  .b4 .block-num { background: rgba(34,197,94,.15); color: var(--green); }
+  .b4 .ring-fg { stroke: var(--green); }
+  .b5 .block-num { background: rgba(251,191,36,.15); color: var(--gold); }
+  .b5 .ring-fg { stroke: var(--gold); }
+  .b6 .block-num { background: rgba(236,72,153,.15); color: var(--pink); }
+  .b6 .ring-fg { stroke: var(--pink); }
+  .b7 .block-num { background: rgba(239,68,68,.15); color: var(--red); }
+  .b7 .ring-fg { stroke: var(--red); }
+
+  .tag-beginner { background: rgba(59,130,246,.12); color: var(--blue); }
+  .tag-core { background: rgba(168,85,247,.12); color: var(--purple); }
+  .tag-intermediate { background: rgba(249,115,22,.12); color: var(--accent); }
+  .tag-advanced { background: rgba(34,197,94,.12); color: var(--green); }
+  .tag-pro { background: rgba(251,191,36,.12); color: var(--gold); }
+  .tag-expert { background: rgba(236,72,153,.12); color: var(--pink); }
+
+  .reset-btn {
+    margin-left: auto;
+    background: transparent; border: 1px solid var(--border);
+    color: var(--muted); padding: 6px 14px; border-radius: 6px;
+    font-family: var(--mono); font-size: 11px; cursor: pointer;
+    transition: color .2s, border-color .2s;
+  }
+  .reset-btn:hover { color: var(--red); border-color: var(--red); }
+
+  @media (max-width: 768px) {
+    header, .container { padding: 24px 20px; }
+    .progress-section { padding: 16px 20px; }
+    h1 { font-size: 2rem; }
+    .topics-grid { grid-template-columns: 1fr; }
+    .stats-row { gap: 20px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-grid"></div>
+  <div class="header-content">
+    <div class="badge">⬡ DevOps Foundation · Git Mastery Track</div>
+    <h1>Git <span>Zero → Hero</span><br>Complete Roadmap</h1>
+    <p class="subtitle">// One-shot learning source · Everything you need · Nothing you don't</p>
+    <div class="stats-row">
+      <div class="stat"><span class="stat-val" id="total-topics">0</span><span class="stat-label">Total Topics</span></div>
+      <div class="stat"><span class="stat-val" id="done-topics" style="color:var(--green)">0</span><span class="stat-label">Completed</span></div>
+      <div class="stat"><span class="stat-val" id="remaining-topics" style="color:var(--gold)">0</span><span class="stat-label">Remaining</span></div>
+      <div class="stat"><span class="stat-val">7</span><span class="stat-label">Learning Blocks</span></div>
+    </div>
+  </div>
+</header>
+
+<div class="progress-section">
+  <div class="progress-header">
+    <span class="progress-label">// OVERALL PROGRESS</span>
+    <span class="progress-pct" id="pct">0%</span>
+  </div>
+  <div class="progress-track"><div class="progress-fill" id="prog-fill" style="width:0%"></div></div>
+</div>
+
+<div class="container">
+  <div class="legend">
+    <div class="legend-item"><div class="legend-dot" style="background:var(--blue)"></div> Beginner</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--purple)"></div> Core</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--accent)"></div> Intermediate</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--green)"></div> Advanced</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--gold)"></div> Pro</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--pink)"></div> Expert</div>
+    <button class="reset-btn" onclick="resetAll()">↺ Reset Progress</button>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════
+       BLOCK 1 — FOUNDATIONS
+  ═══════════════════════════════════════════════ -->
+  <div class="block b1" id="block-1">
+    <div class="block-header" onclick="toggleBlock('block-1')">
+      <div class="block-num">01</div>
+      <div class="block-title">
+        <h2>Foundations &amp; Setup</h2>
+        <p>What Git is, how it works under the hood, and getting your environment ready</p>
+      </div>
+      <div class="block-meta">
+        <div class="block-progress-ring">
+          <svg class="ring-svg" width="44" height="44" viewBox="0 0 44 44">
+            <circle class="ring-bg" cx="22" cy="22" r="18"/>
+            <circle class="ring-fg" cx="22" cy="22" r="18" stroke-dasharray="113" stroke-dashoffset="113" data-block="1"/>
+          </svg>
+          <div class="ring-label" data-ring-label="1">0%</div>
+        </div>
+        <div class="toggle-icon">▾</div>
+      </div>
+    </div>
+    <div class="block-body">
+      <div class="topics-grid">
+
+        <div class="topic" id="t-1-1">
+          <div class="topic-head">
+            <div class="topic-check" onclick="toggleDone('t-1-1',event)">✓</div>
+            <div class="topic-info">
+              <div class="topic-name">What is Version Control?</div>
+              <div class="topic-desc">Why VCS exists, types of VCS, Git's place in history</div>
+            </div>
+            <span class="topic-tag tag-beginner">Beginner</span>
+          </div>
+          <div class="content-panel">
+            <h4>// Core Concepts</h4>
+            <div class="concept">
+              <div class="concept-title">Version Control System (VCS)</div>
+              <div class="concept-body">A system that records changes to files over time so you can recall specific versions later. Think of it as a "time machine" for your code — you can go back to any point in history.</div>
+            </div>
+            <div class="concept">
+              <div class="concept-title">Types of VCS</div>
+              <div class="concept-body">
+                <b>Local VCS</b> — Simple database of changes (RCS). All history on one machine.<br>
+                <b>Centralized VCS</b> — Single server holds all versioned files (SVN, CVS). Everyone checks out from one place. Single point of failure.<br>
+                <b>Distributed VCS</b> — Every client mirrors the entire repository including history (Git, Mercurial). No single point of failure.
+              </div>
+            </div>
+            <div class="concept">
+              <div class="concept-title">Why Git Won</div>
+              <div class="concept-body">Speed, data integrity, support for distributed non-linear workflows, free and open source, and industry adoption. Created by Linus Torvalds in 2005 for Linux kernel development.</div>
+            </div>
+            <div class="tip">Git stores snapshots of your entire project, not just diffs between files. This is what makes it fast and reliable.</div>
+            <button class="mark-done-btn" onclick="markDone('t-1-1')">Mark Complete ✓</button>
+          </div>
+        </div>
+
+        <div class="topic" id="t-1-2">
+          <div class="topic-head">
+            <div class="topic-check" onclick="toggleDone('t-1-2',event)">✓</div>
+            <div class="topic-info">
+              <div class="topic-name">Installing Git</div>
+              <div class="topic-desc">Install on Linux, macOS, Windows; verify installation</div>
+            </div>
+            <span class="topic-tag tag-beginner">Beginner</span>
+          </div>
+          <div class="content-panel">
+            <h4>// Installation</h4>
+            <div class="concept">
+              <div class="concept-title">Linux (Ubuntu/Debian)</div>
+              <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">copy</button>
+<span class="cmd">sudo apt update</span>
+<span class="cmd">sudo apt install git -y</span>
+              </div>
+            </div>
+            <div class="concept">
+              <div class="concept-title">macOS</div>
+              <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">copy</button>
+<span class="cmd">brew install git</span>
+<span class="comment"># Or install Xcode Command Line Tools</span>
+<span class="cmd">xcode-select --install</span>
+              </div>
+            </div>
+            <div class="concept">
+              <div class="concept-title">Windows</div>
+              <div class="concept-body">Download from git-scm.com. Git Bash is included — always use Git Bash on Windows for consistent commands.</div>
+            </div>
+            <div class="concept">
+              <div class="concept-title">Verify Installation</div>
+              <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">copy</button>
+<span class="cmd">git --version</span>
+<span class="comment"># Expected: git version 2.x.x</span>
+              </div>
+            </div>
+            <button class="mark-done-btn" onclick="markDone('t-1-2')">Mark Complete ✓</button>
+          </div>
+        </div>
+
+        <div class="topic" id="t-1-3">
+          <div class="topic-head">
+            <div class="topic-check" onclick="toggleDone('t-1-3',event)">✓</div>
+            <div class="topic-info">
+              <div class="topic-name">Git Configuration (git config)</div>
+              <div class="topic-desc">Identity, editor, aliases, global vs local config</div>
+            </div>
+            <span class="topic-tag tag-beginner">Beginner</span>
+          </div>
+          <div class="content-panel">
+            <h4>// Configuration Levels</h4>
+            <div class="concept">
+              <div class="concept-title">Config Scopes (Priority: local &gt; global &gt; system)</div>
+              <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">copy</button>
+<span class="comment"># System-wide: /etc/gitconfig</span>
+<span class="cmd">git config --system</span>
+
+<span class="comment"># Per user: ~/.gitconfig</span>
+<span class="cmd">git config --global</span>
+
+<span class="comment"># Per repo: .git/config</span>
+<span class="cmd">git config --local</span>
+              </div>
+            </div>
+            <div class="concept">
+              <div class="concept-title">Essential Setup (do this first!)</div>
+              <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">copy</button>
+<span class="cmd">git config --global</span> <span class="arg">user.name</span> <span class="str">"Your Name"</span>
+<span class="cmd">git config --global</span> <span class="arg">user.email</span> <span class="str">"you@example.com"</span>
+<span class="cmd">git config --global</span> <span class="arg">core.editor</span> <span class="str">"code --wait"</span>
+<span class="cmd">git config --global</span> <span class="arg">init.defaultBranch</span> <span class="str">main</span>
+<span class="cmd">git config --global</span> <span class="arg">color.ui</span> <span class="str">auto</span>
+              </div>
+            </div>
+            <div class="concept">
+              <div class="concept-title">Useful Aliases</div>
+              <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">copy</button>
+<span class="cmd">git config --global</span> <span class="arg">alias.st</span> <span class="str">status</span>
+<span class="cmd">git config --global</span> <span class="arg">alias.co</span> <span class="str">checkout</span>
+<span class="cmd">git config --global</span> <span class="arg">alias.br</span> <span class="str">branch</span>
+<span class="cmd">git config --global</span> <span class="arg">alias.lg</span> <span class="str">"log --oneline --graph --all"</span>
+              </div>
+            </div>
+            <div class="concept">
+              <div class="concept-title">View All Config</div>
+              <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">copy</button>
+<span class="cmd">git config --list</span>
+<span class="cmd">git config --global --list</span>
+<span class="cmd">cat ~/.gitconfig</span>
+              </div>
+            </div>
+            <div class="tip">Your name and email appear in every commit you make. Set them correctly — they're permanent in the commit history.</div>
+            <button class="mark-done-btn" onclick="markDone('t-1-3')">Mark Complete ✓</button>
+          </div>
+        </div>
+
+        <div class="topic" id="t-1-4">
+          <div class="topic-head">
+            <div class="topic-check" onclick="toggleDone('t-1-4',event)">✓</div>
+            <div class="topic-info">
+              <div class="topic-name">How Git Stores Data (Object Model)</div>
+              <div class="topic-desc">Blobs, Trees, Commits, Tags — Git's internal storage</div>
+            </div>
+            <span class="topic-tag tag-beginner">Beginner</span>
+          </div>
+          <div class="content-panel">
+            <h4>// Git Object Types</h4>
+            <div class="concept">
+              <div class="concept-title">The 4 Object Types</div>
+              <div class="concept-body">
+                <b>Blob</b> — stores file content (no filename, no metadata)<br>
+                <b>Tree</b> — stores directory structure (maps filenames to blobs/trees)<br>
+                <b>Commit</b> — stores a snapshot pointer (tree + parent + author + message)<br>
+                <b>Tag</b> — annotated label for a specific commit
+              </div>
+            </div>
+            <div class="concept">
+              <div class="concept-title">Content-Addressable Storage</div>
+              <div class="concept-body">Every object is identified by a SHA-1 hash of its content. If two files have identical content, Git stores them only once. This is why Git is incredibly efficient.</div>
+            </div>
+            <div class="code-block">
+              <button class="copy-btn" onclick="copyCode(this)">copy</button>
+<span class="comment"># Inspect the .git directory</span>
+ls .git/
+<span class="comment"># objects/ — all your blobs, trees, commits</span>
+<span class="comment"># refs/     — pointers to commits (branches, tags)</span>
+<span class="comment"># HEAD      — pointer to current branch</span>
+
+<span class="comment"># See what a commit looks like internally</span>
+<span class="cmd">git cat-file</span> <span class="arg">-t</span> HEAD     <span class="comment"># type: commit</span>
+<span class="cmd">git cat-file</span> <span class="arg">-p</span> HEAD     <span class="comment"># content</span>
+            </div>
+            <div class="tip">Understanding Git's object model makes every Git command make sense. A branch is just a file containing a commit SHA. HEAD is a file pointing to a branch file.</div>
+            <button class="mark-done-btn" onclick="markDone('t-1-4')">Mark Complete ✓</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════
+       BLOCK 2 — CORE WORKFLOW
+  ═══════════════════════════════════════════════ -->
+  <div class="block b2" id="block-2">
+    <div class="block-header" onclick="toggleBlock('block-2')">
+      <div class="block-num">02</div>
+      <div class="block-title">
+        <h2>Core Workflow — The Daily Driver</h2>
+        <p>init, stage, commit, log — the commands you'll use every single day</p>
+      </div>
+      <div class="block-meta">
+        <div class="block-progress-ring">
+          <svg class="ring-svg" width="44" height="44" viewBox="0 0 44 44">
+            <circle class="ring-bg" cx="22" cy="22" r="18"/>
+            <circle class="ring-fg" cx="22" cy="22" r="18" stroke-dasharray="113" stroke-dashoffset="113" data-block="2"/>
+          </svg>
+          <div class="ring-label" data-ring-label="2">0%</div>
+        </div>
+        <div class="toggle-icon">▾</div>
+      </div>
+    </div>
+    <div class="block-body">
+      <div class="topics-grid">
+
+        <div class="topic" id="t-2-1">
+          <div class="topic-head">
+            <div class="topic-check" onclick="toggleDone('t-2-1',event)">✓</div>
+            <div class="topic-info">
+              <div class="topic-name">git init &amp; git clone</div>
+              <div class="topic-desc">Create a new repo or copy an existing one</div>
+            </div>
+            <span class="topic-tag tag-core">Core</span>
+          </div>
+          <div class="content-panel">
+            <h4>// Starting a Repository</h4>
+            <div class="code-block">
+              <button class="copy-btn" onclick="copyCode(this)">copy</button>
+<span class="comment"># Create a new repo in current directory</span>
+<span class="cmd">git init</span>
+
+<span class="comment"># Create a new repo in a named directory</span>
+<span class="cmd">git init</span> <span class="arg">my-project</span>
+
+<span class="comment"># Clone a remote repo</span>
+<span class="cmd">git clone</span> <span class="str">https://github.com/user/repo.git</span>
+
+<span class="comment"># Clone into a specific directory name</span>
+<span class="cmd">git clone</span> <span class="str">https://github.com/user/repo.git</span> <span class="arg">my-folder</span>
+
+<span class="comment"># Clone only the latest snapshot (faster, less data)</span>
+<span class="cmd">git clone --depth=1</span> <span class="str">https://github.com/user/repo.git</span>
+            </div>
+            <div class="tip">git init creates a hidden .git directory — this IS your repository. Delete .git and you lose all history.</div>
+            <button class="mark-done-btn" onclick="markDone('t-2-1')">Mark Complete ✓</button>
+          </div>
+        </div>
+
+        <div class="topic" id="t-2-2">
+          <div class="topic-head">
+            <div class="topic-check" onclick="toggleDone('t-2-2',event)">✓</div>
+            <div class="topic-info">
+              <div class="topic-name">The Three Trees (Working Dir, Index, HEAD)</div>
+              <div class="topic-desc">Git's most fundamental concept — the staging model</div>
+            </div>
+            <span class="topic-tag tag-core">Core</span>
+          </div>
+          <div class="content-panel">
+            <h4>// Git's Three Areas</h4>
+            <div class="concept">
+              <div class="concept-title">Working Directory</div>
+              <div class="concept-body">Where you edit files. Git tracks changes here but doesn't version them yet. Files can be tracked (modified) or untracked (new).</div>
+            </div>
+            <div class="concept">
+              <div class="concept-title">Staging Area (Index)</div>
+              <div class="concept-body">A preparation area. You explicitly add changes here before committing. This lets you craft precise, logical commits from messy working changes.</div>
+            </div>
+            <div class="concept">
+              <div class="concept-title">Repository (HEAD)</div>
+              <div class="concept-body">The permanent, versioned history. Once committed, data is safe. HEAD always points to the latest commit of your current branch.</div>
+            </div>
+            <div class="code-block">
+              <button class="copy-btn" onclick="copyCode(this)">copy</button>
+<span class="comment">Working Directory → (git add) → Staging → (git commit) → HEAD</span>
+<span class="comment">HEAD → (git checkout) → Working Directory</span>
+<span class="comment">Staging → (git reset HEAD) → Working Directory</span>
+            </div>
+            <div class="tip">The staging area is Git's superpower. Other VCS go straight from working dir to committed. Git's index lets you build clean commits from messy work.</div>
+            <button class="mark-done-btn" onclick="markDone('t-2-2')">Mark Complete ✓</button>
+          </div>
+        </div>
+
+        <div class="topic" id="t-2-3">
+          <div class="topic-head">
+            <div class="topic-check" onclick="toggleDone('t-2-3',event)">✓</div>
+            <div class="topic-info">
+              <div class="topic-name">git status &amp; git add</div>
+              <div class="topic-desc">Inspect state and stage changes with precision</div>
+            </div>
+            <span class="topic-tag tag-core">Core</span>
+          </div>
+          <div class="content-panel">
+            <h4>// Staging Changes</h4>
+            <div class="code-block">
+              <button class="copy-btn" onclick="copyCode(this)">copy</button>
+<span class="comment"># See current state of working dir and staging area</span>
+<span class="cmd">git status</span>
+<span class="cmd">git status -s</span>   <span class="comment"># short format: M=modified, A=added, ??=untracked</span>
+
+<span class="comment"># Add specific file</span>
+<span class="cmd">git add</span> <span class="arg">filename.txt</span>
+
+<span class="comment"># Add all changes in current directory</span>
+<span class="cmd">git add .</span>
+
+<span class="comment"># Add all tracked file changes (no untracked)</span>
+<span class="cmd">git add -u</span>
+
+<span class="comment"># Interactively stage hunks of a file</span>
+<span class="cmd">git add -p</span> <span class="arg">filename.txt</span>
+
+<span class="comment"># Add all files matching a pattern</span>
+<span class="cmd">git add</span> <span class="arg">*.js</span>
+            </div>
+            <div class="tip">Use `git add -p` (patch mode) to stage only specific lines/hunks — essential for clean, focused commits when you've made multiple unrelated changes.</div>
+            <button class="mark-done-btn" onclick="markDone('t-2-3')">Mark Complete ✓</button>
+          </div>
+        </div>
+
+        <div class="topic" id="t-2-4">
+          <div class="topic-head">
+            <div class="topic-check" onclick="toggleDone('t-2-4',event)">✓</div>
+            <div class="topic-info">
+              <div class="topic-name">git commit</div>
+              <div class="topic-desc">Write good commit messages, amend, empty commits</div>
+            </div>
+            <span class="topic-tag tag-core">Core</span>
+          </div>
+          <div class="content-panel">
+            <h4>// Committing</h4>
+            <div class="code-block">
+              <button class="copy-btn" onclick="copyCode(this)">copy</button>
+<span class="comment"># Commit staged changes</span>
+<span class="cmd">git commit</span>
+
+<span class="comment"># Commit with inline message</span>
+<span class="cmd">git commit -m</span> <span class="str">"feat: add login button"</span>
+
+<span class="comment"># Stage all tracked files AND commit</span>
+<span class="cmd">git commit -am</span> <span class="str">"fix: correct typo in README"</span>
+
+<span class="comment"># Fix the last commit (message or files)</span>
+<span class="cmd">git commit --amend</span>
+<span class="cmd">git commit --amend -m</span> <span class="str">"corrected message"</span>
+
+<span class="comment"># Create an empty commit (e.g., to trigger CI)</span>
+<span class="cmd">git commit --allow-empty -m</span> <span class="str">"trigger: pipeline"</span>
+            </div>
+            <div class="concept">
+              <div class="concept-title">Conventional Commits Format</div>
+              <div class="concept-body">
+                <b>type(scope): description</b><br><br>
+                feat: new feature | fix: bug fix | docs: documentation<br>
+                style: formatting | refactor: code restructure | test: tests<br>
+                chore: build/tool changes | ci: CI config changes
+              </div>
+            </div>
+            <div class="tip">A good commit message answers: "If applied, this commit will..." The subject line should be 50 chars or less, imperative mood: "Add feature" not "Added feature".</div>
+            <div class="warn">Never amend commits that have already been pushed to a shared remote. It rewrites history and causes problems for teammates.</div>
+            <button class="mark-done-btn" onclick="markDone('t-2-4')">Mark Complete ✓</button>
+          </div>
+        </div>
+
+        <div class="topic" id="t-2-5">
+          <div class="topic-head">
+            <div class="topic-check" onclick="toggleDone('t-2-5',event)">✓</div>
+            <div class="topic-info">
+              <div class="topic-name">git log &amp; git show</div>
+              <div class="topic-desc">Navigate and inspect your history like a pro</div>
+            </div>
+            <span class="topic-tag tag-core">Core</span>
+          </div>
+          <div class="content-panel">
+            <h4>// Viewing History</h4>
+            <div class="code-block">
+              <button class="copy-btn" onclick="copyCode(this)">copy</button>
+<span class="comment"># Default log</span>
+<span class="cmd">git log</span>
+
+<span class="comment"># One line per commit</span>
+<span class="cmd">git log --oneline</span>
+
+<span class="comment"># Visual branch graph</span>
+<span class="cmd">git log --oneline --graph --all --decorate</span>
+
+<span class="comment"># Filter by author</span>
+<span class="cmd">git log --author=</span><span class="str">"John"</span>
+
+<span class="comment"># Filter by date</span>
+<span class="cmd">git log --since=</span><span class="str">"2024-01-01"</span> <span class="cmd">--until=</span><span class="str">"2024-12-31"</span>
+
+<span class="comment"># Search commit messages</span>
+<span class="cmd">git log --grep=</span><span class="str">"bugfix"</span>
+
+<span class="comment"># Show changes introduced by each commit</span>
+<span class="cmd">git log -p</span>
+
+<span class="comment"># Last N commits</span>
+<span class="cmd">git log -5</span>
+
+<span class="comment"># Show a specific commit</span>
+<span class="cmd">git show</span> <span class="arg">abc1234</span>
+<span class="cmd">git show HEAD</span>
+<span class="cmd">git show HEAD~2</span>  <span class="comment"># 2 commits before HEAD</span>
+            </div>
+            <button class="mark-done-btn" onclick="markDone('t-2-5')">Mark Complete ✓</button>
+          </div>
+        </div>
+
+        <div class="topic" id="t-2-6">
+          <div class="topic-head">
+            <div class="topic-check" onclick="toggleDone('t-2-6',event)">✓</div>
+            <div class="topic-info">
+              <div class="topic-name">.gitignore</div>
+              <div class="topic-desc">Tell Git which files to completely ignore</div>
+            </div>
+            <span class="topic-tag tag-core">Core</span>
+          </div>
+          <div class="content-panel">
+            <h4>// Ignoring Files</h4>
+            <div class="code-block">
+              <button class="copy-btn" onclick="copyCode(this)">copy</button>
+<span class="comment"># .gitignore — place in root of repo</span>
+
+<span class="comment"># Ignore a specific file</span>
+<span class="str">secrets.env</span>
+
+<span class="comment"># Ignore all .log files</span>
+<span class="str">*.log</span>
+
+<span class="comment"># Ignore a directory</span>
+<span class="str">node_modules/</span>
+<span class="str">__pycache__/</span>
+<span class="str">.terraform/</span>
+
+<span class="comment"># Ignore but keep the directory</span>
+<span class="str">dist/*</span>
+<span class="str">!dist/.gitkeep</span>
+
+<span class="comment"># Ignore in any subdirectory</span>
+<span class="str">**/*.tmp</span>
+
+<span class="comment"># Check why a file is ignored</span>
+<span class="cmd">git check-ignore -v</span> <span class="arg">filename</span>
+
+<span class="comment"># Untrack a file that was mistakenly committed</span>
+<span class="cmd">git rm --cached</span> <span class="arg">secrets.env</span>
+            </div>
+            <div class="tip">Use gitignore.io to generate .gitignore templates for any tech stack instantly.</div>
+            <div class="warn">Once a file is committed, adding it to .gitignore won't untrack it. You must use `git rm --cached` first.</div>
+            <button class="mark-done-btn" onclick="markDone('t-2-6')">Mark Complete ✓</button>
+          </div>
+        </div>
+
+        <div class="topic" id="t-2-7">
+          <div class="topic-head">
+            <div class="topic-check" onclick="toggleDone('t-2-7',event)">✓</div>
+            <div class="topic-info">
+              <div class="topic-name">git diff</div>
+              <div class="topic-desc">Compare working tree, staged, and commits</div>
+            </div>
+            <span class="topic-tag tag-core">Core</span>
+          </div>
+          <div class="content-panel">
+            <h4>// Comparing Changes</h4>
+            <div class="code-block">
+              <button class="copy-btn" onclick="copyCode(this)">copy</button>
+<span class="comment"># Working dir vs staging area (unstaged changes)</span>
+<span class="cmd">git diff</span>
+
+<span class="comment"># Staging area vs last commit (what will be committed)</span>
+<span class="cmd">git diff --staged</span>
+<span class="cmd">git diff --cached</span>   <span class="comment"># same as --staged</span>
+
+<span class="comment"># Compare two commits</span>
+<span class="cmd">git diff</span> <span class="arg">abc123 def456</span>
+
+<span class="comment"># Compare two branches</span>
+<span class="cmd">git diff</span> <span class="arg">main feature-branch</span>
+
+<span class="comment"># Show only changed file names</span>
+<span class="cmd">git diff --name-only</span>
+<span class="cmd">git diff --stat</span>
+
+<span class="comment"># Word-level diff (more readable)</span>
+<span class="cmd">git diff --word-diff</span>
+            </div>
+            <button class="mark-done-btn" onclick="markDone('t-2-7')">Mark Complete ✓</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════
+       BLOCK 3 — BRANCHING & MERGING
+  ═══════════════════════════════════════════════ -->
+  <div class="block b3" id="block-3">
+    <div class="block-header" onclick="toggleBlock('block-3')">
+      <div class="block-num">03</div>
+      <div class="block-title">
+        <h2>Branching &amp; Merging</h2>
+        <p>Git's killer feature — cheap branches, powerful merge strategies</p>
+      </div>
+      <div class="block-meta">
+        <div class="block-progress-ring">
+          <svg class="ring-svg" width="44" height="44" viewBox="0 0 44 44">
+            <circle class="ring-bg" cx="22" cy="22" r="18"/>
+            <circle class="ring-fg" cx="22" cy="22" r="18" stroke-dasharray="113" stroke-dashoffset="113" data-block="3"/>
+          </svg>
+          <div class="ring-label" data-ring-label="3">0%</div>
+        </div>
+        <div class="toggle-icon">▾</div>
+      </div>
+    </div>
+    <div class="block-body">
+      <div class="topics-grid">
+
+        <div class="topic" id="t-3-1">
+          <div class="topic-head">
+            <div class="topic-check" onclick="toggleDone('t-3-1',event)">✓</div>
+            <div class="topic-info">
+              <div class="topic-name">Creating &amp; Managing Branches</div>
+              <div class="topic-desc">branch, checkout, switch — full branch lifecycle</div>
+            </div>
+            <span class="topic-tag tag-intermediate">Intermediate</span>
+          </div>
+          <div class="content-panel">
+            <h4>// Branch Operations</h4>
+            <div class="code-block">
+              <button class="copy-btn" onclick="copyCode(this)">copy</button>
+<span class="comment"># List branches (* = current)</span>
+<span class="cmd">git branch</span>
+<span class="cmd">git branch -a</span>   <span class="comment"># include remote branches</span>
+<span class="cmd">git branch -v</span>   <span class="comment"># show last commit on each</span>
+
+<span class="comment"># Create a branch</span>
+<span class="cmd">git branch</span> <span class="arg">feature/login</span>
+
+<span class="comment"># Switch to a branch</span>
+<span class="cmd">git switch</span> <span class="arg">feature/login</span>   <span class="comment"># modern (Git 2.23+)</span>
+<span class="cmd">git checkout</span> <span class="arg">feature/login</span>  <span class="comment"># classic</span>
+
+<span class="comment"># Create AND switch in one command</span>
+<span class="cmd">git switch -c</span> <span class="arg">feature/login</span>
+<span class="cmd">git checkout -b</span> <span class="arg">feature/login</span>
+
+<span class="comment"># Rename a branch</span>
+<span class="cmd">git branch -m</span> <span class="arg">old-name new-name</span>
+
+<span class="comment"># Delete a branch (safe — only if merged)</span>
+<span class="cmd">git branch -d</span> <span class="arg">feature/login</span>
+
+<span class="comment"># Force delete (unmerged)</span>
+<span class="cmd">git branch -D</span> <span class="arg">feature/login</span>
+            </div>
+            <div class="tip">A branch is just a lightweight pointer (a 41-byte file with a SHA). Creating thousands of branches costs almost nothing.</div>
+            <button class="mark-done-btn" onclick="markDone('t-3-1')">Mark Complete ✓</button>
+          </div>
+        </div>
+
+        <div class="topic" id="t-3-2">
+          <div class="topic-head">
+            <div class="topic-check" onclick="toggleDone('t-3-2',event)">✓</div>
+            <div class="topic-info">
+              <div class="topic-name">git merge (all strategies)</div>
+              <div class="topic-desc">Fast-forward, 3-way merge, squash merge, no-ff</div>
+            </div>
+            <span class="topic-tag tag-intermediate">Intermediate</span>
+          </div>
+          <div class="content-panel">
+            <h4>// Merge Strategies</h4>
+            <div class="concept">
+              <div class="concept-title">Fast-Forward Merge</div>
+              <div class="concept-body">When the target branch hasn't diverged, Git simply moves the pointer forward. No merge commit created. Clean linear history.</div>
+            </div>
+            <div class="concept">
+              <div class="concept-title">3-Way Merge</div>
+              <div class="concept-body">When both branches have diverged, Git finds the common ancestor and creates a merge commit combining both histories.</div>
+            </div>
+            <div class="code-block">
+              <button class="copy-btn" onclick="copyCode(this)">copy</button>
+<span class="comment"># Switch to target branch first</span>
+<span class="cmd">git switch main</span>
+
+<span class="comment"># Fast-forward merge (default when possible)</span>
+<span class="cmd">git merge</span> <span class="arg">feature/login</span>
+
+<span class="comment"># Always create merge commit (no fast-forward)</span>
+<span class="cmd">git merge --no-ff</span> <span class="arg">feature/login</span>
+
+<span class="comment"># Squash all feature commits into one</span>
+<span class="cmd">git merge --squash</span> <span class="arg">feature/login</span>
+<span class="cmd">git commit -m</span> <span class="str">"feat: add login feature"</span>
+
+<span class="comment"># Abort a merge in progress</span>
+<span class="cmd">git merge --abort</span>
+            </div>
+            <div class="tip">Use --no-ff in team settings to preserve the fact that a feature branch existed. Use --squash to keep main history clean with one commit per feature.</div>
+            <button class="mark-done-btn" onclick="markDone('t-3-2')">Mark Complete ✓</button>
+          </div>
+        </div>
+
+        <div class="topic" id="t-3-3">
+          <div class="topic-head">
+            <div class="topic-check" onclick="toggleDone('t-3-3',event)">✓</div>
+            <div class="topic-info">
+              <div class="topic-name">Resolving Merge Conflicts</div>
+              <div class="topic-desc">Understand conflict markers, resolve manually, use tools</div>
+            </div>
+            <span class="topic-tag tag-intermediate">Intermediate</span>
+          </div>
+          <div class="content-panel">
+            <h4>// Conflict Resolution</h4>
+            <div class="concept">
+              <div class="concept-title">Conflict Markers</div>
+              <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">copy</button>
+<span class="comment"><<<<<<< HEAD (your current branch)</span>
+your version of the code
+<span class="comment">=======</span>
+incoming version from merge
+<span class="comment">>>>>>>> feature/login (incoming branch)</span>
+              </div>
+            </div>
+            <div class="concept">
+              <div class="concept-title">Resolution Steps</div>
+              <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">copy</button>
+<span class="comment"># 1. See which files have conflicts</span>
+<span class="cmd">git status</span>
+
+<span class="comment"># 2. Open files and edit to resolve (remove markers)</span>
+
+<span class="comment"># 3. Mark as resolved</span>
+<span class="cmd">git add</span> <span class="arg">resolved-file.txt</span>
+
+<span class="comment"># 4. Complete the merge</span>
+<span class="cmd">git commit</span>
+
+<span class="comment"># Use a visual merge tool</span>
+<span class="cmd">git mergetool</span>
+
+<span class="comment"># Use ours or theirs strategy for a whole file</span>
+<span class="cmd">git checkout --ours</span> <span class="arg">filename.txt</span>
+<span class="cmd">git checkout --theirs</span> <span class="arg">filename.txt</span>
+              </div>
+            </div>
+            <div class="warn">Always read both sides of a conflict before choosing. Blindly accepting "ours" or "theirs" can silently discard important changes.</div>
+            <button class="mark-done-btn" onclick="markDone('t-3-3')">Mark Complete ✓</button>
+          </div>
+        </div>
+
+        <div class="topic" id="t-3-4">
+          <div class="topic-head">
+            <div class="topic-check" onclick="toggleDone('t-3-4',event)">✓</div>
+            <div class="topic-info">
+              <div class="topic-name">git rebase</div>
+              <div class="topic-desc">Rebase vs merge, interactive rebase, golden rule</div>
+            </div>
+            <span class="topic-tag tag-intermediate">Intermediate</span>
+          </div>
+          <div class="content-panel">
+            <h4>// Rebasing</h4>
+            <div class="concept">
+              <div class="concept-title">What Rebase Does</div>
+              <div class="concept-body">Takes commits from your branch and re-applies them on top of another branch. Creates a linear history as if you started your work from the latest main, not from the point you branched.</div>
+            </div>
+            <div class="code-block">
+              <button class="copy-btn" onclick="copyCode(this)">copy</button>
+<span class="comment"># Rebase feature onto main</span>
+<span class="cmd">git switch</span> <span class="arg">feature/login</span>
+<span class="cmd">git rebase</span> <span class="arg">main</span>
+
+<span class="comment"># Interactive rebase — edit last 3 commits</span>
+<span class="cmd">git rebase -i HEAD~3</span>
+
+<span class="comment"># In the editor, use these commands:</span>
+<span class="comment"># pick   — keep commit as-is</span>
+<span class="comment"># reword — keep commit, edit message</span>
+<span class="comment"># edit   — pause to amend this commit</span>
+<span class="comment"># squash — combine with previous commit</span>
+<span class="comment"># fixup  — squash, discard this message</span>
+<span class="comment"># drop   — delete this commit entirely</span>
+
+<span class="comment"># Continue after resolving conflicts</span>
+<span class="cmd">git rebase --continue</span>
+
+<span class="comment"># Abort a rebase</span>
+<span class="cmd">git rebase --abort</span>
+            </div>
+            <div class="warn">GOLDEN RULE: Never rebase commits that exist on a public/shared remote branch. Rebase rewrites history — it changes SHA hashes. This breaks everyone else's work.</div>
+            <button class="mark-done-btn" onclick="markDone('t-3-4')">Mark Complete ✓</button>
+          </div>
+        </div>
+
+        <div class="topic" id="t-3-5">
+          <div class="topic-head">
+            <div class="topic-check" onclick="toggleDone('t-3-5',event)">✓</div>
+            <div class="topic-info">
+              <div class="topic-name">git cherry-pick</div>
+              <div class="topic-desc">Apply specific commits from one branch to another</div>
+            </div>
+            <span class="topic-tag tag-intermediate">Intermediate</span>
+          </div>
+          <div class="content-panel">
+            <h4>// Cherry Picking</h4>
+            <div class="concept">
+              <div class="concept-title">Use Case</div>
+              <div class="concept-body">You fixed a bug in a feature branch but need that fix on main right now. Cherry-pick copies just that commit.</div>
+            </div>
+            <div class="code-block">
+              <button class="copy-btn" onclick="copyCode(this)">copy</button>
+<span class="comment"># Apply a single commit to current branch</span>
+<span class="cmd">git cherry-pick</span> <span class="arg">abc1234</span>
+
+<span class="comment"># Apply a range of commits</span>
+<span class="cmd">git cherry-pick</span> <span class="arg">abc1234^..def5678</span>
+
+<span class="comment"># Cherry-pick without committing (stage only)</span>
+<span class="cmd">git cherry-pick -n</span> <span class="arg">abc1234</span>
+
+<span class="comment"># Cherry-pick with original author info</span>
+<span class="cmd">git cherry-pick -x</span> <span class="arg">abc1234</span>
+
+<span class="comment"># Abort if conflict</span>
+<span class="cmd">git cherry-pick --abort</span>
+            </div>
+            <div class="tip">Cherry-pick creates a new commit with a different SHA but the same changes. Use it sparingly — it can lead to duplicate commits if the original branch is later merged.</div>
+            <button class="mark-done-btn" onclick="markDone('t-3-5')">Mark Complete ✓</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════
+       BLOCK 4 — REMOTE REPOS
+  ═══════════════════════════════════════════════ -->
+  <div class="block b4" id="block-4">
+    <div class="block-header" onclick="toggleBlock('block-4')">
+      <div class="block-num">04</div>
+      <div class="block-title">
+        <h2>Remote Repositories &amp; Collaboration</h2>
+        <p>GitHub, SSH keys, push, pull, fetch — working with teams</p>
+      </div>
+      <div class="block-meta">
+        <div class="block-progress-ring">
+          <svg class="ring-svg" width="44" height="44" viewBox="0 0 44 44">
+            <circle class="ring-bg" cx="22" cy="22" r="18"/>
+            <circle class="ring-fg" cx="22" cy="22" r="18" stroke-dasharray="113" stroke-dashoffset="113" data-block="4"/>
+          </svg>
+          <div class="ring-label" data-ring-label="4">0%</div>
+        </div>
+        <div class="toggle-icon">▾</div>
+      </div>
+    </div>
+    <div class="block-body">
+      <div class="topics-grid">
+
+        <div class="topic" id="t-4-1">
+          <div class="topic-head">
+            <div class="topic-check" onclick="toggleDone('t-4-1',event)">✓</div>
+            <div class="topic-info">
+              <div class="topic-name">SSH Keys &amp; Authentication</div>
+              <div class="topic-desc">Generate SSH keys, add to GitHub, test connection</div>
+            </div>
+            <span class="topic-tag tag-intermediate">Intermediate</span>
+          </div>
+          <div class="content-panel">
+            <h4>// SSH Authentication Setup</h4>
+            <div class="code-block">
+              <button class="copy-btn" onclick="copyCode(this)">copy</button>
+<span class="comment"># 1. Generate SSH key pair</span>
+<span class="cmd">ssh-keygen -t ed25519 -C</span> <span class="str">"you@example.com"</span>
+<span class="comment"># Press Enter for default location (~/.ssh/id_ed25519)</span>
+
+<span class="comment"># 2. Start SSH agent</span>
+<span class="cmd">eval</span> <span class="str">"$(ssh-agent -s)"</span>
+
+<span class="comment"># 3. Add key to agent</span>
+<span class="cmd">ssh-add ~/.ssh/id_ed25519</span>
+
+<span class="comment"># 4. Copy public key to clipboard</span>
+<span class="cmd">cat ~/.ssh/id_ed25519.pub</span>
+<span class="comment"># → Paste this into GitHub Settings > SSH Keys</span>
+
+<span class="comment"># 5. Test connection</span>
+<span class="cmd">ssh -T git@github.com</span>
+<span class="comment"># Expected: Hi username! You've successfully authenticated</span>
+            </div>
+            <div class="tip">SSH keys authenticate you without a password. The public key (id_ed25519.pub) goes to GitHub. The private key (id_ed25519) NEVER leaves your machine.</div>
+            <button class="mark-done-btn" onclick="markDone('t-4-1')">Mark Complete ✓</button>
+          </div>
+        </div>
+
+        <div class="topic" id="t-4-2">
+          <div class="topic-head">
+            <div class="topic-check" onclick="toggleDone('t-4-2',event)">✓</div>
+            <div class="topic-info">
+              <div class="topic-name">git remote</div>
+              <div class="topic-desc">Add, remove, rename, inspect remotes; origin</div>
+            </div>
+            <span class="topic-tag tag-intermediate">Intermediate</span>
+          </div>
+          <div class="content-panel">
+            <h4>// Managing Remotes</h4>
+            <div class="code-block">
+              <button class="copy-btn" onclick="copyCode(this)">copy</button>
+<span class="comment"># List remotes</span>
+<span class="cmd">git remote</span>
+<span class="cmd">git remote -v</span>   <span class="comment"># verbose: shows fetch/push URLs</span>
+
+<span class="comment"># Add a remote</span>
+<span class="cmd">git remote add</span> <span class="arg">origin</span> <span class="str">git@github.com:user/repo.git</span>
+
+<span class="comment"># Add multiple remotes (e.g., upstream for forks)</span>
+<span class="cmd">git remote add</span> <span class="arg">upstream</span> <span class="str">git@github.com:org/original.git</span>
+
+<span class="comment"># Change remote URL</span>
+<span class="cmd">git remote set-url</span> <span class="arg">origin</span> <span class="str">git@github.com:user/newrepo.git</span>
+
+<span class="comment"># Rename a remote</span>
+<span class="cmd">git remote rename</span> <span class="arg">origin production</span>
+
+<span class="comment"># Remove a remote</span>
+<span class="cmd">git remote remove</span> <span class="arg">upstream</span>
+
+<span class="comment"># Inspect remote details</span>
+<span class="cmd">git remote show</span> <span class="arg">origin</span>
+            </div>
+            <button class="mark-done-btn" onclick="markDone('t-4-2')">Mark Complete ✓</button>
+          </div>
+        </div>
+
+        <div class="topic" id="t-4-3">
+          <div class="topic-head">
+            <div class="topic-check" onclick="toggleDone('t-4-3',event)">✓</div>
+            <div class="topic-info">
+              <div class="topic-name">git fetch, pull, push</div>
+              <div class="topic-desc">Sync with remotes — the complete picture</div>
+            </div>
+            <span class="topic-tag tag-intermediate">Intermediate</span>
+          </div>
+          <div class="content-panel">
+            <h4>// Remote Sync Operations</h4>
+            <div class="concept">
+              <div class="concept-title">fetch vs pull</div>
+              <div class="concept-body"><b>fetch</b> — downloads remote changes but does NOT merge. Safe to run anytime. <b>pull</b> = fetch + merge (or rebase with --rebase flag). Can cause conflicts.</div>
+            </div>
+            <div class="code-block">
+              <button class="copy-btn" onclick="copyCode(this)">copy</button>
+<span class="comment"># Fetch all remotes</span>
+<span class="cmd">git fetch</span>
+<span class="cmd">git fetch</span> <span class="arg">origin</span>
+<span class="cmd">git fetch --all</span>   <span class="comment"># all remotes</span>
+
+<span class="comment"># Pull (fetch + merge)</span>
+<span class="cmd">git pull</span>
+<span class="cmd">git pull</span> <span class="arg">origin main</span>
+
+<span class="comment"># Pull with rebase instead of merge</span>
+<span class="cmd">git pull --rebase</span>
+
+<span class="comment"># Push to remote</span>
+<span class="cmd">git push</span> <span class="arg">origin main</span>
+
+<span class="comment"># Push and set upstream tracking</span>
+<span class="cmd">git push -u</span> <span class="arg">origin feature/login</span>
+<span class="comment"># After -u, you can just use: git push</span>
+
+<span class="comment"># Force push (DANGEROUS — only on your own branches)</span>
+<span class="cmd">git push --force-with-lease</span>   <span class="comment"># safer than --force</span>
+
+<span class="comment"># Delete remote branch</span>
+<span class="cmd">git push origin --delete</span> <span class="arg">feature/login</span>
+            </div>
+            <div class="tip">Always prefer `git pull --rebase` over plain `git pull`. It keeps your history linear and avoids unnecessary merge commits.</div>
+            <div class="warn">Never force push to main/master. Only use force push on your own feature branches, and prefer --force-with-lease which checks for new remote commits first.</div>
+            <button class="mark-done-btn" onclick="markDone('t-4-3')">Mark Complete ✓</button>
+          </div>
+        </div>
+
+        <div class="topic" id="t-4-4">
+          <div class="topic-head">
+            <div class="topic-check" onclick="toggleDone('t-4-4',event)">✓</div>
+            <div class="topic-info">
+              <div class="topic-name">Tracking Branches &amp; Upstream</div>
+              <div class="topic-desc">Understand origin/main, remote-tracking refs</div>
+            </div>
+            <span class="topic-tag tag-intermediate">Intermediate</span>
+          </div>
+          <div class="content-panel">
+            <h4>// Tracking Branches</h4>
+            <div class="concept">
+              <div class="concept-title">Remote-Tracking Branches</div>
+              <div class="concept-body">Local read-only references that mirror remote branch state at last fetch. Named like `origin/main`. They're NOT the same as your local `main`.</div>
+            </div>
+            <div class="code-block">
+              <button class="copy-btn" onclick="copyCode(this)">copy</button>
+<span class="comment"># See all branches including remote-tracking</span>
+<span class="cmd">git branch -a</span>
+
+<span class="comment"># See tracking relationships</span>
+<span class="cmd">git branch -vv</span>
+
+<span class="comment"># Set upstream for existing branch</span>
+<span class="cmd">git branch --set-upstream-to=origin/main main</span>
+
+<span class="comment"># Check what's ahead/behind remote</span>
+<span class="cmd">git status</span>  <span class="comment"># shows "ahead 2, behind 1"</span>
+
+<span class="comment"># Checkout a remote branch locally</span>
+<span class="cmd">git checkout --track</span> <span class="arg">origin/feature-x</span>
+<span class="comment"># Or shorthand:</span>
+<span class="cmd">git switch</span> <span class="arg">feature-x</span>  <span class="comment"># auto-tracks if remote exists</span>
+
+<span class="comment"># Clean up stale remote-tracking refs</span>
+<span class="cmd">git fetch --prune</span>
+            </div>
+            <button class="mark-done-btn" onclick="markDone('t-4-4')">Mark Complete ✓</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════
+       BLOCK 5 — UNDOING & RECOVERY
+  ═══════════════════════════════════════════════ -->
+  <div class="block b5" id="block-5">
+    <div class="block-header" onclick="toggleBlock('block-5')">
+      <div class="block-num">05</div>
+      <div class="block-title">
+        <h2>Undoing Things &amp; Recovery</h2>
+        <p>reset, revert, restore, reflog — Git never truly loses data</p>
+      </div>
+      <div class="block-meta">
+        <div class="block-progress-ring">
+          <svg class="ring-svg" width="44" height="44" viewBox="0 0 44 44">
+            <circle class="ring-bg" cx="22" cy="22" r="18"/>
+            <circle class="ring-fg" cx="22" cy="22" r="18" stroke-dasharray="113" stroke-dashoffset="113" data-block="5"/>
+          </svg>
+          <div class="ring-label" data-ring-label="5">0%</div>
+        </div>
+        <div class="toggle-icon">▾</div>
+      </div>
+    </div>
+    <div class="block-body">
+      <div class="topics-grid">
+
+        <div class="topic" id="t-5-1">
+          <div class="topic-head">
+            <div class="topic-check" onclick="toggleDone('t-5-1',event)">✓</div>
+            <div class="topic-info">
+              <div class="topic-name">git restore &amp; git checkout (files)</div>
+              <div class="topic-desc">Discard working directory changes safely</div>
+            </div>
+            <span class="topic-tag tag-advanced">Advanced</span>
+          </div>
+          <div class="content-panel">
+            <h4>// Discarding Changes</h4>
+            <div class="code-block">
+              <button class="copy-btn" onclick="copyCode(this)">copy</button>
+<span class="comment"># Discard unstaged changes in a file (modern)</span>
+<span class="cmd">git restore</span> <span class="arg">filename.txt</span>
+
+<span class="comment"># Discard unstaged changes in ALL files</span>
+<span class="cmd">git restore .</span>
+
+<span class="comment"># Unstage a file (keep working dir changes)</span>
+<span class="cmd">git restore --staged</span> <span class="arg">filename.txt</span>
+
+<span class="comment"># Restore file from a specific commit</span>
+<span class="cmd">git restore --source=HEAD~2</span> <span class="arg">filename.txt</span>
+
+<span class="comment"># Classic equivalent (still works)</span>
+<span class="cmd">git checkout --</span> <span class="arg">filename.txt</span>
+
+<span class="comment"># Clean all untracked files</span>
+<span class="cmd">git clean -fd</span>   <span class="comment"># -f=force, -d=directories</span>
+<span class="cmd">git clean -n</span>    <span class="comment"># dry run first (shows what would be deleted)</span>
+            </div>
+            <div class="warn">git restore and git clean permanently destroy uncommitted changes. There's no undo. Run `git clean -n` first to preview.</div>
+            <button class="mark-done-btn" onclick="markDone('t-5-1')">Mark Complete ✓</button>
+          </div>
+        </div>
+
+        <div class="topic" id="t-5-2">
+          <div class="topic-head">
+            <div class="topic-check" onclick="toggleDone('t-5-2',event)">✓</div>
+            <div class="topic-info">
+              <div class="topic-name">git reset (soft, mixed, hard)</div>
+              <div class="topic-desc">Move HEAD and optionally unstage/discard changes</div>
+            </div>
+            <span class="topic-tag tag-advanced">Advanced</span>
+          </div>
+          <div class="content-panel">
+            <h4>// Reset Modes</h4>
+            <div class="concept">
+              <div class="concept-title">The Three Modes</div>
+              <div class="concept-body">
+                <b>--soft</b>: Move HEAD only. Changes stay staged.<br>
+                <b>--mixed</b> (default): Move HEAD + unstage. Changes stay in working dir.<br>
+                <b>--hard</b>: Move HEAD + unstage + discard changes. DESTRUCTIVE.
+              </div>
+            </div>
+            <div class="code-block">
+              <button class="copy-btn" onclick="copyCode(this)">copy</button>
+<span class="comment"># Undo last commit, keep changes staged</span>
+<span class="cmd">git reset --soft HEAD~1</span>
+
+<span class="comment"># Undo last commit, keep changes in working dir (default)</span>
+<span class="cmd">git reset HEAD~1</span>
+<span class="cmd">git reset --mixed HEAD~1</span>
+
+<span class="comment"># Undo last commit, DISCARD all changes ⚠️</span>
+<span class="cmd">git reset --hard HEAD~1</span>
+
+<span class="comment"># Reset to a specific commit</span>
+<span class="cmd">git reset --hard abc1234</span>
+
+<span class="comment"># Unstage a specific file (mixed reset on file)</span>
+<span class="cmd">git reset HEAD</span> <span class="arg">filename.txt</span>
+            </div>
+            <div class="warn">--hard reset permanently destroys uncommitted changes. Combined with reflog, you can recover committed work — but not uncommitted work.</div>
+            <button class="mark-done-btn" onclick="markDone('t-5-2')">Mark Complete ✓</button>
+          </div>
+        </div>
+
+        <div class="topic" id="t-5-3">
+          <div class="topic-head">
+            <div class="topic-check" onclick="toggleDone('t-5-3',event)">✓</div>
+            <div class="topic-info">
+              <div class="topic-name">git revert</div>
+              <div class="topic-desc">Undo commits safely without rewriting history</div>
+            </div>
+            <span class="topic-tag tag-advanced">Advanced</span>
+          </div>
+          <div class="content-panel">
+            <h4>// Safe Undo with Revert</h4>
+            <div class="concept">
+              <div class="concept-title">Revert vs Reset</div>
+              <div class="concept-body">Revert creates a NEW commit that undoes the changes of a previous commit. History is preserved. Safe for public/shared branches. Reset moves HEAD backwards — rewrites history.</div>
+            </div>
+            <div class="code-block">
+              <button class="copy-btn" onclick="copyCode(this)">copy</button>
+<span class="comment"># Revert the last commit</span>
+<span class="cmd">git revert HEAD</span>
+
+<span class="comment"># Revert a specific commit</span>
+<span class="cmd">git revert abc1234</span>
+
+<span class="comment"># Revert without auto-committing (stage only)</span>
+<span class="cmd">git revert -n abc1234</span>
+
+<span class="comment"># Revert a range of commits (newest first)</span>
+<span class="cmd">git revert HEAD~3..HEAD</span>
+
+<span class="comment"># Revert a merge commit (must specify parent)</span>
+<span class="cmd">git revert -m 1 abc1234</span>
+            </div>
+            <div class="tip">Use revert on shared/public branches. Use reset only on private local branches. This is the professional rule every team should follow.</div>
+            <button class="mark-done-btn" onclick="markDone('t-5-3')">Mark Complete ✓</button>
+          </div>
+        </div>
+
+        <div class="topic" id="t-5-4">
+          <div class="topic-head">
+            <div class="topic-check" onclick="toggleDone('t-5-4',event)">✓</div>
+            <div class="topic-info">
+              <div class="topic-name">git reflog — The Safety Net</div>
+              <div class="topic-desc">Recover "lost" commits, branches, and resets</div>
+            </div>
+            <span class="topic-tag tag-advanced">Advanced</span>
+          </div>
+          <div class="content-panel">
+            <h4>// Reflog — Git's Secret Undo History</h4>
+            <div class="concept">
+              <div class="concept-title">What is Reflog?</div>
+              <div class="concept-body">The reflog records every time HEAD moves — commits, resets, checkouts, rebases. It's your local safety net. Entries expire after 90 days by default.</div>
+            </div>
+            <div class="code-block">
+              <button class="copy-btn" onclick="copyCode(this)">copy</button>
+<span class="comment"># View reflog</span>
+<span class="cmd">git reflog</span>
+
+<span class="comment"># Output looks like:</span>
+<span class="comment"># abc1234 HEAD@{0}: commit: add feature</span>
+<span class="comment"># def5678 HEAD@{1}: reset: moving to HEAD~2</span>
+<span class="comment"># ghi9012 HEAD@{2}: checkout: moving from main to feature</span>
+
+<span class="comment"># Recover "lost" commits after a hard reset</span>
+<span class="cmd">git reset --hard HEAD@{2}</span>
+
+<span class="comment"># Recover a deleted branch</span>
+<span class="cmd">git reflog</span>  <span class="comment"># find last commit SHA of deleted branch</span>
+<span class="cmd">git branch</span> <span class="arg">recovered-branch</span> <span class="arg">abc1234</span>
+
+<span class="comment"># View reflog for a specific branch</span>
+<span class="cmd">git reflog</span> <span class="arg">feature/login</span>
+            </div>
+            <div class="tip">Before any scary Git operation (hard reset, force push, etc.) run `git reflog` first so you know where to return if things go wrong.</div>
+            <button class="mark-done-btn" onclick="markDone('t-5-4')">Mark Complete ✓</button>
+          </div>
+        </div>
+
+        <div class="topic" id="t-5-5">
+          <div class="topic-head">
+            <div class="topic-check" onclick="toggleDone('t-5-5',event)">✓</div>
+            <div class="topic-info">
+              <div class="topic-name">git stash</div>
+              <div class="topic-desc">Temporarily shelve work to switch context</div>
+            </div>
+            <span class="topic-tag tag-advanced">Advanced</span>
+          </div>
+          <div class="content-panel">
+            <h4>// Stashing</h4>
+            <div class="code-block">
+              <button class="copy-btn" onclick="copyCode(this)">copy</button>
+<span class="comment"># Stash current changes</span>
+<span class="cmd">git stash</span>
+
+<span class="comment"># Stash with a meaningful name</span>
+<span class="cmd">git stash push -m</span> <span class="str">"wip: login form validation"</span>
+
+<span class="comment"># Include untracked files</span>
+<span class="cmd">git stash -u</span>
+
+<span class="comment"># List all stashes</span>
+<span class="cmd">git stash list</span>
+
+<span class="comment"># Apply most recent stash (keep it in list)</span>
+<span class="cmd">git stash apply</span>
+
+<span class="comment"># Apply and remove from list</span>
+<span class="cmd">git stash pop</span>
+
+<span class="comment"># Apply a specific stash</span>
+<span class="cmd">git stash apply stash@{2}</span>
+
+<span class="comment"># Delete a stash</span>
+<span class="cmd">git stash drop stash@{0}</span>
+
+<span class="comment"># Clear all stashes</span>
+<span class="cmd">git stash clear</span>
+
+<span class="comment"># Create a branch from a stash</span>
+<span class="cmd">git stash branch</span> <span class="arg">feature/stashed-work stash@{0}</span>
+            </div>
+            <button class="mark-done-btn" onclick="markDone('t-5-5')">Mark Complete ✓</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════
+       BLOCK 6 — TAGS, WORKFLOWS & GIT INTERNALS
+  ═══════════════════════════════════════════════ -->
+  <div class="block b6" id="block-6">
+    <div class="block-header" onclick="toggleBlock('block-6')">
+      <div class="block-num">06</div>
+      <div class="block-title">
+        <h2>Tags, Workflows &amp; Advanced Internals</h2>
+        <p>Tagging releases, Git Flow, GitHub Flow, submodules, hooks</p>
+      </div>
+      <div class="block-meta">
+        <div class="block-progress-ring">
+          <svg class="ring-svg" width="44" height="44" viewBox="0 0 44 44">
+            <circle class="ring-bg" cx="22" cy="22" r="18"/>
+            <circle class="ring-fg" cx="22" cy="22" r="18" stroke-dasharray="113" stroke-dashoffset="113" data-block="6"/>
+          </svg>
+          <div class="ring-label" data-ring-label="6">0%</div>
+        </div>
+        <div class="toggle-icon">▾</div>
+      </div>
+    </div>
+    <div class="block-body">
+      <div class="topics-grid">
+
+        <div class="topic" id="t-6-1">
+          <div class="topic-head">
+            <div class="topic-check" onclick="toggleDone('t-6-1',event)">✓</div>
+            <div class="topic-info">
+              <div class="topic-name">git tag</div>
+              <div class="topic-desc">Lightweight vs annotated tags, semantic versioning</div>
+            </div>
+            <span class="topic-tag tag-pro">Pro</span>
+          </div>
+          <div class="content-panel">
+            <h4>// Tagging Releases</h4>
+            <div class="code-block">
+              <button class="copy-btn" onclick="copyCode(this)">copy</button>
+<span class="comment"># Lightweight tag (just a pointer)</span>
+<span class="cmd">git tag</span> <span class="arg">v1.0.0</span>
+
+<span class="comment"># Annotated tag (full object: tagger, date, message)</span>
+<span class="cmd">git tag -a</span> <span class="arg">v1.0.0</span> <span class="cmd">-m</span> <span class="str">"Release version 1.0.0"</span>
+
+<span class="comment"># Tag a past commit</span>
+<span class="cmd">git tag -a</span> <span class="arg">v0.9.0</span> <span class="arg">abc1234</span>
+
+<span class="comment"># List all tags</span>
+<span class="cmd">git tag</span>
+<span class="cmd">git tag -l</span> <span class="str">"v1.*"</span>   <span class="comment"># filter</span>
+
+<span class="comment"># Push tags to remote (not pushed by default)</span>
+<span class="cmd">git push origin</span> <span class="arg">v1.0.0</span>
+<span class="cmd">git push origin --tags</span>  <span class="comment"># all tags</span>
+
+<span class="comment"># Delete a tag</span>
+<span class="cmd">git tag -d</span> <span class="arg">v1.0.0</span>
+<span class="cmd">git push origin --delete</span> <span class="arg">v1.0.0</span>
+            </div>
+            <div class="tip">Use Semantic Versioning: v{MAJOR}.{MINOR}.{PATCH} — v2.1.3. MAJOR=breaking changes, MINOR=new features, PATCH=bug fixes. Always use annotated tags for releases.</div>
+            <button class="mark-done-btn" onclick="markDone('t-6-1')">Mark Complete ✓</button>
+          </div>
+        </div>
+
+        <div class="topic" id="t-6-2">
+          <div class="topic-head">
+            <div class="topic-check" onclick="toggleDone('t-6-2',event)">✓</div>
+            <div class="topic-info">
+              <div class="topic-name">Branching Workflows (Git Flow, GitHub Flow)</div>
+              <div class="topic-desc">Industry standard workflows for teams</div>
+            </div>
+            <span class="topic-tag tag-pro">Pro</span>
+          </div>
+          <div class="content-panel">
+            <h4>// Workflow Strategies</h4>
+            <div class="concept">
+              <div class="concept-title">GitHub Flow (simple — best for most teams)</div>
+              <div class="concept-body">
+                1. main is always deployable<br>
+                2. Create a descriptive feature branch from main<br>
+                3. Add commits<br>
+                4. Open a Pull Request<br>
+                5. Review, discuss, iterate<br>
+                6. Merge to main → deploy immediately
+              </div>
+            </div>
+            <div class="concept">
+              <div class="concept-title">Git Flow (complex — for versioned releases)</div>
+              <div class="concept-body">
+                <b>main</b> — production-ready code only<br>
+                <b>develop</b> — integration branch<br>
+                <b>feature/*</b> — new features (branch from develop)<br>
+                <b>release/*</b> — release prep (from develop, merge to main+develop)<br>
+                <b>hotfix/*</b> — urgent fixes (from main, merge to main+develop)
+              </div>
+            </div>
+            <div class="tip">For DevOps/cloud projects, GitHub Flow or trunk-based development is preferred. Git Flow is complex and often overkill unless you have multiple production versions to support.</div>
+            <button class="mark-done-btn" onclick="markDone('t-6-2')">Mark Complete ✓</button>
+          </div>
+        </div>
+
+        <div class="topic" id="t-6-3">
+          <div class="topic-head">
+            <div class="topic-check" onclick="toggleDone('t-6-3',event)">✓</div>
+            <div class="topic-info">
+              <div class="topic-name">Git Hooks</div>
+              <div class="topic-desc">Automate actions at key Git lifecycle events</div>
+            </div>
+            <span class="topic-tag tag-pro">Pro</span>
+          </div>
+          <div class="content-panel">
+            <h4>// Hooks</h4>
+            <div class="concept">
+              <div class="concept-title">What Are Hooks?</div>
+              <div class="concept-body">Scripts in .git/hooks/ that run automatically at Git lifecycle events. Use them to enforce standards, run tests, or lint code before commits.</div>
+            </div>
+            <div class="code-block">
+              <button class="copy-btn" onclick="copyCode(this)">copy</button>
+<span class="comment"># Key hook scripts (make them executable: chmod +x)</span>
+<span class="comment"># pre-commit    → runs before commit, can abort it</span>
+<span class="comment"># commit-msg    → validates commit message format</span>
+<span class="comment"># pre-push      → runs before pushing</span>
+<span class="comment"># post-merge    → runs after merging</span>
+<span class="comment"># post-checkout → runs after checkout</span>
+
+<span class="comment"># Example: pre-commit hook (.git/hooks/pre-commit)</span>
+#!/bin/bash
+<span class="cmd">npm run lint</span>
+<span class="kw">if</span> [ $? -ne 0 ]; then
+  echo <span class="str">"Linting failed. Commit aborted."</span>
+  <span class="kw">exit</span> 1
+<span class="kw">fi</span>
+
+<span class="comment"># Share hooks via repo (hooks aren't committed by default)</span>
+<span class="cmd">git config core.hooksPath</span> <span class="str">.githooks</span>
+<span class="comment"># Put hooks in .githooks/ and commit that directory</span>
+            </div>
+            <div class="tip">For team-wide hooks, use tools like Husky (Node.js) or pre-commit (Python). These make hooks versioned and shareable across the team.</div>
+            <button class="mark-done-btn" onclick="markDone('t-6-3')">Mark Complete ✓</button>
+          </div>
+        </div>
+
+        <div class="topic" id="t-6-4">
+          <div class="topic-head">
+            <div class="topic-check" onclick="toggleDone('t-6-4',event)">✓</div>
+            <div class="topic-info">
+              <div class="topic-name">git submodule &amp; subtree</div>
+              <div class="topic-desc">Manage repos within repos</div>
+            </div>
+            <span class="topic-tag tag-pro">Pro</span>
+          </div>
+          <div class="content-panel">
+            <h4>// Submodules</h4>
+            <div class="concept">
+              <div class="concept-title">Submodule vs Subtree</div>
+              <div class="concept-body"><b>Submodule</b>: links to a specific commit of another repo. Keeps repos separate. More complex workflow. <b>Subtree</b>: merges another repo's history into your repo. Simpler to use, history is inline.</div>
+            </div>
+            <div class="code-block">
+              <button class="copy-btn" onclick="copyCode(this)">copy</button>
+<span class="comment"># Add a submodule</span>
+<span class="cmd">git submodule add</span> <span class="str">https://github.com/user/lib.git</span> <span class="arg">libs/lib</span>
+
+<span class="comment"># Clone a repo with submodules</span>
+<span class="cmd">git clone --recurse-submodules</span> <span class="str">https://github.com/user/repo.git</span>
+
+<span class="comment"># Initialize & update submodules after clone</span>
+<span class="cmd">git submodule init</span>
+<span class="cmd">git submodule update</span>
+<span class="cmd">git submodule update --init --recursive</span>
+
+<span class="comment"># Update all submodules to latest</span>
+<span class="cmd">git submodule update --remote</span>
+            </div>
+            <button class="mark-done-btn" onclick="markDone('t-6-4')">Mark Complete ✓</button>
+          </div>
+        </div>
+
+        <div class="topic" id="t-6-5">
+          <div class="topic-head">
+            <div class="topic-check" onclick="toggleDone('t-6-5',event)">✓</div>
+            <div class="topic-info">
+              <div class="topic-name">git bisect</div>
+              <div class="topic-desc">Binary search through history to find a bug's origin</div>
+            </div>
+            <span class="topic-tag tag-pro">Pro</span>
+          </div>
+          <div class="content-panel">
+            <h4>// Bug Hunting with Bisect</h4>
+            <div class="concept">
+              <div class="concept-title">How Bisect Works</div>
+              <div class="concept-body">Uses binary search to find which commit introduced a bug. You tell Git "good" and "bad" commits, and it checks out the midpoint for you to test, halving the search space each time.</div>
+            </div>
+            <div class="code-block">
+              <button class="copy-btn" onclick="copyCode(this)">copy</button>
+<span class="comment"># Start bisect session</span>
+<span class="cmd">git bisect start</span>
+
+<span class="comment"># Mark current commit as bad</span>
+<span class="cmd">git bisect bad</span>
+
+<span class="comment"># Mark a known-good commit</span>
+<span class="cmd">git bisect good</span> <span class="arg">v1.0.0</span>
+
+<span class="comment"># Git checks out midpoint — test your app, then:</span>
+<span class="cmd">git bisect good</span>  <span class="comment"># if bug not present</span>
+<span class="cmd">git bisect bad</span>   <span class="comment"># if bug is present</span>
+<span class="comment"># Repeat until Git finds the exact commit</span>
+
+<span class="comment"># Automated bisect with a test script</span>
+<span class="cmd">git bisect run</span> <span class="arg">./test-script.sh</span>
+
+<span class="comment"># End bisect session</span>
+<span class="cmd">git bisect reset</span>
+            </div>
+            <div class="tip">Bisect can find a bug in 1000 commits in just 10 tests. With an automated test script, it runs completely unattended.</div>
+            <button class="mark-done-btn" onclick="markDone('t-6-5')">Mark Complete ✓</button>
+          </div>
+        </div>
+
+        <div class="topic" id="t-6-6">
+          <div class="topic-head">
+            <div class="topic-check" onclick="toggleDone('t-6-6',event)">✓</div>
+            <div class="topic-info">
+              <div class="topic-name">git blame &amp; git log (advanced)</div>
+              <div class="topic-desc">Trace line history, find when bugs were introduced</div>
+            </div>
+            <span class="topic-tag tag-pro">Pro</span>
+          </div>
+          <div class="content-panel">
+            <h4>// Tracing Changes</h4>
+            <div class="code-block">
+              <button class="copy-btn" onclick="copyCode(this)">copy</button>
+<span class="comment"># Show who last changed each line of a file</span>
+<span class="cmd">git blame</span> <span class="arg">filename.py</span>
+
+<span class="comment"># Blame specific lines</span>
+<span class="cmd">git blame -L 10,25</span> <span class="arg">filename.py</span>
+
+<span class="comment"># Blame at a specific commit</span>
+<span class="cmd">git blame abc1234</span> <span class="arg">filename.py</span>
+
+<span class="comment"># Find all commits that changed a specific function</span>
+<span class="cmd">git log -L :function_name:filename.py</span>
+
+<span class="comment"># Find commits that changed a specific string</span>
+<span class="cmd">git log -S</span> <span class="str">"search_string"</span>
+
+<span class="comment"># Find commits that affected specific lines</span>
+<span class="cmd">git log -L 10,20:filename.py</span>
+
+<span class="comment"># What files changed between two branches?</span>
+<span class="cmd">git diff --name-status</span> <span class="arg">main..feature</span>
+            </div>
+            <button class="mark-done-btn" onclick="markDone('t-6-6')">Mark Complete ✓</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════
+       BLOCK 7 — GIT IN DEVOPS (HERO LEVEL)
+  ═══════════════════════════════════════════════ -->
+  <div class="block b7" id="block-7">
+    <div class="block-header" onclick="toggleBlock('block-7')">
+      <div class="block-num">07</div>
+      <div class="block-title">
+        <h2>Git in DevOps — Hero Level</h2>
+        <p>CI/CD integration, monorepos, signed commits, performance, security</p>
+      </div>
+      <div class="block-meta">
+        <div class="block-progress-ring">
+          <svg class="ring-svg" width="44" height="44" viewBox="0 0 44 44">
+            <circle class="ring-bg" cx="22" cy="22" r="18"/>
+            <circle class="ring-fg" cx="22" cy="22" r="18" stroke-dasharray="113" stroke-dashoffset="113" data-block="7"/>
+          </svg>
+          <div class="ring-label" data-ring-label="7">0%</div>
+        </div>
+        <div class="toggle-icon">▾</div>
+      </div>
+    </div>
+    <div class="block-body">
+      <div class="topics-grid">
+
+        <div class="topic" id="t-7-1">
+          <div class="topic-head">
+            <div class="topic-check" onclick="toggleDone('t-7-1',event)">✓</div>
+            <div class="topic-info">
+              <div class="topic-name">Git in CI/CD Pipelines</div>
+              <div class="topic-desc">GitHub Actions, GitLab CI — Git triggers &amp; actions</div>
+            </div>
+            <span class="topic-tag tag-expert">Expert</span>
+          </div>
+          <div class="content-panel">
+            <h4>// Git + CI/CD</h4>
+            <div class="concept">
+              <div class="concept-title">Key CI/CD Git Patterns</div>
+              <div class="concept-body">CI pipelines are triggered by Git events: push, pull_request, tag creation. Pipeline behavior should differ based on branch (feature → test only, main → test + deploy).</div>
+            </div>
+            <div class="code-block">
+              <button class="copy-btn" onclick="copyCode(this)">copy</button>
+<span class="comment"># GitHub Actions: trigger on push and PR</span>
+<span class="kw">on:</span>
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+  <span class="comment"># Trigger on tag push (for releases)</span>
+  push:
+    tags: [ 'v*.*.*' ]
+
+<span class="comment"># Common CI Git operations in pipeline scripts</span>
+<span class="cmd">git log --oneline -5</span>         <span class="comment"># Show recent commits in build</span>
+<span class="cmd">git describe --tags --always</span> <span class="comment"># Get version from nearest tag</span>
+<span class="cmd">git rev-parse --short HEAD</span>   <span class="comment"># Short SHA for image tagging</span>
+<span class="cmd">git diff --name-only HEAD~1</span>  <span class="comment"># Changed files (conditional builds)</span>
+
+<span class="comment"># Fetch all branches in CI (shallow clones miss history)</span>
+<span class="cmd">git fetch --unshallow</span>
+            </div>
+            <div class="tip">In CI, always use `git rev-parse --short HEAD` to tag Docker images and deployments. This creates a direct traceability link from running code back to the exact commit.</div>
+            <button class="mark-done-btn" onclick="markDone('t-7-1')">Mark Complete ✓</button>
+          </div>
+        </div>
+
+        <div class="topic" id="t-7-2">
+          <div class="topic-head">
+            <div class="topic-check" onclick="toggleDone('t-7-2',event)">✓</div>
+            <div class="topic-info">
+              <div class="topic-name">Signing Commits with GPG</div>
+              <div class="topic-desc">Prove your commits are genuinely from you</div>
+            </div>
+            <span class="topic-tag tag-expert">Expert</span>
+          </div>
+          <div class="content-panel">
+            <h4>// GPG Commit Signing</h4>
+            <div class="code-block">
+              <button class="copy-btn" onclick="copyCode(this)">copy</button>
+<span class="comment"># Generate GPG key</span>
+<span class="cmd">gpg --full-generate-key</span>
+<span class="comment"># Choose RSA, 4096 bits, set expiry</span>
+
+<span class="comment"># List GPG keys</span>
+<span class="cmd">gpg --list-secret-keys --keyid-format=long</span>
+
+<span class="comment"># Copy the key ID (after sec rsa4096/)</span>
+<span class="comment"># Example: sec rsa4096/3AA5C34371567BD2</span>
+
+<span class="comment"># Configure Git to use GPG key</span>
+<span class="cmd">git config --global user.signingkey</span> <span class="arg">3AA5C34371567BD2</span>
+
+<span class="comment"># Sign commits by default</span>
+<span class="cmd">git config --global commit.gpgsign true</span>
+
+<span class="comment"># Sign a commit manually</span>
+<span class="cmd">git commit -S -m</span> <span class="str">"signed commit"</span>
+
+<span class="comment"># Export public key to add to GitHub</span>
+<span class="cmd">gpg --armor --export</span> <span class="arg">3AA5C34371567BD2</span>
+<span class="comment"># Paste output in GitHub Settings > GPG Keys</span>
+            </div>
+            <div class="tip">For DevOps roles, signed commits and branch protection rules are standard security requirements. Learn this before interviews.</div>
+            <button class="mark-done-btn" onclick="markDone('t-7-2')">Mark Complete ✓</button>
+          </div>
+        </div>
+
+        <div class="topic" id="t-7-3">
+          <div class="topic-head">
+            <div class="topic-check" onclick="toggleDone('t-7-3',event)">✓</div>
+            <div class="topic-info">
+              <div class="topic-name">Monorepo Git Strategies</div>
+              <div class="topic-desc">Sparse checkout, partial clone, large-scale patterns</div>
+            </div>
+            <span class="topic-tag tag-expert">Expert</span>
+          </div>
+          <div class="content-panel">
+            <h4>// Monorepo Techniques</h4>
+            <div class="concept">
+              <div class="concept-title">What is a Monorepo?</div>
+              <div class="concept-body">A single Git repository containing multiple projects/services. Used by Google, Meta, Uber. Simplifies dependency management but requires special Git techniques for scale.</div>
+            </div>
+            <div class="code-block">
+              <button class="copy-btn" onclick="copyCode(this)">copy</button>
+<span class="comment"># Sparse checkout — check out only specific paths</span>
+<span class="cmd">git clone --sparse --filter=blob:none</span> <span class="str">https://github.com/org/monorepo.git</span>
+<span class="cmd">git sparse-checkout set</span> <span class="arg">services/auth</span>
+
+<span class="comment"># Partial clone — skip large blobs</span>
+<span class="cmd">git clone --filter=blob:none</span> <span class="str">https://github.com/org/repo.git</span>
+
+<span class="comment"># Check which services changed (for selective CI)</span>
+<span class="cmd">git diff --name-only HEAD~1 HEAD | grep</span> <span class="str">'^services/'</span>
+
+<span class="comment"># Shallow clone for CI (faster)</span>
+<span class="cmd">git clone --depth=1 --single-branch --branch main</span> <span class="str">URL</span>
+            </div>
+            <button class="mark-done-btn" onclick="markDone('t-7-3')">Mark Complete ✓</button>
+          </div>
+        </div>
+
+        <div class="topic" id="t-7-4">
+          <div class="topic-head">
+            <div class="topic-check" onclick="toggleDone('t-7-4',event)">✓</div>
+            <div class="topic-info">
+              <div class="topic-name">Branch Protection &amp; Security Rules</div>
+              <div class="topic-desc">Enforce review, status checks, signed commits at repo level</div>
+            </div>
+            <span class="topic-tag tag-expert">Expert</span>
+          </div>
+          <div class="content-panel">
+            <h4>// Branch Protection (GitHub)</h4>
+            <div class="concept">
+              <div class="concept-title">Recommended Branch Protection Rules for main</div>
+              <div class="concept-body">
+                ✓ Require pull request reviews (min 1-2 approvals)<br>
+                ✓ Require status checks to pass (CI tests, linting)<br>
+                ✓ Require signed commits<br>
+                ✓ Require linear history (no merge commits)<br>
+                ✓ Include administrators<br>
+                ✓ Restrict who can push<br>
+                ✓ Block force pushes
+              </div>
+            </div>
+            <div class="concept">
+              <div class="concept-title">CODEOWNERS File</div>
+              <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">copy</button>
+<span class="comment"># .github/CODEOWNERS</span>
+<span class="comment"># Assign reviewers by path</span>
+
+<span class="comment"># Default owner for everything</span>
+*       @org/team-leads
+
+<span class="comment"># Infrastructure files need DevOps review</span>
+/terraform/   @org/devops-team
+/.github/     @org/devops-team
+
+<span class="comment"># Frontend owned by frontend team</span>
+/frontend/    @org/frontend-team
+              </div>
+            </div>
+            <button class="mark-done-btn" onclick="markDone('t-7-4')">Mark Complete ✓</button>
+          </div>
+        </div>
+
+        <div class="topic" id="t-7-5">
+          <div class="topic-head">
+            <div class="topic-check" onclick="toggleDone('t-7-5',event)">✓</div>
+            <div class="topic-info">
+              <div class="topic-name">Git Performance &amp; Large Files</div>
+              <div class="topic-desc">Git LFS, gc, shallow clones, repo cleanup</div>
+            </div>
+            <span class="topic-tag tag-expert">Expert</span>
+          </div>
+          <div class="content-panel">
+            <h4>// Performance</h4>
+            <div class="code-block">
+              <button class="copy-btn" onclick="copyCode(this)">copy</button>
+<span class="comment"># Git LFS (Large File Storage) for binaries, videos, models</span>
+<span class="cmd">git lfs install</span>
+<span class="cmd">git lfs track</span> <span class="str">"*.psd"</span> <span class="str">"*.mp4"</span> <span class="str">"*.bin"</span>
+<span class="cmd">git add .gitattributes</span>
+<span class="comment"># Now normal git add/commit works for LFS files</span>
+
+<span class="comment"># Clean up repo and optimize storage</span>
+<span class="cmd">git gc</span>              <span class="comment"># garbage collect</span>
+<span class="cmd">git gc --aggressive</span> <span class="comment"># thorough but slow</span>
+
+<span class="comment"># Find largest objects in repo</span>
+<span class="cmd">git rev-list --objects --all | git cat-file --batch-check='%(objecttype) %(objectname) %(objectsize) %(rest)' | sort -k3 -n -r | head -20</span>
+
+<span class="comment"># Prune unreachable objects</span>
+<span class="cmd">git prune</span>
+
+<span class="comment"># Count objects</span>
+<span class="cmd">git count-objects -vH</span>
+            </div>
+            <div class="tip">Never commit binary files (images, binaries, videos) directly to Git. Use Git LFS. Large binaries bloat the repo permanently — even after deletion, they stay in history.</div>
+            <button class="mark-done-btn" onclick="markDone('t-7-5')">Mark Complete ✓</button>
+          </div>
+        </div>
+
+        <div class="topic" id="t-7-6">
+          <div class="topic-head">
+            <div class="topic-check" onclick="toggleDone('t-7-6',event)">✓</div>
+            <div class="topic-info">
+              <div class="topic-name">Git Worktrees</div>
+              <div class="topic-desc">Work on multiple branches simultaneously without stashing</div>
+            </div>
+            <span class="topic-tag tag-expert">Expert</span>
+          </div>
+          <div class="content-panel">
+            <h4>// Worktrees</h4>
+            <div class="concept">
+              <div class="concept-title">What is a Worktree?</div>
+              <div class="concept-body">Multiple working directories linked to the same Git repo. Switch between branches instantly without stashing. Each worktree has its own working dir and HEAD but shares the same .git object store.</div>
+            </div>
+            <div class="code-block">
+              <button class="copy-btn" onclick="copyCode(this)">copy</button>
+<span class="comment"># Add a worktree for a branch</span>
+<span class="cmd">git worktree add</span> <span class="arg">../feature-login</span> <span class="arg">feature/login</span>
+
+<span class="comment"># Create a new branch in a new worktree</span>
+<span class="cmd">git worktree add -b</span> <span class="arg">hotfix/critical</span> <span class="arg">../hotfix</span>
+
+<span class="comment"># List worktrees</span>
+<span class="cmd">git worktree list</span>
+
+<span class="comment"># Remove a worktree</span>
+<span class="cmd">git worktree remove</span> <span class="arg">../feature-login</span>
+
+<span class="comment"># Prune stale worktree references</span>
+<span class="cmd">git worktree prune</span>
+            </div>
+            <div class="tip">Worktrees are perfect when you need to fix a hotfix on main while in the middle of a large feature. No stashing or branch switching needed — both codebases open at once.</div>
+            <button class="mark-done-btn" onclick="markDone('t-7-6')">Mark Complete ✓</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- CHEAT SHEET -->
+  <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:28px;margin-bottom:40px;">
+    <h2 style="font-size:20px;margin-bottom:20px;color:var(--accent)">⚡ Quick Reference Cheat Sheet</h2>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px;">
+      <div style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:14px;">
+        <div style="font-family:var(--mono);font-size:11px;color:var(--blue);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">Setup</div>
+        <div class="code-block" style="margin:0;font-size:11px;">git config --global user.name "Name"<br>git config --global user.email "e@x.com"<br>git init | git clone URL<br>git status | git log --oneline</div>
+      </div>
+      <div style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:14px;">
+        <div style="font-family:var(--mono);font-size:11px;color:var(--purple);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">Commit Cycle</div>
+        <div class="code-block" style="margin:0;font-size:11px;">git add . | git add -p<br>git commit -m "msg"<br>git diff | git diff --staged<br>git commit --amend</div>
+      </div>
+      <div style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:14px;">
+        <div style="font-family:var(--mono);font-size:11px;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">Branching</div>
+        <div class="code-block" style="margin:0;font-size:11px;">git switch -c feature/x<br>git merge --no-ff feature/x<br>git rebase -i HEAD~3<br>git cherry-pick abc123</div>
+      </div>
+      <div style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:14px;">
+        <div style="font-family:var(--mono);font-size:11px;color:var(--green);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">Remotes</div>
+        <div class="code-block" style="margin:0;font-size:11px;">git remote add origin URL<br>git push -u origin main<br>git pull --rebase<br>git fetch --prune</div>
+      </div>
+      <div style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:14px;">
+        <div style="font-family:var(--mono);font-size:11px;color:var(--gold);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">Undo</div>
+        <div class="code-block" style="margin:0;font-size:11px;">git restore . (discard changes)<br>git reset --soft HEAD~1<br>git revert abc123<br>git reflog (recover anything)</div>
+      </div>
+      <div style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:14px;">
+        <div style="font-family:var(--mono);font-size:11px;color:var(--pink);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">Pro Tools</div>
+        <div class="code-block" style="margin:0;font-size:11px;">git stash push -m "msg"<br>git bisect start/good/bad<br>git blame -L 10,20 file<br>git log -S "searchterm"</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ── STATE ──────────────────────────────────────────
+const STORAGE_KEY = 'git_roadmap_v1';
+let done = new Set(JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'));
+
+// ── INIT ──────────────────────────────────────────
+function getAllTopics() {
+  return [...document.querySelectorAll('.topic')].map(t => t.id);
+}
+
+function getBlockTopics(blockNum) {
+  const block = document.getElementById('block-' + blockNum);
+  return [...block.querySelectorAll('.topic')].map(t => t.id);
+}
+
+function save() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify([...done]));
+}
+
+function applyState() {
+  const all = getAllTopics();
+  all.forEach(id => {
+    const el = document.getElementById(id);
+    if (done.has(id)) {
+      el.classList.add('done');
+      const btn = el.querySelector('.mark-done-btn');
+      if (btn) { btn.textContent = 'Undo ↩'; btn.classList.add('undo'); }
+    } else {
+      el.classList.remove('done');
+      const btn = el.querySelector('.mark-done-btn');
+      if (btn) { btn.textContent = 'Mark Complete ✓'; btn.classList.remove('undo'); }
+    }
+  });
+  updateProgress();
+}
+
+// ── TOGGLE DONE ──────────────────────────────────
+function toggleDone(id, e) {
+  e && e.stopPropagation();
+  if (done.has(id)) { done.delete(id); } else { done.add(id); }
+  save(); applyState();
+}
+
+function markDone(id) {
+  if (done.has(id)) { done.delete(id); } else { done.add(id); }
+  save(); applyState();
+}
+
+// ── TOPIC EXPAND ─────────────────────────────────
+document.querySelectorAll('.topic').forEach(t => {
+  t.addEventListener('click', function(e) {
+    if (e.target.classList.contains('topic-check') || e.target.classList.contains('mark-done-btn') || e.target.classList.contains('copy-btn')) return;
+    const isActive = this.classList.contains('active');
+    document.querySelectorAll('.topic.active').forEach(a => a.classList.remove('active'));
+    if (!isActive) this.classList.add('active');
+  });
+});
+
+// ── BLOCK COLLAPSE ───────────────────────────────
+function toggleBlock(id) {
+  const b = document.getElementById(id);
+  b.classList.toggle('collapsed');
+  const body = b.querySelector('.block-body');
+  if (b.classList.contains('collapsed')) {
+    body.style.display = 'none';
+  } else {
+    body.style.display = '';
+  }
+}
+
+// ── PROGRESS ─────────────────────────────────────
+function updateProgress() {
+  const all = getAllTopics();
+  const total = all.length;
+  const completed = all.filter(id => done.has(id)).length;
+  const pct = total === 0 ? 0 : Math.round((completed / total) * 100);
+
+  document.getElementById('total-topics').textContent = total;
+  document.getElementById('done-topics').textContent = completed;
+  document.getElementById('remaining-topics').textContent = total - completed;
+  document.getElementById('pct').textContent = pct + '%';
+  document.getElementById('prog-fill').style.width = pct + '%';
+
+  // Per-block rings
+  for (let b = 1; b <= 7; b++) {
+    const bTopics = getBlockTopics(b);
+    const bDone = bTopics.filter(id => done.has(id)).length;
+    const bPct = bTopics.length === 0 ? 0 : bDone / bTopics.length;
+    const circ = 113;
+    const offset = circ - (circ * bPct);
+
+    const ring = document.querySelector(`[data-block="${b}"]`);
+    if (ring) ring.style.strokeDashoffset = offset;
+
+    const label = document.querySelector(`[data-ring-label="${b}"]`);
+    if (label) label.textContent = Math.round(bPct * 100) + '%';
+  }
+}
+
+// ── COPY CODE ────────────────────────────────────
+function copyCode(btn) {
+  const block = btn.parentElement;
+  const text = block.innerText.replace('copy\n', '').trim();
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = 'copied!';
+    setTimeout(() => btn.textContent = 'copy', 1500);
+  });
+}
+
+// ── RESET ────────────────────────────────────────
+function resetAll() {
+  if (confirm('Reset all progress? This cannot be undone.')) {
+    done.clear(); save(); applyState();
+  }
+}
+
+// ── BOOT ─────────────────────────────────────────
+applyState();
+</script>
+</body>
+</html>

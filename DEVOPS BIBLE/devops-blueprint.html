@@ -1,0 +1,1522 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DevOps Zero to Hero — Your Complete Blueprint</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #07090F;
+  --bg2: #0D1117;
+  --bg3: #161B22;
+  --card: #0D1117;
+  --border: #21262D;
+  --border2: #30363D;
+  --green: #00D9A6;
+  --green2: #00A87D;
+  --blue: #58A6FF;
+  --purple: #A371F7;
+  --amber: #F0B429;
+  --red: #FF6B6B;
+  --coral: #FF8A65;
+  --text: #E6EDF3;
+  --text2: #8B949E;
+  --text3: #656D76;
+  --sidebar-w: 280px;
+  --radius: 8px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; display: flex; font-size: 15px; line-height: 1.6; }
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+
+/* Sidebar */
+#sidebar {
+  width: var(--sidebar-w); min-width: var(--sidebar-w); background: var(--bg2);
+  border-right: 1px solid var(--border); height: 100vh; position: sticky;
+  top: 0; overflow-y: auto; display: flex; flex-direction: column; flex-shrink: 0;
+}
+.sidebar-header { padding: 20px 16px 16px; border-bottom: 1px solid var(--border); }
+.sidebar-logo { font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--green); font-weight: 700; letter-spacing: -0.5px; margin-bottom: 4px; }
+.sidebar-sub { font-size: 11px; color: var(--text3); }
+.sidebar-progress { padding: 14px 16px; border-bottom: 1px solid var(--border); }
+.progress-label { font-size: 11px; color: var(--text2); display: flex; justify-content: space-between; margin-bottom: 8px; }
+.progress-bar-outer { height: 4px; background: var(--bg3); border-radius: 2px; overflow: hidden; }
+.progress-bar-inner { height: 100%; background: linear-gradient(90deg, var(--green), var(--blue)); border-radius: 2px; transition: width 0.4s ease; }
+.progress-stats { display: flex; gap: 12px; margin-top: 10px; }
+.stat { text-align: center; flex: 1; }
+.stat-num { font-family: 'JetBrains Mono', monospace; font-size: 16px; font-weight: 700; color: var(--green); }
+.stat-label { font-size: 10px; color: var(--text3); margin-top: 2px; }
+.sidebar-nav { flex: 1; padding: 8px 0; }
+.nav-item {
+  display: flex; align-items: center; gap: 10px; padding: 8px 16px;
+  cursor: pointer; border-left: 2px solid transparent; transition: all 0.15s;
+  font-size: 13px; color: var(--text2); text-decoration: none;
+}
+.nav-item:hover { color: var(--text); background: rgba(255,255,255,0.03); border-left-color: var(--border2); }
+.nav-item.active { color: var(--green); border-left-color: var(--green); background: rgba(0,217,166,0.05); }
+.nav-item.done { color: var(--text3); }
+.nav-item.done .nav-check { color: var(--green); }
+.nav-icon { font-size: 14px; flex-shrink: 0; width: 18px; text-align: center; }
+.nav-title { flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.nav-duration { font-size: 10px; color: var(--text3); flex-shrink: 0; }
+.nav-phase-num { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text3); flex-shrink: 0; width: 24px; }
+.sidebar-footer { padding: 12px 16px; border-top: 1px solid var(--border); font-size: 11px; color: var(--text3); }
+
+/* Main content */
+#main { flex: 1; overflow-y: auto; min-width: 0; }
+
+/* Hero */
+.hero { background: linear-gradient(135deg, #07090F 0%, #0D1A2E 50%, #07090F 100%); padding: 50px 48px 40px; border-bottom: 1px solid var(--border); position: relative; overflow: hidden; }
+.hero::before { content: ''; position: absolute; top: -100px; right: -100px; width: 400px; height: 400px; background: radial-gradient(circle, rgba(0,217,166,0.06) 0%, transparent 70%); }
+.hero::after { content: ''; position: absolute; bottom: -80px; left: 200px; width: 300px; height: 300px; background: radial-gradient(circle, rgba(88,166,255,0.05) 0%, transparent 70%); }
+.hero-badge { display: inline-flex; align-items: center; gap: 6px; background: rgba(0,217,166,0.1); border: 1px solid rgba(0,217,166,0.25); color: var(--green); padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 500; margin-bottom: 20px; font-family: 'JetBrains Mono', monospace; }
+.hero-title { font-family: 'JetBrains Mono', monospace; font-size: 32px; font-weight: 700; line-height: 1.2; margin-bottom: 12px; }
+.hero-title span { color: var(--green); }
+.hero-desc { font-size: 16px; color: var(--text2); max-width: 640px; line-height: 1.7; margin-bottom: 24px; }
+.hero-stats { display: flex; gap: 32px; flex-wrap: wrap; }
+.hero-stat { }
+.hero-stat-num { font-family: 'JetBrains Mono', monospace; font-size: 24px; font-weight: 700; color: var(--text); }
+.hero-stat-label { font-size: 12px; color: var(--text3); margin-top: 2px; }
+
+/* Phase sections */
+.phases { padding: 32px 48px; display: flex; flex-direction: column; gap: 32px; }
+
+.phase-section { border: 1px solid var(--border); border-radius: 12px; overflow: hidden; background: var(--bg2); transition: border-color 0.2s; }
+.phase-section:hover { border-color: var(--border2); }
+.phase-section.current { border-color: rgba(0,217,166,0.3); }
+
+.phase-header {
+  display: flex; align-items: flex-start; gap: 16px; padding: 24px 28px;
+  cursor: pointer; user-select: none; position: relative;
+}
+.phase-header:hover { background: rgba(255,255,255,0.01); }
+.phase-num-badge {
+  font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 700;
+  padding: 3px 8px; border-radius: 4px; flex-shrink: 0; margin-top: 2px;
+  letter-spacing: 0.5px;
+}
+.phase-icon-wrap { font-size: 24px; flex-shrink: 0; margin-top: 0; }
+.phase-header-text { flex: 1; }
+.phase-title { font-family: 'JetBrains Mono', monospace; font-size: 18px; font-weight: 700; margin-bottom: 4px; }
+.phase-subtitle { font-size: 13px; color: var(--text2); margin-bottom: 10px; }
+.phase-meta { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.meta-badge { font-size: 11px; padding: 2px 10px; border-radius: 12px; display: inline-flex; align-items: center; gap: 4px; font-weight: 500; }
+.badge-duration { background: rgba(240,180,41,0.1); color: var(--amber); border: 1px solid rgba(240,180,41,0.2); }
+.badge-current { background: rgba(0,217,166,0.1); color: var(--green); border: 1px solid rgba(0,217,166,0.3); }
+.badge-upcoming { background: rgba(88,166,255,0.1); color: var(--blue); border: 1px solid rgba(88,166,255,0.2); }
+.badge-done-status { background: rgba(0,217,166,0.08); color: var(--green2); border: 1px solid rgba(0,217,166,0.15); }
+.phase-progress-mini { display: flex; align-items: center; gap: 8px; }
+.mini-bar { height: 4px; width: 80px; background: var(--bg3); border-radius: 2px; overflow: hidden; }
+.mini-bar-fill { height: 100%; background: var(--green); border-radius: 2px; transition: width 0.4s; }
+.mini-pct { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text3); min-width: 28px; }
+.phase-expand-icon { font-size: 12px; color: var(--text3); flex-shrink: 0; margin-top: 6px; transition: transform 0.2s; }
+.phase-section.open .phase-expand-icon { transform: rotate(180deg); }
+
+/* Phase body */
+.phase-body { display: none; border-top: 1px solid var(--border); }
+.phase-section.open .phase-body { display: block; }
+
+/* Tabs */
+.tab-nav { display: flex; padding: 0 28px; border-bottom: 1px solid var(--border); background: rgba(0,0,0,0.2); overflow-x: auto; }
+.tab-btn {
+  font-size: 13px; padding: 12px 16px; color: var(--text2); cursor: pointer;
+  border-bottom: 2px solid transparent; white-space: nowrap; font-weight: 500;
+  transition: all 0.15s; background: none; border-top: none; border-left: none; border-right: none; font-family: 'Inter', sans-serif;
+}
+.tab-btn:hover { color: var(--text); }
+.tab-btn.active { color: var(--green); border-bottom-color: var(--green); }
+.tab-content { padding: 28px; }
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+
+/* Overview tab */
+.overview-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
+.overview-card { background: var(--bg3); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px; }
+.overview-card-title { font-size: 11px; font-weight: 600; color: var(--text3); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 10px; }
+.overview-card-text { font-size: 14px; color: var(--text2); line-height: 1.7; }
+
+/* Concepts tab */
+.concepts-intro { font-size: 14px; color: var(--text2); margin-bottom: 20px; line-height: 1.7; }
+.concept-group { margin-bottom: 24px; }
+.concept-group-title { font-size: 12px; font-weight: 600; color: var(--text3); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 12px; padding-bottom: 6px; border-bottom: 1px solid var(--border); }
+.concept-item { display: flex; align-items: flex-start; gap: 12px; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.03); }
+.concept-item:last-child { border-bottom: none; }
+.concept-cb { width: 16px; height: 16px; border: 1.5px solid var(--border2); border-radius: 4px; cursor: pointer; flex-shrink: 0; margin-top: 2px; display: flex; align-items: center; justify-content: center; transition: all 0.15s; background: transparent; appearance: none; -webkit-appearance: none; }
+.concept-cb:checked { background: var(--green); border-color: var(--green); }
+.concept-cb:checked::after { content: '✓'; color: #000; font-size: 10px; font-weight: 700; }
+.concept-label { font-size: 14px; color: var(--text); cursor: pointer; line-height: 1.5; }
+.concept-label.done { text-decoration: line-through; color: var(--text3); }
+
+/* Resources tab */
+.resource-category { margin-bottom: 28px; }
+.resource-cat-title { font-size: 12px; font-weight: 600; color: var(--text3); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+.resource-cat-title::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+.resource-list { display: flex; flex-direction: column; gap: 8px; }
+.resource-item {
+  display: flex; align-items: flex-start; gap: 14px; padding: 14px 16px;
+  background: var(--bg3); border: 1px solid var(--border); border-radius: var(--radius);
+  text-decoration: none; transition: all 0.15s; cursor: pointer;
+}
+.resource-item:hover { border-color: var(--green); background: rgba(0,217,166,0.03); transform: translateX(2px); }
+.resource-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+.resource-info { flex: 1; min-width: 0; }
+.resource-title { font-size: 14px; font-weight: 500; color: var(--text); margin-bottom: 3px; }
+.resource-desc { font-size: 12px; color: var(--text2); line-height: 1.5; }
+.resource-url { font-size: 11px; color: var(--text3); margin-top: 3px; font-family: 'JetBrains Mono', monospace; }
+.resource-type { font-size: 10px; padding: 2px 8px; border-radius: 10px; flex-shrink: 0; font-weight: 600; align-self: flex-start; margin-top: 2px; }
+.type-free { background: rgba(0,217,166,0.1); color: var(--green); }
+.type-paid { background: rgba(240,180,41,0.1); color: var(--amber); }
+.type-doc { background: rgba(88,166,255,0.1); color: var(--blue); }
+.type-practice { background: rgba(163,113,247,0.1); color: var(--purple); }
+
+/* Project tab */
+.project-card { background: var(--bg3); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; margin-bottom: 20px; }
+.project-title { font-family: 'JetBrains Mono', monospace; font-size: 16px; font-weight: 700; color: var(--green); margin-bottom: 8px; }
+.project-desc { font-size: 14px; color: var(--text2); margin-bottom: 20px; line-height: 1.7; }
+.project-steps { counter-reset: step; list-style: none; }
+.project-steps li { counter-increment: step; display: flex; align-items: flex-start; gap: 14px; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.04); }
+.project-steps li:last-child { border-bottom: none; }
+.step-num { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #000; background: var(--green); border-radius: 4px; width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-weight: 700; margin-top: 1px; }
+.step-text { font-size: 14px; color: var(--text); line-height: 1.6; }
+.step-cb { flex-shrink: 0; margin-top: 3px; }
+
+.why-box { background: rgba(0,217,166,0.05); border: 1px solid rgba(0,217,166,0.2); border-radius: var(--radius); padding: 16px; margin-bottom: 20px; }
+.why-box-label { font-size: 11px; font-weight: 600; color: var(--green); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 6px; }
+.why-box-text { font-size: 14px; color: var(--text2); line-height: 1.7; }
+
+/* Interview tab */
+.interview-intro { font-size: 14px; color: var(--text2); margin-bottom: 20px; line-height: 1.7; background: rgba(88,166,255,0.05); border: 1px solid rgba(88,166,255,0.15); border-radius: var(--radius); padding: 14px 16px; }
+.interview-q { display: flex; align-items: flex-start; gap: 14px; padding: 14px 0; border-bottom: 1px solid rgba(255,255,255,0.04); }
+.interview-q:last-child { border-bottom: none; }
+.q-num { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--blue); background: rgba(88,166,255,0.1); border-radius: 4px; padding: 2px 7px; flex-shrink: 0; margin-top: 2px; font-weight: 700; }
+.q-text { font-size: 14px; color: var(--text); line-height: 1.6; }
+
+/* Code blocks */
+.code-block { background: #010409; border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; margin: 12px 0; font-family: 'JetBrains Mono', monospace; font-size: 13px; color: #79C0FF; overflow-x: auto; }
+.code-comment { color: var(--text3); }
+
+/* Tip boxes */
+.tip-box { border-radius: var(--radius); padding: 14px 16px; margin: 16px 0; }
+.tip-mentor { background: rgba(163,113,247,0.08); border: 1px solid rgba(163,113,247,0.2); }
+.tip-mentor .tip-label { color: var(--purple); font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 6px; }
+.tip-mentor .tip-text { font-size: 13px; color: var(--text2); line-height: 1.7; }
+
+/* Footer */
+.footer { padding: 32px 48px; border-top: 1px solid var(--border); text-align: center; font-size: 12px; color: var(--text3); }
+.footer strong { color: var(--green); }
+
+/* Responsive */
+@media (max-width: 900px) {
+  #sidebar { display: none; }
+  .phases { padding: 20px; }
+  .hero { padding: 32px 20px 28px; }
+  .overview-grid { grid-template-columns: 1fr; }
+}
+
+/* Utility */
+.flex { display: flex; }
+.gap-8 { gap: 8px; }
+.mt-16 { margin-top: 16px; }
+.section-label { font-size: 11px; font-weight: 600; color: var(--text3); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 10px; }
+
+/* Floating reset btn */
+#reset-btn { position: fixed; bottom: 20px; right: 20px; background: var(--bg3); border: 1px solid var(--border2); color: var(--text3); font-size: 12px; padding: 8px 14px; border-radius: 6px; cursor: pointer; font-family: 'Inter', sans-serif; transition: all 0.15s; z-index: 100; }
+#reset-btn:hover { color: var(--red); border-color: var(--red); }
+
+.cert-badge { display: inline-flex; align-items: center; gap: 6px; background: rgba(240,180,41,0.1); border: 1px solid rgba(240,180,41,0.25); color: var(--amber); font-size: 11px; padding: 3px 10px; border-radius: 12px; font-weight: 600; margin-top: 8px; }
+
+.phase-complete-banner { background: rgba(0,217,166,0.08); border: 1px solid rgba(0,217,166,0.2); border-radius: var(--radius); padding: 12px 16px; margin-bottom: 20px; display: none; align-items: center; gap: 10px; }
+.phase-complete-banner.show { display: flex; }
+.phase-complete-banner span { font-size: 13px; color: var(--green); font-weight: 500; }
+</style>
+</head>
+<body>
+
+<nav id="sidebar">
+  <div class="sidebar-header">
+    <div class="sidebar-logo">$ devops --blueprint</div>
+    <div class="sidebar-sub">Zero to Hero — Complete Roadmap</div>
+  </div>
+  <div class="sidebar-progress">
+    <div class="progress-label">
+      <span>Overall Progress</span>
+      <span id="pct-label">0%</span>
+    </div>
+    <div class="progress-bar-outer"><div class="progress-bar-inner" id="global-bar" style="width:0%"></div></div>
+    <div class="progress-stats">
+      <div class="stat"><div class="stat-num" id="stat-done">0</div><div class="stat-label">Done</div></div>
+      <div class="stat"><div class="stat-num" id="stat-total">0</div><div class="stat-label">Total</div></div>
+      <div class="stat"><div class="stat-num" id="stat-phases">0</div><div class="stat-label">Phases</div></div>
+    </div>
+  </div>
+  <nav class="sidebar-nav" id="sidebar-nav"></nav>
+  <div class="sidebar-footer">Save this file locally · Progress auto-saved</div>
+</nav>
+
+<main id="main">
+  <div class="hero">
+    <div class="hero-badge">📍 Built for Vartha · Updated April 2025</div>
+    <h1 class="hero-title">DevOps <span>Zero to Hero</span><br>Complete Blueprint</h1>
+    <p class="hero-desc">Everything you need to become a job-ready DevOps engineer — what to learn, how to learn it, where to learn it from, and what to build. No other resource needed. Start Phase 0 today.</p>
+    <div class="hero-stats">
+      <div class="hero-stat"><div class="hero-stat-num">14</div><div class="hero-stat-label">Learning Phases</div></div>
+      <div class="hero-stat"><div class="hero-stat-num">~12</div><div class="hero-stat-label">Months to Job-Ready</div></div>
+      <div class="hero-stat"><div class="hero-stat-num">100%</div><div class="hero-stat-label">Free Resources</div></div>
+      <div class="hero-stat"><div class="hero-stat-num">14</div><div class="hero-stat-label">Portfolio Projects</div></div>
+    </div>
+  </div>
+
+  <div class="phases" id="phases-container"></div>
+
+  <div class="footer">
+    Built for <strong>Vartha</strong> — Your personal DevOps mentor blueprint. Track your progress, build everything, understand every line. You've got this. 🚀
+  </div>
+</main>
+
+<button id="reset-btn" onclick="resetProgress()">↺ Reset Progress</button>
+
+<script>
+const PHASES = [
+  {
+    id: 'phase-0',
+    num: 0,
+    title: 'Mindset & Environment Setup',
+    subtitle: 'Before you write a single command',
+    duration: '3–5 days',
+    icon: '⚡',
+    color: '#7C3AED',
+    status: 'foundation',
+    description: 'Most self-learners skip this and spend weeks confused about why things don\'t work. You\'re on a Windows corporate machine — understanding your setup gives you control. This phase is short but sets everything up correctly.',
+    why: 'DevOps is a culture and practice before it\'s a set of tools. Building the right mental model from day one means you\'ll learn tools with purpose — not just following steps.',
+    conceptGroups: [
+      {
+        title: 'DevOps Philosophy',
+        items: ['Understand what DevOps is — culture + practice + tooling, not just a job title', 'The DevOps infinity loop: Plan → Code → Build → Test → Release → Deploy → Operate → Monitor', 'Why DevOps exists: breaking silos between Dev and Ops teams', 'SRE (Site Reliability Engineering) vs DevOps vs Platform Engineering', 'The concept of "shift-left" — catching problems earlier in the cycle', 'Continuous Integration (CI) vs Continuous Delivery (CD) vs Continuous Deployment']
+      },
+      {
+        title: 'Environment Setup (Windows + WSL)',
+        items: ['Install WSL2 (Windows Subsystem for Linux) with Ubuntu 22.04 LTS', 'Install Git Bash as a backup terminal', 'Install and configure VSCode with DevOps extensions', 'Set up Windows Terminal as your primary terminal', 'Configure Git globally (name, email, default branch)', 'Understand the difference between your Windows file system and your WSL file system', 'Install Python 3.x in WSL and verify with python3 --version']
+      },
+      {
+        title: 'How to Learn Effectively',
+        items: ['How to read official documentation — this is the most important skill', 'How to Google engineering errors effectively (copy exact error messages)', 'How to use GitHub Issues and Stack Overflow correctly', 'Building a lab notebook: always take notes on what you learn and break', 'The importance of building things — not just watching tutorials']
+      }
+    ],
+    resources: [
+      {
+        category: '📖 Read First — DevOps Big Picture',
+        items: [
+          { icon: '🗺️', title: 'DevOps Roadmap — roadmap.sh', url: 'https://roadmap.sh/devops', desc: 'The community-maintained visual map of everything a DevOps engineer needs to know. Bookmark this.', type: 'free' },
+          { icon: '📘', title: 'What is DevOps? — AWS', url: 'https://aws.amazon.com/devops/what-is-devops/', desc: 'A clear, concise explanation of the DevOps philosophy, practices, and benefits.', type: 'free' },
+          { icon: '📗', title: 'Google SRE Book — Free Online', url: 'https://sre.google/sre-book/table-of-contents/', desc: 'The bible of modern operations. Read the first 5 chapters to understand what production engineering looks like.', type: 'free' },
+          { icon: '📙', title: 'The DevOps Handbook — Summary', url: 'https://itrevolution.com/product/the-devops-handbook/', desc: 'Read free summaries and previews of this foundational book by Gene Kim.', type: 'free' }
+        ]
+      },
+      {
+        category: '🛠️ Environment Setup Guides',
+        items: [
+          { icon: '🪟', title: 'Install WSL2 — Microsoft Official Guide', url: 'https://learn.microsoft.com/en-us/windows/wsl/install', desc: 'Official step-by-step guide to running Linux inside Windows. Run: wsl --install in PowerShell as admin.', type: 'doc' },
+          { icon: '💻', title: 'VSCode Setup for DevOps', url: 'https://code.visualstudio.com/docs/setup/windows', desc: 'Install VSCode then add: YAML, Docker, Kubernetes, HashiCorp Terraform, GitLens, Remote-WSL extensions.', type: 'free' },
+          { icon: '🖥️', title: 'Windows Terminal — Install Guide', url: 'https://learn.microsoft.com/en-us/windows/terminal/install', desc: 'Modern terminal supporting WSL, PowerShell, Git Bash all in tabs. Essential tool.', type: 'free' }
+        ]
+      },
+      {
+        category: '🎥 Watch — Big Picture Understanding',
+        items: [
+          { icon: '▶️', title: 'DevOps explained — TechWorld with Nana', url: 'https://www.youtube.com/@TechWorldwithNana', desc: 'The best YouTube channel for DevOps learning. Start with "DevOps explained" videos. Free and excellent quality.', type: 'free' },
+          { icon: '▶️', title: 'What is CI/CD? — TechWorld with Nana', url: 'https://www.youtube.com/watch?v=scEDHsr3APg', desc: 'Clear explanation of Continuous Integration and Delivery before you start building pipelines.', type: 'free' }
+        ]
+      }
+    ],
+    project: {
+      title: 'Project 0: Your DevOps Workstation',
+      desc: 'Get your Windows machine configured as a proper DevOps workstation. Document every step in a README.md — this is your first technical documentation.',
+      steps: ['Install WSL2 with Ubuntu 22.04 — verify with: wsl --list --verbose', 'Install Git and configure: git config --global user.name and user.email', 'Install VSCode + the 6 extensions listed above', 'Install Python 3 in WSL: sudo apt install python3 python3-pip', 'Create a GitHub account and generate an SSH key', 'Add your SSH key to GitHub and verify: ssh -T git@github.com', 'Create a repo called devops-journey, clone it, write a README.md documenting your setup', 'Push your first commit — this is day 1 of your DevOps portfolio']
+    },
+    interview: ['What is DevOps and how does it differ from traditional IT?', 'What is the difference between SRE and DevOps?', 'Explain the DevOps lifecycle stages.', 'What is the difference between Continuous Delivery and Continuous Deployment?', 'What is "shift-left" in software development?', 'What is immutable infrastructure?', 'How do you stay up to date with DevOps tools and practices?']
+  },
+
+  {
+    id: 'phase-1',
+    num: 1,
+    title: 'Linux Fundamentals',
+    subtitle: 'The operating system all DevOps runs on',
+    duration: '4–5 weeks',
+    icon: '🐧',
+    color: '#F59E0B',
+    status: 'upcoming',
+    description: 'Linux is the foundation of everything. Servers run Linux. Docker containers run Linux. Kubernetes runs Linux. You MUST be fluent in the terminal before touching any other tool. This is the most important phase.',
+    why: 'Every tool you\'ll use — Docker, Kubernetes, Terraform, Ansible — assumes Linux fluency. A weak Linux foundation slows you down in every phase that follows.',
+    conceptGroups: [
+      {
+        title: 'File System & Navigation',
+        items: ['Linux directory hierarchy: /, /home, /etc, /var, /tmp, /usr, /bin, /proc', 'Navigation: pwd, cd, ls (with -la, -lh flags), tree', 'File operations: cp, mv, rm, mkdir, touch, ln (soft and hard links)', 'Finding files: find, locate, which, whereis', 'Viewing files: cat, less, more, head, tail, tail -f (live log watching)', 'File system info: df -h, du -sh, mount, lsblk']
+      },
+      {
+        title: 'File Permissions & Users',
+        items: ['Read/Write/Execute permissions: chmod numeric (755, 644) and symbolic (u+x)', 'chown and chgrp to change ownership', 'umask and default permissions', 'Users and groups: useradd, usermod, groupadd, /etc/passwd, /etc/shadow', 'sudo and the sudoers file (/etc/sudoers)', 'su - (switch user) and su vs sudo differences', 'SSH key authentication: ssh-keygen, authorized_keys, known_hosts']
+      },
+      {
+        title: 'Text Processing (Critical!)',
+        items: ['grep (search text): -i, -r, -n, -v, -E flags, regex basics', 'sed (stream editor): substitute text, in-place editing', 'awk (field processing): print columns, filter rows, basic programs', 'cut, sort, uniq, wc (word count)', 'pipes (|) and redirection (>, >>, <, 2>, &>)', 'xargs — pass output of one command as arguments to another', 'tee — split output to file and stdout']
+      },
+      {
+        title: 'Process Management',
+        items: ['ps aux, top, htop — viewing running processes', 'kill, killall, pkill — stopping processes', 'Background jobs: &, fg, bg, jobs, nohup', 'systemctl — start, stop, restart, enable, status services', 'journalctl — reading systemd logs', 'Process signals: SIGTERM, SIGKILL, SIGHUP (1, 9, 15)', '/proc filesystem — understanding process info']
+      },
+      {
+        title: 'Package Management',
+        items: ['apt (Debian/Ubuntu): apt update, apt install, apt remove, apt upgrade', 'Understanding /etc/apt/sources.list', 'dpkg for local .deb packages', 'snap packages basics', 'Building from source: ./configure, make, make install']
+      },
+      {
+        title: 'Networking Commands',
+        items: ['curl and wget — HTTP requests from terminal', 'ping, traceroute, mtr — network diagnostics', 'netstat -tlnp and ss -tlnp — open ports', 'nslookup and dig — DNS lookups', 'ip addr, ip route — network interface info', 'scp and rsync — file transfer over SSH', 'nc (netcat) — the networking Swiss army knife']
+      },
+      {
+        title: 'Scheduling & Automation',
+        items: ['cron and crontab -e — scheduling recurring tasks', 'cron syntax: minute hour day month weekday', 'at command — one-time scheduling', 'Environment variables: $PATH, export, .bashrc vs .bash_profile vs .profile', 'alias — creating command shortcuts', 'Shell config: ~/.bashrc customization']
+      },
+      {
+        title: 'Logs & Monitoring',
+        items: ['/var/log directory — where system logs live', 'journalctl -f — live system log streaming', 'logrotate — managing log file sizes', 'dmesg — kernel ring buffer messages', 'watch command — repeat commands every N seconds']
+      }
+    ],
+    resources: [
+      {
+        category: '📖 Free Books & Reading',
+        items: [
+          { icon: '📗', title: 'The Linux Command Line — William Shotts (Free PDF)', url: 'https://linuxcommand.org/tlcl.php', desc: 'The best free book on Linux command line. 550+ pages. Chapters 1–17 are essential for DevOps.', type: 'free' },
+          { icon: '📘', title: 'Linux Journey — Interactive Guide', url: 'https://linuxjourney.com', desc: 'Structured, interactive Linux learning path. Start with Grasshopper → Journeyman tracks.', type: 'free' },
+          { icon: '🔧', title: 'ExplainShell — Understand Any Command', url: 'https://explainshell.com', desc: 'Paste any shell command and get a visual breakdown of what every part does. Use constantly.', type: 'free' }
+        ]
+      },
+      {
+        category: '🎥 Video Courses',
+        items: [
+          { icon: '▶️', title: 'Linux for DevOps — TechWorld with Nana', url: 'https://www.youtube.com/watch?v=ip7lEBB5bBE', desc: 'Nana\'s Linux fundamentals video specifically for DevOps engineers. Covers everything you need.', type: 'free' },
+          { icon: '▶️', title: 'Linux Command Line Full Course — freeCodeCamp', url: 'https://www.youtube.com/watch?v=ZtqBQ68cfJc', desc: 'Comprehensive 5-hour course from freeCodeCamp covering all Linux command line essentials.', type: 'free' },
+          { icon: '▶️', title: 'Linux Crash Course — NetworkChuck', url: 'https://www.youtube.com/@NetworkChuck', desc: 'Entertaining and practical Linux tutorials. Great for beginners who want energy in their learning.', type: 'free' }
+        ]
+      },
+      {
+        category: '🎮 Hands-On Practice (Do These!)',
+        items: [
+          { icon: '🎮', title: 'OverTheWire: Bandit — Gamified Linux Learning', url: 'https://overthewire.org/wargames/bandit/', desc: 'Learn Linux by hacking through a game. Level 0–20 covers all essential commands. THIS IS THE BEST PRACTICE.', type: 'practice' },
+          { icon: '⚔️', title: 'KillerCoda — Linux Scenarios', url: 'https://killercoda.com/learn', desc: 'Browser-based Linux terminals with guided scenarios. No setup needed. Practice in your browser.', type: 'practice' },
+          { icon: '🧪', title: 'Linux Foundation Free Courses', url: 'https://training.linuxfoundation.org/resources/free-courses/', desc: 'Official Linux Foundation training. LFS101x (Introduction to Linux) is free on edX.', type: 'free' }
+        ]
+      },
+      {
+        category: '📋 Quick References',
+        items: [
+          { icon: '📋', title: 'Linux Command Cheat Sheet — FOSS', url: 'https://fossbytes.com/linux-commands-cheat-sheet/', desc: 'Quick reference for all essential Linux commands. Print it or keep it open as you practice.', type: 'free' },
+          { icon: '📋', title: 'chmod Calculator', url: 'https://chmod-calculator.com', desc: 'Visual tool to understand numeric permission values (755, 644, etc.).', type: 'free' }
+        ]
+      }
+    ],
+    project: {
+      title: 'Project 1: Linux System Administration Script',
+      desc: 'Write a bash script that acts as a simple system health reporter. This combines file system, process, networking, and log knowledge.',
+      steps: ['Create a script: system_health.sh', 'Report: disk usage (df -h), memory (free -h), CPU load (uptime)', 'List top 5 processes by CPU usage (ps aux --sort=-%cpu)', 'Check if critical services are running (ssh, cron)', 'Show last 20 lines of /var/log/syslog', 'Check which ports are listening (ss -tlnp)', 'Write output to a dated log file: health_$(date +%Y%m%d).log', 'Schedule it to run daily at 8am using crontab', 'Add error handling with if/else for each check', 'Push the script to your GitHub devops-journey repo']
+    },
+    interview: ['What is the difference between a process and a daemon?', 'Explain Linux file permissions. What does chmod 755 mean?', 'What does the | (pipe) operator do in Linux?', 'How do you find a file in Linux whose name you don\'t fully remember?', 'What is the difference between kill -9 and kill -15?', 'How do you check what is listening on port 8080?', 'What is the difference between soft links and hard links?', 'How do you check disk space in Linux?', 'What is /etc/fstab used for?', 'How do you schedule a recurring job in Linux?']
+  },
+
+  {
+    id: 'phase-2',
+    num: 2,
+    title: 'Networking Fundamentals',
+    subtitle: 'How computers talk to each other',
+    duration: '2–3 weeks',
+    icon: '🌐',
+    color: '#3B82F6',
+    status: 'upcoming',
+    description: 'Networking is the plumbing of DevOps. Every tool you configure — load balancers, security groups, VPCs, service meshes — requires you to understand how data moves through networks. This phase makes cloud architecture click.',
+    why: 'Cloud architecture, Kubernetes networking, Docker networks, security groups, and VPCs are all networking concepts. Without this foundation, you\'ll configure things by guesswork.',
+    conceptGroups: [
+      {
+        title: 'Network Models',
+        items: ['OSI model — all 7 layers and what each one does', 'TCP/IP model — 4 layers and how it maps to OSI', 'How data encapsulation works (packet, frame, segment)', 'Protocols at each OSI layer: Ethernet (L2), IP (L3), TCP/UDP (L4), HTTP (L7)']
+      },
+      {
+        title: 'IP Addressing',
+        items: ['IPv4 address structure: 4 octets, decimal notation', 'Public vs private IP ranges (10.x, 172.16-31.x, 192.168.x)', 'Subnetting and CIDR notation (/24, /16, /8 — what they mean)', 'Calculate: network address, broadcast address, usable hosts from CIDR', 'IPv6 basics — why it exists, format, difference from IPv4', 'NAT (Network Address Translation) — how private IPs reach the internet', 'DHCP — how devices get IP addresses automatically']
+      },
+      {
+        title: 'DNS — Deep Understanding',
+        items: ['How DNS resolution works — full journey of a domain lookup', 'Record types: A (IPv4), AAAA (IPv6), CNAME, MX, TXT, NS, PTR', 'TTL (Time to Live) — what it means and why it matters', 'DNS hierarchy: root servers → TLD → authoritative nameservers', 'Split-horizon DNS in cloud environments', 'dig and nslookup commands for DNS troubleshooting', 'How /etc/hosts overrides DNS']
+      },
+      {
+        title: 'HTTP/HTTPS',
+        items: ['HTTP methods: GET, POST, PUT, DELETE, PATCH, HEAD, OPTIONS', 'HTTP status codes: 1xx, 2xx, 3xx, 4xx, 5xx — memorize the key ones', 'HTTP headers: Content-Type, Authorization, Cache-Control, Accept', 'How HTTPS/TLS works: handshake, certificates, CA chain', 'REST API concepts (stateless, resources, verbs)', 'HTTP/2 vs HTTP/1.1 differences', 'Cookies, sessions, and tokens (JWT basics)']
+      },
+      {
+        title: 'Firewalls & Security',
+        items: ['Stateful vs stateless firewalls', 'iptables basics — chains: INPUT, OUTPUT, FORWARD', 'UFW (Uncomplicated Firewall) — practical Ubuntu firewall management', 'Security groups in cloud (AWS) — inbound/outbound rules', 'NACLs (Network Access Control Lists) vs Security Groups', 'Ports — well-known: 22 SSH, 80 HTTP, 443 HTTPS, 3306 MySQL, 5432 Postgres']
+      },
+      {
+        title: 'Load Balancers & Proxies',
+        items: ['What a load balancer does and why', 'Layer 4 vs Layer 7 load balancing', 'Load balancing algorithms: Round Robin, Least Connections, IP Hash', 'Reverse proxy vs forward proxy', 'Nginx as a reverse proxy — basic configuration', 'Health checks in load balancers', 'SSL termination at the load balancer']
+      },
+      {
+        title: 'VPN & Tunneling',
+        items: ['What a VPN does and how it creates encrypted tunnels', 'OpenVPN basics', 'WireGuard basics', 'SSH tunneling (port forwarding): -L, -R, -D flags', 'Bastion hosts / jump boxes in cloud environments']
+      }
+    ],
+    resources: [
+      {
+        category: '🎥 Best Free Video Resources',
+        items: [
+          { icon: '▶️', title: 'Free CCNA Course — NetworkChuck (YouTube)', url: 'https://www.youtube.com/playlist?list=PLIhvC56v63IJVXv0GJcl9vO5Z6znCVb1P', desc: 'One of the best free networking courses. Not just for CCNA — covers everything you need for DevOps networking.', type: 'free' },
+          { icon: '▶️', title: 'CompTIA Network+ — Professor Messer', url: 'https://www.professormesser.com/network-plus/n10-009/n10-009-video/n10-009-training-course/', desc: 'Comprehensive, well-organized video course. Watch the sections on TCP/IP, DNS, HTTP, security.', type: 'free' },
+          { icon: '▶️', title: 'Networking for DevOps — TechWorld with Nana', url: 'https://www.youtube.com/@TechWorldwithNana', desc: 'DevOps-focused networking explanation. Covers what matters most for working with cloud and containers.', type: 'free' }
+        ]
+      },
+      {
+        category: '📖 Reading & References',
+        items: [
+          { icon: '☁️', title: 'Cloudflare Learning Center — Networking', url: 'https://www.cloudflare.com/learning/', desc: 'Excellent free articles on DNS, HTTP, TLS, DDoS, CDN. Written for practitioners, not academics.', type: 'free' },
+          { icon: '🌐', title: 'HTTP Guide — MDN Web Docs', url: 'https://developer.mozilla.org/en-US/docs/Web/HTTP/Overview', desc: 'The definitive reference for HTTP/HTTPS. Covers methods, headers, status codes, cookies.', type: 'doc' },
+          { icon: '🎓', title: 'Cisco Networking Academy — Free Courses', url: 'https://www.netacad.com/courses/networking', desc: 'Cisco\'s own free networking courses. Introduction to Networks is available free.', type: 'free' }
+        ]
+      },
+      {
+        category: '🎮 Practice Tools',
+        items: [
+          { icon: '🔢', title: 'Subnetting Practice Tool', url: 'https://subnettingpractice.com', desc: 'Practice IP subnetting until it\'s second nature. Do 10 problems per day for 1 week.', type: 'practice' },
+          { icon: '🔍', title: 'DNSChecker — DNS Propagation Tool', url: 'https://dnschecker.org', desc: 'Visual tool to see DNS records globally. Use this while learning DNS concepts.', type: 'practice' },
+          { icon: '🛠️', title: 'Wireshark — Packet Analysis', url: 'https://www.wireshark.org', desc: 'Install Wireshark and capture real HTTP traffic. Seeing packets is the best way to understand networking.', type: 'free' }
+        ]
+      }
+    ],
+    project: {
+      title: 'Project 2: Network Diagnostics Toolkit',
+      desc: 'Write a bash script that performs comprehensive network diagnostics. This reinforces both Linux and networking skills.',
+      steps: ['Write network_check.sh script', 'Check internet connectivity (ping 8.8.8.8)', 'DNS resolution test (dig google.com)', 'Show local IP and gateway (ip addr, ip route)', 'List all listening ports (ss -tlnp)', 'Check HTTP status of 5 URLs using curl -o /dev/null -s -w "%{http_code}"', 'Traceroute to 3 destinations', 'Report your public IP using curl ifconfig.me', 'Run nmap on localhost (if installed) to scan for open ports', 'Write a Markdown report of findings and push to GitHub']
+    },
+    interview: ['What is the OSI model? Describe each layer.', 'What is subnetting? What does /24 mean?', 'Explain how DNS resolution works step by step.', 'What is the difference between TCP and UDP?', 'What HTTP status codes do you know and what do they mean?', 'What is NAT and why is it used?', 'What is the difference between a reverse proxy and a load balancer?', 'How does HTTPS/TLS work?', 'What is the difference between a security group and a firewall?', 'What port does SSH run on and how do you change it?']
+  },
+
+  {
+    id: 'phase-3',
+    num: 3,
+    title: 'Git & GitHub — Version Control',
+    subtitle: 'The backbone of every DevOps workflow',
+    duration: '2 weeks',
+    icon: '🔀',
+    color: '#F97316',
+    status: 'partial',
+    description: 'You already have Git basics from your CI pipeline work. Now go deeper — branching strategies, team workflows, GitHub features that power DevOps pipelines. Every tool you use integrates with Git.',
+    why: 'Git is not just version control — it\'s the trigger for everything in DevOps. A push to a branch triggers CI, deploys to staging, and gates production releases.',
+    conceptGroups: [
+      {
+        title: 'Core Git (Solidify)',
+        items: ['git init, clone, add, commit, push, pull, fetch', 'Understanding the three areas: Working Directory, Staging Area, Repository', 'git status, git log (--oneline --graph --decorate), git diff', 'git stash (stash apply, stash pop, stash list)', '.gitignore patterns — what to ignore and why']
+      },
+      {
+        title: 'Branching & Merging',
+        items: ['git branch, checkout, switch — creating and switching branches', 'git merge — fast-forward vs 3-way merge', 'git rebase — linear history, when to use vs merge', 'Merge conflict resolution — the skill that matters in team work', 'git cherry-pick — applying specific commits to another branch', 'git tag — annotated tags for releases', 'Trunk-based development vs Git Flow — know both, know when to use each']
+      },
+      {
+        title: 'Advanced Git',
+        items: ['git bisect — find the commit that introduced a bug (binary search)', 'git blame — who wrote which line', 'git reflog — recover "lost" commits', 'git reset (--soft, --mixed, --hard) — the most dangerous and most useful command', 'git revert — safe undo for shared branches', 'Interactive rebase: squash, reword, drop commits before pushing', 'Submodules — embedding repos inside repos']
+      },
+      {
+        title: 'GitHub Features',
+        items: ['Pull Requests — anatomy: title, description, reviewers, labels, milestones', 'Branch protection rules — require reviews, status checks before merge', 'GitHub Issues and Projects — basic project management', 'GitHub Actions (overview — deep dive in Phase 5)', 'GitHub Packages — hosting Docker images, npm packages', 'GitHub Secrets — storing sensitive values for Actions', 'Code owners — CODEOWNERS file', 'GitHub Pages — hosting static sites', 'Webhooks — triggering external systems on git events']
+      },
+      {
+        title: 'Commit Best Practices',
+        items: ['Conventional Commits spec: feat:, fix:, docs:, refactor:, test:', 'Atomic commits — one logical change per commit', 'Good commit message structure: imperative mood, <50 chars subject', 'Signed commits with GPG keys', 'CHANGELOG.md and semantic versioning (MAJOR.MINOR.PATCH)']
+      }
+    ],
+    resources: [
+      {
+        category: '📖 Primary Learning Resources',
+        items: [
+          { icon: '📗', title: 'Pro Git Book — Free Online (Official)', url: 'https://git-scm.com/book/en/v2', desc: 'THE definitive Git book. Free online. Chapters 1–3, 6–7 are essential for DevOps engineers.', type: 'free' },
+          { icon: '🔀', title: 'Learn Git Branching — Interactive Visualizer', url: 'https://learngitbranching.js.org', desc: 'Visual, interactive exercises for branching, merging, rebasing. This is the BEST way to learn branching.', type: 'practice' },
+          { icon: '📘', title: 'Atlassian Git Tutorials', url: 'https://www.atlassian.com/git/tutorials', desc: 'Excellent written tutorials on all Git workflows. Especially good on branching strategies and rebasing.', type: 'free' }
+        ]
+      },
+      {
+        category: '🎮 GitHub Learning',
+        items: [
+          { icon: '🎓', title: 'GitHub Skills — Official Interactive Courses', url: 'https://skills.github.com', desc: 'GitHub\'s own hands-on courses: Introduction to GitHub, GitHub Actions, Release Management. Free.', type: 'practice' },
+          { icon: '📋', title: 'Git Cheat Sheet — GitHub Education', url: 'https://education.github.com/git-cheat-sheet-education.pdf', desc: 'Print-ready PDF of all essential Git commands. Keep it on your desk.', type: 'free' },
+          { icon: '🎥', title: 'Git Tutorial — freeCodeCamp', url: 'https://www.youtube.com/watch?v=RGOj5yH7evk', desc: 'Practical Git and GitHub course from freeCodeCamp. Great for solidifying basics.', type: 'free' }
+        ]
+      },
+      {
+        category: '🛠️ Tools & References',
+        items: [
+          { icon: '🌳', title: 'Gitflow Workflow Guide', url: 'https://www.atlassian.com/git/tutorials/comparing-workflows/gitflow-workflow', desc: 'Deep explanation of the Gitflow branching model — still used in many enterprise environments.', type: 'free' },
+          { icon: '📐', title: 'Conventional Commits Spec', url: 'https://www.conventionalcommits.org', desc: 'The specification for structured commit messages. Many CI pipelines enforce this format.', type: 'doc' },
+          { icon: '🔍', title: 'Oh Shit, Git!? — Common Mistakes & Fixes', url: 'https://ohshitgit.com', desc: 'How to fix common Git disasters without panicking. Every developer needs this.', type: 'free' }
+        ]
+      }
+    ],
+    project: {
+      title: 'Project 3: Team Collaboration Simulation',
+      desc: 'Simulate a real team Git workflow on your own to practice branching, PRs, and conflict resolution.',
+      steps: ['Create a repo: git-workflow-practice', 'Set up branch protection on main: require PR before merging', 'Create a feature branch: feature/add-calculator', 'Build a simple Python calculator with 4 operations', 'Create a second branch: feature/add-tests, intentionally overlapping changes', 'Merge feature/add-calculator to main via a Pull Request', 'Attempt to merge feature/add-tests — experience a merge conflict', 'Resolve the conflict and complete the merge', 'Tag the result as v1.0.0 using an annotated tag', 'Write a CHANGELOG.md using Conventional Commits format', 'Push everything to GitHub and document the workflow in README']
+    },
+    interview: ['What is the difference between git merge and git rebase?', 'How do you resolve a merge conflict?', 'What is git stash and when would you use it?', 'Explain the difference between git reset and git revert.', 'What is a Pull Request and what should a good PR description include?', 'What branching strategy would you recommend for a team of 5 developers?', 'What does git reflog do?', 'How do you undo the last commit without losing your changes?', 'What are Conventional Commits and why do they matter?', 'How do you squash multiple commits into one?']
+  },
+
+  {
+    id: 'phase-4',
+    num: 4,
+    title: 'Bash & Python Scripting',
+    subtitle: 'Automate everything — this is the DevOps superpower',
+    duration: '4 weeks',
+    icon: '⌨️',
+    color: '#10B981',
+    status: 'partial',
+    description: 'Automation is the core of DevOps. If you do something manually twice, write a script for it. Bash handles system tasks and glue between tools. Python handles complex logic, APIs, and CLIs.',
+    why: 'Every tool you\'ll use has a CLI. Bash connects them. Python extends them. The ability to script is what separates a DevOps engineer from someone who just follows runbooks.',
+    conceptGroups: [
+      {
+        title: 'Bash Fundamentals',
+        items: ['Shebang (#!/bin/bash) and script execution permissions', 'Variables: assignment, quoting ($var, "${var}", single vs double quotes)', 'Special variables: $0, $1..$9, $#, $@, $?, $$', 'Command substitution: $(command) vs `command`', 'Arithmetic: $(( )), let, expr', 'Arrays: declaration, access, iteration, length', 'String operations: length, substring, replace, split']
+      },
+      {
+        title: 'Bash Control Flow',
+        items: ['if/elif/else — file tests (-f, -d, -z, -n), string, numeric comparisons', 'for loops — list iteration, C-style, brace expansion', 'while loops — reading files line by line', 'until loops — opposite of while', 'case statements — cleaner alternative to if-elif chains', 'break, continue — loop control', 'Functions — definition, arguments, return values, local scope']
+      },
+      {
+        title: 'Bash Best Practices (Critical)',
+        items: ['set -euo pipefail — always start scripts with this', 'set -x — debug mode (trace execution)', 'Error handling with if/then and trap', 'Input validation — never trust user input', 'Logging with timestamps: echo "[$(date)] message"', 'Locking scripts: flock to prevent parallel execution', 'Heredocs (<<EOF) for multi-line strings', 'ShellCheck — always lint your scripts']
+      },
+      {
+        title: 'Python for DevOps — Core Concepts',
+        items: ['Data types: strings, numbers, lists, dicts, tuples, sets', 'Control flow: if/elif, for, while, list comprehensions', 'Functions: def, *args, **kwargs, return, lambda', 'Modules and packages: import, from ... import, pip, virtual environments', 'File I/O: open(), read, write, with statement (context managers)', 'Exception handling: try/except/finally, custom exceptions', 'JSON handling: json.load(), json.dumps(), json.loads()']
+      },
+      {
+        title: 'Python for DevOps — Practical Modules',
+        items: ['os and os.path — file system operations', 'subprocess — running system commands from Python', 'sys — command line args, exit codes', 'pathlib — modern file path handling', 'argparse — building proper CLI tools with flags and help', 'requests — making HTTP API calls', 'boto3 — AWS SDK for Python (Phase 7)', 'logging module — structured logging vs print()', 'dotenv — loading .env files for config', 'yaml — reading YAML config files (pip install pyyaml)']
+      },
+      {
+        title: 'Python DevOps Patterns',
+        items: ['Config-driven scripts using YAML/JSON config files', 'Building CLIs with argparse (help, flags, subcommands)', 'Making API calls with error handling and retries', 'Writing idempotent scripts — safe to run multiple times', 'Packaging Python tools with setup.py / pyproject.toml', 'Writing unit tests with pytest', 'Virtual environments: python3 -m venv, activation, requirements.txt']
+      }
+    ],
+    resources: [
+      {
+        category: '🐚 Bash Resources',
+        items: [
+          { icon: '📗', title: 'Bash Guide — Bash Hackers Wiki', url: 'https://bash.cyberciti.biz/guide/Main_Page', desc: 'Comprehensive, practical bash scripting guide. Covers everything from basics to advanced patterns.', type: 'free' },
+          { icon: '📘', title: 'Advanced Bash-Scripting Guide — TLDP', url: 'https://tldp.org/LDP/abs/html/', desc: 'The most comprehensive bash reference. Use as a reference when you hit specific topics.', type: 'free' },
+          { icon: '🔍', title: 'ShellCheck — Bash Linter', url: 'https://www.shellcheck.net', desc: 'Paste your bash scripts here and get instant feedback on bugs and bad practices. USE THIS ALWAYS.', type: 'practice' },
+          { icon: '🧠', title: 'Bash Pitfalls — Greg\'s Wiki', url: 'https://mywiki.wooledge.org/BashPitfalls', desc: 'Common bash mistakes and how to fix them. Read this after writing your first 3 scripts.', type: 'free' }
+        ]
+      },
+      {
+        category: '🐍 Python Resources',
+        items: [
+          { icon: '📗', title: 'CS50P — Harvard Python for Programmers (Free)', url: 'https://cs50.harvard.edu/python/2022/', desc: 'Harvard\'s Python course. One of the best structured Python courses online. 100% free with certificate.', type: 'free' },
+          { icon: '📘', title: 'Automate the Boring Stuff with Python (Free)', url: 'https://automatetheboringstuff.com', desc: 'THE book for using Python for real-world automation tasks. Directly applicable to DevOps work.', type: 'free' },
+          { icon: '🌐', title: 'Real Python Tutorials', url: 'https://realpython.com', desc: 'High-quality, in-depth Python tutorials. Focus on: subprocess, argparse, pathlib, testing sections.', type: 'free' },
+          { icon: '📙', title: 'Python Official Tutorial', url: 'https://docs.python.org/3/tutorial/', desc: 'The official Python tutorial. Dry but authoritative. Use alongside a practical course.', type: 'doc' }
+        ]
+      },
+      {
+        category: '🎥 Video Courses',
+        items: [
+          { icon: '▶️', title: 'Bash Scripting Tutorial — freeCodeCamp', url: 'https://www.youtube.com/watch?v=e7BufAVwDiM', desc: 'Comprehensive bash scripting course. Follow along in your terminal, don\'t just watch.', type: 'free' },
+          { icon: '▶️', title: 'Python for DevOps — TechWorld with Nana', url: 'https://www.youtube.com/watch?v=t8pPdKYpowI', desc: 'Python specifically through a DevOps lens — focuses on automation and tooling, not web development.', type: 'free' }
+        ]
+      }
+    ],
+    project: {
+      title: 'Project 4: DevOps Automation Toolkit',
+      desc: 'Build two practical tools — a bash deployment helper and a Python reporting CLI — that you\'d actually use on a job.',
+      steps: ['Bash: Write deploy.sh that takes environment (dev/staging/prod) as argument', 'deploy.sh: validate the argument, reject unknown environments', 'deploy.sh: check all required tools are installed before running', 'deploy.sh: pull latest code, run tests, show summary with exit code', 'deploy.sh: write deployment log with timestamp and outcome', 'Python: Write health_reporter.py using argparse with --format (text/json) flag', 'health_reporter.py: check disk, memory, CPU (using os module)', 'health_reporter.py: make an HTTP call to a public API (e.g. httpbin.org)', 'health_reporter.py: output as either human text or JSON based on flag', 'Add pytest tests for the Python tool. Push both to GitHub.']
+    },
+    interview: ['What is set -euo pipefail and why do you use it?', 'How do you pass arguments to a bash script?', 'How do you read a file line by line in bash?', 'What is the difference between $@ and $* in bash?', 'How do you run a system command from Python?', 'What is a virtual environment and why do you need one?', 'How do you handle exceptions in Python?', 'What is argparse and how do you use it?', 'How do you make an HTTP request in Python?', 'How do you write an idempotent script?']
+  },
+
+  {
+    id: 'phase-5',
+    num: 5,
+    title: 'CI/CD — GitHub Actions',
+    subtitle: 'Automate the software delivery pipeline',
+    duration: '4 weeks',
+    icon: '⚙️',
+    color: '#06B6D4',
+    status: 'partial',
+    description: 'You\'ve already built a basic pipeline. Now master it completely — multi-job workflows, matrix builds, reusable workflows, and deploying to real targets. CI/CD mastery is the core of a junior DevOps role.',
+    why: 'Employers expect junior DevOps engineers to be able to set up and maintain CI/CD pipelines independently. This is the first thing you\'ll be asked to demo.',
+    conceptGroups: [
+      {
+        title: 'YAML & Workflow Structure',
+        items: ['YAML syntax: indentation, strings, lists, dicts, multi-line values', 'Workflow file location: .github/workflows/*.yml', 'Workflow triggers (on:): push, pull_request, schedule, workflow_dispatch, release', 'Filter triggers by branch, tag, path', 'Environment variables: env: at workflow/job/step level', 'Expressions and contexts: ${{ github.event }}, ${{ env.VAR }}, ${{ secrets.KEY }}']
+      },
+      {
+        title: 'Jobs & Steps',
+        items: ['Defining jobs: jobs.build.runs-on', 'GitHub-hosted runners: ubuntu-latest, windows-latest, macos-latest', 'Self-hosted runners — setup and when to use', 'Steps: uses (Actions), run (shell commands)', 'Job dependencies: needs — run jobs sequentially', 'Passing data between jobs: outputs and inputs', 'Conditional steps: if: github.ref == \'refs/heads/main\'', 'Continuing on error: continue-on-error: true']
+      },
+      {
+        title: 'Actions & Marketplace',
+        items: ['actions/checkout — always the first step in any job', 'actions/setup-python, actions/setup-node, actions/setup-java', 'actions/upload-artifact and actions/download-artifact', 'actions/cache — cache pip, npm, maven dependencies for speed', 'docker/build-push-action — build and push Docker images', 'AWS configure and deploy actions', 'Pinning action versions with SHA (security best practice)', 'Creating custom Actions: composite vs JavaScript vs Docker actions']
+      },
+      {
+        title: 'Advanced Pipeline Patterns',
+        items: ['Matrix builds: test across multiple Python/Node versions simultaneously', 'Parallel jobs — run tests in parallel, merge results', 'Reusable workflows: workflow_call — share pipeline logic across repos', 'Environments: dev, staging, prod with protection rules and required reviewers', 'Deployment environments and manual approval gates', 'Secrets management: encrypted secrets, environment secrets, OIDC (no long-lived keys)', 'Status badges in README', 'Slack/email notifications on failure']
+      },
+      {
+        category: 'Real-World CI Pipeline Components',
+        items: ['Linting step (flake8, eslint)', 'Unit test step with coverage report', 'Security scanning step (bandit, npm audit)', 'Build Docker image step', 'Push to registry step', 'Deploy to environment step', 'Integration/smoke test step', 'Notification step']
+      }
+    ],
+    resources: [
+      {
+        category: '📖 Official Documentation (Primary Source)',
+        items: [
+          { icon: '📗', title: 'GitHub Actions Official Docs', url: 'https://docs.github.com/en/actions', desc: 'The authoritative source. Read: Quickstart, Core Concepts, Using workflows, Using secrets. Spend 3 days here.', type: 'doc' },
+          { icon: '📘', title: 'GitHub Actions Marketplace', url: 'https://github.com/marketplace?type=actions', desc: 'Browse 15,000+ community Actions. Search before you build — what you need likely already exists.', type: 'free' },
+          { icon: '🔧', title: 'Workflow Syntax Reference', url: 'https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions', desc: 'Every available YAML key with examples. Bookmark and return constantly.', type: 'doc' }
+        ]
+      },
+      {
+        category: '🎥 Video Courses',
+        items: [
+          { icon: '▶️', title: 'GitHub Actions — TechWorld with Nana', url: 'https://www.youtube.com/watch?v=R8_veQiYBjI', desc: 'Best practical GitHub Actions course. Builds a real pipeline from scratch. Follow along.', type: 'free' },
+          { icon: '▶️', title: 'GitHub Actions Full Course — freeCodeCamp', url: 'https://www.youtube.com/watch?v=TLB5MY9BBa4', desc: 'Comprehensive 4-hour course covering all major features including matrix and reusable workflows.', type: 'free' },
+          { icon: '▶️', title: 'GitHub Skills — GitHub Actions', url: 'https://skills.github.com', desc: 'GitHub\'s official hands-on course. Complete "Hello GitHub Actions" and "Continuous Integration" courses.', type: 'practice' }
+        ]
+      },
+      {
+        category: '🛠️ Tools & References',
+        items: [
+          { icon: '⚡', title: 'act — Run GitHub Actions Locally', url: 'https://github.com/nektos/act', desc: 'Test your Actions locally before pushing. Saves time when debugging pipelines.', type: 'free' },
+          { icon: '📚', title: 'Awesome GitHub Actions', url: 'https://github.com/sdras/awesome-actions', desc: 'Curated list of the best GitHub Actions for common tasks: Docker, Slack, AWS, testing.', type: 'free' },
+          { icon: '🔐', title: 'GitHub Actions Security Best Practices', url: 'https://docs.github.com/en/actions/security-guides/security-hardening-for-github-actions', desc: 'Essential reading: pin action versions, use OIDC, avoid script injection vulnerabilities.', type: 'doc' }
+        ]
+      }
+    ],
+    project: {
+      title: 'Project 5: Production-Grade CI/CD Pipeline',
+      desc: 'Build a pipeline that mirrors what a real company uses — test, build, scan, push, and deploy a Python app end-to-end. This is your primary portfolio piece.',
+      steps: ['Create a Python Flask app with 5+ routes and pytest tests', 'Pipeline job 1 — Lint: run flake8 on push to any branch', 'Pipeline job 2 — Test: run pytest with coverage, matrix across Python 3.10 and 3.11', 'Pipeline job 3 — Security: run bandit (Python security linter)', 'Pipeline job 4 — Build: build Docker image (requires Phase 6 — come back here)', 'Pipeline job 5 — Deploy: deploy to GitHub Pages (static) or EC2 (after Phase 7)', 'Add manual approval gate before prod deployment using Environments', 'Cache pip dependencies between runs — measure speed improvement', 'Add status badge to README: shows pipeline health', 'Notifications: send failure alert to Slack or email']
+    },
+    interview: ['What is the difference between a CI and CD pipeline?', 'How do you store and use secrets in GitHub Actions?', 'What is a matrix build and when would you use it?', 'How do you run two jobs in parallel in GitHub Actions?', 'How do you make a job run only on the main branch?', 'What is a self-hosted runner and when would you need one?', 'How do you pass output from one step to the next?', 'What is a reusable workflow?', 'How do you prevent a workflow from accidentally running in a fork?', 'What is OIDC in GitHub Actions and why is it better than access keys?']
+  },
+
+  {
+    id: 'phase-6',
+    num: 6,
+    title: 'Docker — Containerization',
+    subtitle: 'Package once, run anywhere',
+    duration: '4 weeks',
+    icon: '🐳',
+    color: '#0EA5E9',
+    status: 'upcoming',
+    description: 'Docker is the gateway to modern DevOps. Every cloud platform, every Kubernetes deployment, and every modern CI pipeline uses containers. This phase is non-negotiable — and it\'s actually fun.',
+    why: 'Without Docker, Kubernetes makes no sense, AWS ECS/EKS makes no sense, and you can\'t build the kind of pipelines employers expect. Docker is the single highest-value skill in this roadmap.',
+    conceptGroups: [
+      {
+        title: 'Container Fundamentals',
+        items: ['Containers vs Virtual Machines — what\'s different, what\'s shared', 'Linux namespaces and cgroups — how containers work under the hood', 'Docker architecture: Docker Daemon, Docker Client, Docker Registry', 'Docker Hub — the default image registry', 'Image vs Container — the class/instance analogy', 'Container lifecycle: create, start, stop, restart, remove', 'Docker Desktop vs Docker Engine on Linux']
+      },
+      {
+        title: 'Dockerfile Mastery',
+        items: ['FROM — base image selection (use official images, pin versions)', 'RUN — executing commands at build time', 'COPY vs ADD — when to use each', 'WORKDIR — setting the working directory', 'ENV — environment variables baked into the image', 'ARG — build-time variables (not available at runtime)', 'CMD vs ENTRYPOINT — the difference and when to use each', 'EXPOSE — documenting ports (does NOT publish ports)', 'LABEL — metadata for your images', 'USER — don\'t run as root inside containers', 'Image layer caching — order your instructions for fast rebuilds']
+      },
+      {
+        title: 'Multi-Stage Builds',
+        items: ['Why multi-stage: keep production images small and secure', 'Builder stage — compile/build your app with all dependencies', 'Production stage — copy only the artifact, no build tools', 'Distroless and Alpine base images', 'Inspecting image layers: docker history, docker inspect', 'Reducing attack surface — fewer packages = fewer vulnerabilities']
+      },
+      {
+        title: 'Docker Networking',
+        items: ['Bridge network — default for containers on same host', 'Host network — container shares host network stack', 'None network — complete isolation', 'User-defined bridge networks — containers discover each other by name', 'docker network create, connect, inspect', 'Port mapping: -p hostPort:containerPort', 'Container DNS — using service names in docker-compose']
+      },
+      {
+        title: 'Volumes & Data Persistence',
+        items: ['Why container data is ephemeral by default', 'Named volumes: docker volume create, persistent across container restarts', 'Bind mounts: mount host directory into container (dev workflow)', 'tmpfs mounts: in-memory, no disk write', 'Volume drivers for cloud storage (NFS, EFS, etc.)', 'When to use volumes vs bind mounts']
+      },
+      {
+        title: 'Docker Compose',
+        items: ['docker-compose.yml structure: version, services, networks, volumes', 'Service definition: image/build, ports, environment, depends_on, volumes', 'docker compose up -d, down, logs, ps, exec', 'Overriding with docker-compose.override.yml (dev vs prod)', 'Health checks in Compose', 'Scaling services: docker compose up --scale web=3', 'Environment files: .env with Compose']
+      },
+      {
+        title: 'Docker Security & Best Practices',
+        items: ['Run containers as non-root user', 'Read-only file systems where possible', 'Limit resource usage: --memory, --cpus', 'Image scanning: Trivy, Docker Scout', 'Never store secrets in Dockerfiles or environment variables — use secrets management', 'Keep images small: reduce attack surface and startup time', 'Distroless images for production']
+      }
+    ],
+    resources: [
+      {
+        category: '📖 Official & Primary Resources',
+        items: [
+          { icon: '🐳', title: 'Docker Official Documentation', url: 'https://docs.docker.com', desc: 'Start with Get Started (Part 1-4), then Dockerfile reference, then Compose file reference.', type: 'doc' },
+          { icon: '📗', title: 'Docker Curriculum — Preethi Kasireddy', url: 'https://docker-curriculum.com', desc: 'Hands-on Docker tutorial that goes from basics to deploying a real app. Great structured learning path.', type: 'free' },
+          { icon: '📘', title: 'Dockerfile Best Practices — Docker Docs', url: 'https://docs.docker.com/develop/develop-images/dockerfile_best-practices/', desc: 'Official best practices guide. Every Dockerfile you write should follow these guidelines.', type: 'doc' }
+        ]
+      },
+      {
+        category: '🎥 Video Courses',
+        items: [
+          { icon: '▶️', title: 'Docker Tutorial — TechWorld with Nana', url: 'https://www.youtube.com/watch?v=3c-iBn73dDE', desc: 'The best Docker course for DevOps engineers. 3 hours, covers everything from basics to compose.', type: 'free' },
+          { icon: '▶️', title: 'Docker Course — freeCodeCamp', url: 'https://www.youtube.com/watch?v=fqMOX6JJhGo', desc: 'Comprehensive Docker course including networking, volumes, Dockerfile, and compose.', type: 'free' },
+          { icon: '▶️', title: 'Docker in 100 Seconds — Fireship', url: 'https://www.youtube.com/watch?v=Gjnup-PuquQ', desc: 'Quick conceptual overview to start with. Watch first to get the mental model.', type: 'free' }
+        ]
+      },
+      {
+        category: '🎮 Hands-On Practice',
+        items: [
+          { icon: '🎮', title: 'Play with Docker — Browser-Based Labs', url: 'https://labs.play-with-docker.com', desc: 'Free 4-hour Docker lab sessions in your browser. No installation needed. Real Docker environment.', type: 'practice' },
+          { icon: '⚔️', title: 'KillerCoda — Docker Scenarios', url: 'https://killercoda.com/learn', desc: 'Guided Docker scenarios directly in your browser. Covers Dockerfile, Compose, networking, volumes.', type: 'practice' },
+          { icon: '🔍', title: 'Trivy — Container Image Scanner', url: 'https://trivy.dev', desc: 'Open-source security scanner for Docker images. Learn to scan your own images as part of your workflow.', type: 'free' }
+        ]
+      }
+    ],
+    project: {
+      title: 'Project 6: Multi-Container Application with Docker Compose',
+      desc: 'Containerize your Flask app with a proper Dockerfile, add a Postgres database, Redis cache, and connect it all with Docker Compose. Then add Docker build/push to your CI pipeline.',
+      steps: ['Write an optimized Dockerfile for your Flask app: non-root user, multi-stage, Alpine base', 'Verify with: docker build -t my-app:v1.0 .', 'Run locally: docker run -p 5000:5000 my-app:v1.0', 'Write docker-compose.yml with: web (Flask), db (Postgres), cache (Redis)', 'Add named volumes for Postgres data persistence', 'Add health checks for the database service', 'Use .env file for database passwords (don\'t hardcode)', 'Test: docker compose up -d, verify all 3 services are healthy', 'Scan your image: trivy image my-app:v1.0', 'Push to Docker Hub: docker push yourname/my-app:v1.0', 'Update your GitHub Actions pipeline to build and push the Docker image on merge to main']
+    },
+    interview: ['What is the difference between a container and a virtual machine?', 'Explain the difference between CMD and ENTRYPOINT in a Dockerfile.', 'What is a Docker layer and how does caching work?', 'How do you persist data in Docker?', 'What is Docker Compose and when would you use it?', 'How do containers communicate with each other?', 'What is a multi-stage Dockerfile build and why would you use it?', 'How do you reduce the size of a Docker image?', 'What security best practices do you follow when writing Dockerfiles?', 'What is the difference between a bind mount and a named volume?']
+  },
+
+  {
+    id: 'phase-7',
+    num: 7,
+    title: 'AWS Cloud Fundamentals',
+    subtitle: 'The platform everything runs on',
+    duration: '8 weeks',
+    icon: '☁️',
+    color: '#F59E0B',
+    status: 'upcoming',
+    description: 'AWS is the world\'s leading cloud platform. Every DevOps job uses AWS or another cloud. Understanding AWS deeply — not just knowing service names but actually using them — is what employers look for.',
+    why: 'Most infrastructure runs on cloud. Without hands-on AWS experience, your DevOps skills have no home to deploy to. AWS also teaches architecture thinking that applies to Azure and GCP.',
+    conceptGroups: [
+      {
+        title: 'AWS Foundations',
+        items: ['AWS Global Infrastructure: Regions, Availability Zones, Edge Locations', 'AWS Console, CLI, and SDK — using all three', 'AWS Free Tier — what\'s free, what costs money, how to avoid surprise bills', 'AWS Pricing model basics and the Pricing Calculator', 'AWS Support plans and documentation navigation', 'AWS Well-Architected Framework: 6 pillars']
+      },
+      {
+        title: 'IAM — Identity & Access Management (Learn First!)',
+        items: ['Root account vs IAM users — never use root for daily work', 'IAM Users, Groups, Roles, and Policies', 'Policy types: AWS Managed, Customer Managed, Inline', 'Principle of Least Privilege — only grant what is needed', 'IAM Roles for EC2 (instance profiles) — no hardcoded credentials', 'IAM Roles for services: Lambda, ECS, CodeBuild', 'MFA (Multi-Factor Authentication) — enable on root and all IAM users', 'Service Control Policies (SCPs) in AWS Organizations', 'AWS CLI configuration: aws configure, profiles, environment variables']
+      },
+      {
+        title: 'EC2 — Elastic Compute Cloud',
+        items: ['Instance types and families: t3, m5, c5, r5 — what each is for', 'AMIs (Amazon Machine Images) — public vs private', 'Security Groups — stateful firewall at instance level', 'Key Pairs — SSH access to Linux instances', 'EBS (Elastic Block Store) — persistent storage, volume types (gp3, io2)', 'Instance storage (ephemeral) vs EBS (persistent)', 'Elastic IP addresses — static public IPs', 'Placement Groups: Cluster, Spread, Partition', 'Launch Templates and Auto Scaling Groups', 'User Data scripts — bootstrap EC2 instances at launch', 'AWS Systems Manager (SSM) Session Manager — SSH without open ports']
+      },
+      {
+        title: 'S3 — Simple Storage Service',
+        items: ['Buckets and objects — the basic building blocks', 'Bucket naming, regions, and global namespace', 'Storage classes: Standard, Intelligent-Tiering, Glacier, Glacier Deep Archive', 'Versioning — enabling and managing object versions', 'Lifecycle policies — automatically move/delete objects', 'S3 Static Website Hosting', 'Bucket policies and ACLs — controlling access', 'S3 Presigned URLs — temporary access links', 'S3 Events — trigger Lambda on object upload', 'Cross-Region Replication', 'Server-Side Encryption (SSE-S3, SSE-KMS)']
+      },
+      {
+        title: 'VPC — Virtual Private Cloud',
+        items: ['VPC, Subnets (public and private)', 'Internet Gateway — public subnet internet access', 'NAT Gateway — private subnet outbound internet', 'Route Tables — controlling traffic flow', 'Security Groups (instance-level) vs NACLs (subnet-level)', 'VPC Peering and Transit Gateway (basics)', 'VPN and Direct Connect (concepts)', 'VPC Flow Logs — network traffic monitoring', 'Bastion Hosts for SSH access to private subnets', '3-tier architecture: public subnet (ALB) → private subnet (app) → private subnet (DB)']
+      },
+      {
+        title: 'More Core Services',
+        items: ['RDS — managed relational databases (Postgres, MySQL, etc.)', 'DynamoDB — managed NoSQL, key concepts', 'ElastiCache — managed Redis and Memcached', 'Lambda — serverless functions, triggers, memory, timeout', 'API Gateway — managed REST/HTTP APIs', 'CloudWatch — metrics, alarms, dashboards, log groups', 'CloudTrail — API call auditing (who did what, when)', 'SNS and SQS — messaging services basics', 'Route 53 — DNS management, health checks, routing policies']
+      },
+      {
+        title: 'Container Services',
+        items: ['ECR (Elastic Container Registry) — private Docker image registry', 'ECS (Elastic Container Service) — run Docker containers on AWS', 'ECS task definitions and services', 'ECS on Fargate (serverless) vs EC2', 'EKS (Elastic Kubernetes Service) — managed Kubernetes (Phase 9)']
+      }
+    ],
+    resources: [
+      {
+        category: '☁️ Free AWS Learning',
+        items: [
+          { icon: '🎓', title: 'AWS Skill Builder — Official Learning', url: 'https://skillbuilder.aws', desc: 'AWS\'s own free learning platform. Cloud Practitioner Essentials course is free and excellent. Start here.', type: 'free' },
+          { icon: '🔬', title: 'AWS Free Tier — Build Real Things', url: 'https://aws.amazon.com/free/', desc: '12 months of free tier services. Create an account today and build alongside your learning.', type: 'free' },
+          { icon: '📗', title: 'AWS Documentation', url: 'https://docs.aws.amazon.com', desc: 'The authoritative source. For each service, read the Getting Started guide and User Guide overview.', type: 'doc' }
+        ]
+      },
+      {
+        category: '🎥 Free Video Courses',
+        items: [
+          { icon: '▶️', title: 'AWS Solutions Architect — freeCodeCamp (Full Course)', url: 'https://www.youtube.com/watch?v=Ia-UEYYR44s', desc: '10-hour free course covering everything for the SAA exam. The single best free resource for deep AWS learning.', type: 'free' },
+          { icon: '▶️', title: 'AWS Cloud Practitioner — freeCodeCamp', url: 'https://www.youtube.com/watch?v=SOTamWNgDKc', desc: 'Complete free course for the foundational AWS certification. Watch this first before SAA.', type: 'free' },
+          { icon: '▶️', title: 'AWS DevOps — TechWorld with Nana', url: 'https://www.youtube.com/@TechWorldwithNana', desc: 'DevOps-specific AWS tutorials covering CI/CD, containers, and deployment patterns.', type: 'free' }
+        ]
+      },
+      {
+        category: '📜 Certifications (Highly Recommended)',
+        items: [
+          { icon: '🏅', title: 'AWS Cloud Practitioner (CLF-C02) — Exam Guide', url: 'https://aws.amazon.com/certification/certified-cloud-practitioner/', desc: 'Start here. 90-minute exam, foundational concepts. $100. Proves you understand the AWS ecosystem.', type: 'paid' },
+          { icon: '🏆', title: 'AWS Solutions Architect Associate (SAA-C03)', url: 'https://aws.amazon.com/certification/certified-solutions-architect-associate/', desc: 'The most valued AWS cert for DevOps engineers. $150. 130 minutes. Covers architecture and all core services.', type: 'paid' },
+          { icon: '📝', title: 'Tutorials Dojo — Practice Exams', url: 'https://tutorialsdojo.com', desc: 'Best practice exam site for AWS certifications. Detailed explanations for each answer. Worth the investment.', type: 'paid' }
+        ]
+      }
+    ],
+    project: {
+      title: 'Project 7: Three-Tier Cloud Application',
+      desc: 'Deploy a real 3-tier application on AWS using best practices: load balancer, auto-scaling app servers, managed database. This is your flagship cloud portfolio project.',
+      steps: ['Create a VPC with public and private subnets across 2 AZs', 'Launch an EC2 instance in a private subnet, install your Flask app', 'Create a security group allowing only port 5000 from the ALB', 'Set up an Application Load Balancer in public subnets', 'Configure ALB target group pointing to EC2', 'Add RDS Postgres in private subnet, configure Flask to connect', 'Create Auto Scaling Group with min 1, max 3 instances', 'Set up CloudWatch alarm for CPU > 70% to trigger scale-out', 'Enable CloudWatch logs for your app', 'Update GitHub Actions to deploy to EC2 via SSM (no open SSH)', 'Add an S3 bucket for static assets (images/CSS)', 'Write architecture diagram in draw.io and add to GitHub repo']
+    },
+    interview: ['What is the difference between a security group and a NACL?', 'Explain the difference between EBS and S3.', 'What is IAM and what is the principle of least privilege?', 'What is a VPC and what components does it have?', 'Explain the difference between horizontal and vertical scaling.', 'What is an Auto Scaling Group and how does it work?', 'What services would you use to build a serverless API?', 'How do you secure an S3 bucket?', 'What is CloudWatch used for?', 'How do containers run on AWS? (ECS/EKS/Fargate)']
+  },
+
+  {
+    id: 'phase-8',
+    num: 8,
+    title: 'Terraform — Infrastructure as Code',
+    subtitle: 'Provision cloud infrastructure with code',
+    duration: '3–4 weeks',
+    icon: '🏗️',
+    color: '#8B5CF6',
+    status: 'upcoming',
+    description: 'Terraform lets you define your entire cloud infrastructure in code — version controlled, repeatable, and automated. No more clicking in the AWS console. This is what separates a DevOps engineer from a sysadmin.',
+    why: 'Clicking in the AWS console to create infrastructure is not DevOps. Terraform is how you create identical environments reliably, version-control your infrastructure, and automate provisioning in pipelines.',
+    conceptGroups: [
+      {
+        title: 'IaC Concepts',
+        items: ['What is Infrastructure as Code — declarative vs imperative', 'Why IaC: reproducibility, version control, collaboration, documentation', 'Terraform vs CloudFormation vs Pulumi vs Ansible — when to use each', 'Idempotency in IaC — running apply multiple times has the same result']
+      },
+      {
+        title: 'HCL Syntax',
+        items: ['Providers — plugins that communicate with cloud APIs', 'Resources — the things you create (aws_instance, aws_s3_bucket)', 'Data Sources — read existing infrastructure you didn\'t create', 'Variables (var.*) — parameterize your configurations', 'Output Values — expose values for other configs or humans', 'Local Values (local.*) — compute intermediate values', 'Expressions: string interpolation, conditionals, functions', 'Loops: count, for_each — create multiple similar resources', 'Dynamic blocks — generate repeated nested blocks']
+      },
+      {
+        title: 'Terraform Workflow',
+        items: ['terraform init — download providers, initialize backend', 'terraform fmt — format code consistently', 'terraform validate — syntax check before planning', 'terraform plan — preview changes, always review before apply', 'terraform apply — create/update infrastructure', 'terraform destroy — tear down infrastructure (be careful in prod)', 'terraform state — inspecting and manipulating state', 'terraform import — bring existing resources under Terraform management']
+      },
+      {
+        title: 'State Management (Critical)',
+        items: ['What the state file is and why it\'s essential', 'Local state (development only) vs Remote state (teams/CI)', 'Remote backends: S3 + DynamoDB for AWS (versioning + locking)', 'State locking — prevents concurrent applies from corrupting state', 'terraform state list, show, rm, mv commands', 'Never commit terraform.tfstate to Git — add to .gitignore', 'State file security — contains sensitive values, encrypt your backend']
+      },
+      {
+        title: 'Modules',
+        items: ['What modules are — reusable blocks of infrastructure', 'Module structure: main.tf, variables.tf, outputs.tf', 'Calling local modules', 'Public Terraform Registry — community modules', 'Versioning modules with Git tags', 'Module composition — build complex infra from simple modules', 'When to write your own vs use community modules']
+      },
+      {
+        title: 'Terraform in CI/CD',
+        items: ['Terraform plan in pull request — review changes before merge', 'Terraform apply on merge to main — automate provisioning', 'OIDC authentication — Terraform in CI without long-lived credentials', 'Terraform Cloud — managed state and execution', 'atlantis — GitOps for Terraform', 'Handling secrets in Terraform: sensitive variables, Vault provider', 'Drift detection — what happens when someone changes infra manually']
+      }
+    ],
+    resources: [
+      {
+        category: '📖 Primary Learning Resources',
+        items: [
+          { icon: '📗', title: 'HashiCorp Terraform Tutorials — Official', url: 'https://developer.hashicorp.com/terraform/tutorials', desc: 'The official, free tutorials from HashiCorp. "Get Started AWS" track is mandatory. Do every exercise.', type: 'free' },
+          { icon: '📘', title: 'Terraform Registry', url: 'https://registry.terraform.io', desc: 'Browse community modules and providers. Learn to read module documentation and use existing modules.', type: 'free' },
+          { icon: '📙', title: 'Terraform Up & Running (Sample Chapters Free)', url: 'https://www.terraformupandrunning.com', desc: 'The best Terraform book. Some chapters available free. Chapters 2-4 cover everything you need.', type: 'free' }
+        ]
+      },
+      {
+        category: '🎥 Video Courses',
+        items: [
+          { icon: '▶️', title: 'Terraform Course — TechWorld with Nana', url: 'https://www.youtube.com/watch?v=7xngnjfIlK4', desc: 'Complete Terraform course deploying to AWS. Best free video course available. Follow every step.', type: 'free' },
+          { icon: '▶️', title: 'Terraform Full Course — freeCodeCamp', url: 'https://www.youtube.com/watch?v=SLB_c_ayRMo', desc: 'Comprehensive Terraform course covering modules, remote state, and CI/CD integration.', type: 'free' }
+        ]
+      },
+      {
+        category: '🎮 Practice',
+        items: [
+          { icon: '⚔️', title: 'KillerCoda — Terraform Scenarios', url: 'https://killercoda.com/learn', desc: 'Browser-based Terraform practice environments. No AWS account needed for basics.', type: 'practice' },
+          { icon: '🔍', title: 'Infracost — Cost Estimation for Terraform', url: 'https://www.infracost.io', desc: 'Estimate cloud costs before running terraform apply. Add to your pipelines.', type: 'free' }
+        ]
+      }
+    ],
+    project: {
+      title: 'Project 8: Full AWS Environment in Terraform',
+      desc: 'Provision your entire 3-tier AWS environment from Phase 7 using only Terraform — zero clicks in the AWS console.',
+      steps: ['Set up S3 backend + DynamoDB table for remote state', 'Write a VPC module: subnets, IGW, NAT, route tables as variables', 'Write an EC2 module: instance, security group, key pair, user data', 'Write an ALB module: load balancer, target group, listener', 'Write an RDS module: postgres, parameter group, subnet group', 'Compose all modules in a root main.tf for dev environment', 'Add variables.tf for all configurable values (region, instance type, etc.)', 'Add outputs.tf exposing ALB DNS, EC2 IP, RDS endpoint', 'Run terraform plan — review the plan carefully', 'Run terraform apply — watch your infrastructure appear', 'Add terraform plan to your GitHub Actions PR pipeline', 'Destroy and recreate the environment to verify reproducibility']
+    },
+    interview: ['What is Infrastructure as Code and what are its benefits?', 'What is Terraform state and why is it important?', 'What is the difference between terraform plan and terraform apply?', 'How do you manage sensitive values in Terraform?', 'What are Terraform modules and when would you write one?', 'How do you handle Terraform state in a team environment?', 'What is the difference between count and for_each?', 'How do you import existing resources into Terraform?', 'What happens if someone modifies infrastructure outside of Terraform?', 'How do you run Terraform in a CI/CD pipeline safely?']
+  },
+
+  {
+    id: 'phase-9',
+    num: 9,
+    title: 'Kubernetes — Container Orchestration',
+    subtitle: 'Run containers at scale in production',
+    duration: '8 weeks',
+    icon: '🚢',
+    color: '#3B82F6',
+    status: 'upcoming',
+    description: 'Kubernetes is the industry standard for running containers in production. Complex but essential. You already have Docker — now you need to run many containers reliably, at scale, with self-healing and rolling deployments.',
+    why: 'Kubernetes is on almost every mid-to-senior DevOps job description. The investment in learning it deeply pays off enormously — CKA certification is one of the highest-value credentials in the field.',
+    conceptGroups: [
+      {
+        title: 'Kubernetes Architecture',
+        items: ['Control Plane: API Server, etcd, Scheduler, Controller Manager', 'Worker Nodes: kubelet, kube-proxy, container runtime', 'How kubectl communicates with the API Server', 'kubeconfig file — contexts, clusters, users', 'kubectl basics: get, describe, create, apply, delete, exec, logs', 'Declarative vs imperative management — always prefer declarative (YAML files)']
+      },
+      {
+        title: 'Core Workload Objects',
+        items: ['Pods — smallest deployable unit, one or more containers', 'ReplicaSets — maintain a desired number of Pod replicas', 'Deployments — manage ReplicaSets with rolling updates and rollbacks', 'StatefulSets — ordered, persistent storage for databases', 'DaemonSets — one Pod per node (logging agents, monitoring)', 'Jobs — run-to-completion tasks', 'CronJobs — scheduled, recurring jobs']
+      },
+      {
+        title: 'Services & Networking',
+        items: ['ClusterIP — internal cluster communication only', 'NodePort — expose service on each node\'s IP', 'LoadBalancer — provision a cloud load balancer', 'ExternalName — map service to external DNS', 'Ingress — HTTP/HTTPS routing to multiple services', 'Ingress Controllers: Nginx, Traefik, AWS ALB Ingress', 'DNS in Kubernetes: CoreDNS, service discovery by name', 'Network Policies — restrict pod-to-pod traffic (microsegmentation)']
+      },
+      {
+        title: 'Config & Secrets',
+        items: ['ConfigMaps — non-sensitive config: env vars and files', 'Secrets — base64 encoded (not encrypted by default), mount as files or env', 'External Secrets Operator — sync secrets from Vault, AWS SSM', 'Environment variables from ConfigMap/Secret references', 'Projected volumes — combine ConfigMap and Secret into one mount']
+      },
+      {
+        title: 'Storage',
+        items: ['PersistentVolumes (PV) — cluster-level storage resource', 'PersistentVolumeClaims (PVC) — request storage from a PV', 'StorageClasses — dynamic provisioning (EBS, EFS, etc.)', 'Access modes: ReadWriteOnce, ReadWriteMany, ReadOnlyMany', 'Reclaim policies: Retain, Recycle, Delete']
+      },
+      {
+        title: 'Reliability & Scaling',
+        items: ['Resource Requests and Limits — CPU and memory for each container', 'Horizontal Pod Autoscaler (HPA) — scale based on metrics', 'Vertical Pod Autoscaler (VPA) — resize containers', 'Pod Disruption Budgets (PDB) — minimum available pods during updates', 'Liveness, Readiness, and Startup Probes', 'Rolling Updates and Rollbacks — zero-downtime deployments', 'Pod affinity/anti-affinity — schedule pods across nodes', 'Taints and Tolerations — reserve nodes for specific workloads']
+      },
+      {
+        title: 'RBAC & Security',
+        items: ['Service Accounts — Pods identity for API access', 'Roles and ClusterRoles — define permissions', 'RoleBindings and ClusterRoleBindings — assign roles', 'Principle of Least Privilege in Kubernetes', 'Pod Security Standards (restricted, baseline, privileged)', 'Secrets encryption at rest', 'Network Policies for zero-trust networking']
+      },
+      {
+        title: 'Helm — Package Manager',
+        items: ['What Helm is and why you use it', 'Charts, Releases, Repositories', 'helm install, upgrade, rollback, uninstall', 'values.yaml — override defaults without modifying the chart', 'Creating your own Helm chart', 'Helm repositories: Artifact Hub', 'Helmfile for managing multiple charts']
+      },
+      {
+        title: 'Managed Kubernetes (EKS)',
+        items: ['EKS cluster creation with eksctl or Terraform', 'Node groups vs Fargate profiles', 'IAM Roles for Service Accounts (IRSA) — Pods access AWS services without credentials', 'AWS Load Balancer Controller', 'EBS CSI Driver for persistent storage', 'Cluster Autoscaler for node scaling', 'EKS monitoring with CloudWatch Container Insights']
+      }
+    ],
+    resources: [
+      {
+        category: '📖 Primary Learning Resources',
+        items: [
+          { icon: '📗', title: 'Kubernetes Official Documentation', url: 'https://kubernetes.io/docs/home/', desc: 'The authoritative source. Concepts section is essential reading. Tasks section for hands-on.', type: 'doc' },
+          { icon: '📘', title: 'kubectl Cheat Sheet — Official', url: 'https://kubernetes.io/docs/reference/kubectl/cheatsheet/', desc: 'Print this. Use it daily. Master kubectl before relying on dashboards.', type: 'doc' },
+          { icon: '📙', title: 'Learnk8s Blog — Deep Dive Articles', url: 'https://learnk8s.io/blog', desc: 'The best in-depth Kubernetes articles available free. Highly recommended for understanding internals.', type: 'free' }
+        ]
+      },
+      {
+        category: '🎥 Video Courses',
+        items: [
+          { icon: '▶️', title: 'Kubernetes Tutorial — TechWorld with Nana (Full Course)', url: 'https://www.youtube.com/watch?v=X48VuDVv0do', desc: 'The best free Kubernetes course on YouTube. 4 hours, covers all core concepts with hands-on demos.', type: 'free' },
+          { icon: '▶️', title: 'CKA Course — KodeKloud (Free Tier)', url: 'https://kodekloud.com/courses/kubernetes-for-the-absolute-beginners-hands-on/', desc: 'KodeKloud\'s beginner Kubernetes course has a free tier. Great for CKA prep later.', type: 'free' },
+          { icon: '▶️', title: 'Helm Tutorial — TechWorld with Nana', url: 'https://www.youtube.com/watch?v=-ykwb1d0DXU', desc: 'Complete Helm tutorial covering charts, values, creating your own chart, and repositories.', type: 'free' }
+        ]
+      },
+      {
+        category: '🎮 Hands-On Practice (Critical!)',
+        items: [
+          { icon: '🎮', title: 'KillerCoda — K8s Scenarios (Free)', url: 'https://killercoda.com/learn', desc: 'Browser-based Kubernetes clusters with guided scenarios. BEST free practice environment. Use daily.', type: 'practice' },
+          { icon: '⚔️', title: 'Play with Kubernetes — PWK', url: 'https://labs.play-with-k8s.com', desc: '4-hour free Kubernetes clusters in your browser. For longer practice sessions.', type: 'practice' },
+          { icon: '🏆', title: 'killer.sh — CKA Exam Simulator', url: 'https://killer.sh', desc: 'The CKA exam simulator. Two free sessions included with CKA exam purchase. Very close to real exam.', type: 'paid' }
+        ]
+      },
+      {
+        category: '📜 Certification',
+        items: [
+          { icon: '🏆', title: 'CKA — Certified Kubernetes Administrator', url: 'https://www.cncf.io/certification/cka/', desc: '$395, 2-hour hands-on exam. THE most valued Kubernetes certification. Prepare for 3-4 months post-basics.', type: 'paid' }
+        ]
+      }
+    ],
+    project: {
+      title: 'Project 9: Kubernetes Production Deployment',
+      desc: 'Deploy your Flask + Postgres + Redis application on Kubernetes with full production setup: ingress, config management, autoscaling, and monitoring.',
+      steps: ['Set up local cluster: minikube or kind', 'Write Deployment for Flask app: 2 replicas, resource limits, liveness/readiness probes', 'Write Service (ClusterIP) for Flask, NodePort for testing', 'Deploy Postgres using a StatefulSet with PVC for data persistence', 'Store DB password in a Secret, mount as environment variable', 'Store app config in ConfigMap, mount as config file', 'Set up Nginx Ingress Controller', 'Write Ingress resource routing / to Flask app', 'Configure HPA: scale when CPU > 60%', 'Package everything as a Helm chart', 'Deploy to EKS using Terraform (from Phase 8)', 'Configure GitHub Actions to helm upgrade on merge to main']
+    },
+    interview: ['What is the difference between a Pod and a Deployment?', 'How does Kubernetes handle rolling deployments?', 'What is the difference between liveness and readiness probes?', 'How does a Service route traffic to Pods?', 'What is an Ingress and when would you use it over a LoadBalancer?', 'How do you configure autoscaling in Kubernetes?', 'What is the difference between ConfigMap and Secret?', 'How does RBAC work in Kubernetes?', 'What happens when a node fails in a Kubernetes cluster?', 'How do you debug a Pod that is in CrashLoopBackOff state?']
+  },
+
+  {
+    id: 'phase-10',
+    num: 10,
+    title: 'Monitoring & Observability',
+    subtitle: 'You can\'t improve what you can\'t measure',
+    duration: '3 weeks',
+    icon: '📊',
+    color: '#EC4899',
+    status: 'upcoming',
+    description: 'Deploying software is only half the job. Knowing it\'s healthy, catching problems before users do, and debugging production incidents are equally important. Prometheus + Grafana is the industry standard stack.',
+    why: 'On-call responsibility is part of DevOps. You\'ll be paged when things break. Knowing how to instrument apps, build dashboards, and set alerts is what keeps 3am pages from being disasters.',
+    conceptGroups: [
+      {
+        title: 'The Three Pillars of Observability',
+        items: ['Metrics — numeric measurements over time (CPU, requests per second, latency)', 'Logs — timestamped event records (what happened and when)', 'Traces — request journeys across multiple services (distributed tracing)', 'The difference between monitoring (knowing it\'s broken) and observability (knowing why)', 'SLIs, SLOs, SLAs — measuring reliability commitments', 'RED method: Rate, Errors, Duration (for services)', 'USE method: Utilization, Saturation, Errors (for resources)']
+      },
+      {
+        title: 'Prometheus',
+        items: ['Prometheus architecture: scraper, TSDB, alert manager', 'Pull-based model — Prometheus scrapes targets', 'Metrics types: Counter, Gauge, Histogram, Summary', 'Exporters: Node Exporter, cAdvisor, Blackbox Exporter, application-specific', 'prometheus.yml configuration: scrape_configs, relabeling', 'PromQL (Prometheus Query Language) — the query language you must master', 'Alerting rules — when to fire alerts, for how long', 'AlertManager — routing, grouping, inhibiting, silencing alerts']
+      },
+      {
+        title: 'Grafana',
+        items: ['Grafana data sources: Prometheus, CloudWatch, Elasticsearch', 'Building dashboards: panels, rows, variables', 'Panel types: time series, gauge, stat, table, heatmap, logs', 'Dashboard variables — make dashboards interactive (select environment, service)', 'Grafana alerts — alert on dashboard data', 'Grafana provisioning — dashboard as code with JSON', 'Grafana Loki — log aggregation for Grafana', 'Grafana Tempo — distributed tracing for Grafana', 'Grafana Cloud — managed Grafana (free tier available)']
+      },
+      {
+        title: 'Logging Stack',
+        items: ['Structured logging — JSON logs are machine-readable', 'Log levels: DEBUG, INFO, WARN, ERROR, FATAL — use appropriately', 'ELK Stack: Elasticsearch, Logstash, Kibana', 'EFK Stack: Elasticsearch, Fluentd, Kibana (Kubernetes standard)', 'Loki — lightweight log aggregation (Grafana ecosystem)', 'Fluentd vs Fluent Bit — log forwarding agents', 'Log querying in Kibana and Grafana Loki', 'CloudWatch Logs for AWS workloads']
+      },
+      {
+        title: 'Application Instrumentation',
+        items: ['Instrumenting Python apps with prometheus_client library', 'Custom metrics: tracking business metrics (orders, signups)', 'Health check endpoints (/health, /ready)', 'OpenTelemetry — the future of observability instrumentation', 'Distributed tracing with Jaeger or Zipkin', 'Error tracking with Sentry']
+      }
+    ],
+    resources: [
+      {
+        category: '📖 Primary Resources',
+        items: [
+          { icon: '📗', title: 'Prometheus Documentation', url: 'https://prometheus.io/docs/introduction/overview/', desc: 'Read: Getting Started, Querying (PromQL), Configuration, and Alerting sections.', type: 'doc' },
+          { icon: '📘', title: 'Grafana Documentation', url: 'https://grafana.com/docs/grafana/latest/', desc: 'Read: Getting Started, Dashboards, and Alerting sections. Use Grafana Play sandbox.', type: 'doc' },
+          { icon: '🎮', title: 'Grafana Play — Live Sandbox', url: 'https://play.grafana.org', desc: 'Explore a live Grafana instance with real dashboards. No signup needed. Hands-on exploration.', type: 'practice' }
+        ]
+      },
+      {
+        category: '🎥 Video Courses',
+        items: [
+          { icon: '▶️', title: 'Prometheus & Grafana — TechWorld with Nana', url: 'https://www.youtube.com/watch?v=h4Sl21AKiDg', desc: 'Complete tutorial from setup to production dashboards. Follow along with real Kubernetes cluster.', type: 'free' },
+          { icon: '▶️', title: 'Observability Course — freeCodeCamp', url: 'https://www.youtube.com/watch?v=WnDG0Rs01FE', desc: 'Covers metrics, logs, and traces with Prometheus, Grafana, and OpenTelemetry.', type: 'free' },
+          { icon: '▶️', title: 'ELK Stack Tutorial — TechWorld with Nana', url: 'https://www.youtube.com/watch?v=4X0WLg05ASw', desc: 'Complete ELK stack setup and usage for log aggregation and analysis.', type: 'free' }
+        ]
+      }
+    ],
+    project: {
+      title: 'Project 10: Full Observability Stack',
+      desc: 'Add production-grade monitoring, logging, and alerting to your Kubernetes application.',
+      steps: ['Deploy Prometheus on Kubernetes using the kube-prometheus-stack Helm chart', 'Install Node Exporter — collect system metrics from all nodes', 'Instrument your Flask app with prometheus_client — expose /metrics endpoint', 'Write a Grafana dashboard: request rate, error rate, latency, pod count', 'Create a PromQL alert rule: error rate > 5% for 5 minutes', 'Configure AlertManager to send alerts to email or Slack', 'Deploy Loki + Promtail for log aggregation', 'Build a log exploration dashboard in Grafana', 'Set up application health check endpoint (/health) with structured response', 'Write an SLO dashboard: availability percentage over 30 days']
+    },
+    interview: ['What is the difference between metrics, logs, and traces?', 'What is Prometheus and how does it collect metrics?', 'What are the 4 Prometheus metric types?', 'Write a PromQL query to calculate error rate.', 'What is an SLO and how is it different from an SLA?', 'How do you set up alerts in Prometheus?', 'What is the difference between push-based and pull-based monitoring?', 'How would you debug a spike in latency in a microservices application?', 'What is distributed tracing and when would you need it?', 'What is the RED method for monitoring?']
+  },
+
+  {
+    id: 'phase-11',
+    num: 11,
+    title: 'Ansible — Configuration Management',
+    subtitle: 'Automate server configuration at scale',
+    duration: '2–3 weeks',
+    icon: '🤖',
+    color: '#EF4444',
+    status: 'upcoming',
+    description: 'Ansible automates server configuration — installing packages, managing files, controlling services — across dozens or hundreds of servers simultaneously, without installing agents on them.',
+    why: 'While Terraform provisions infrastructure, Ansible configures what\'s on it. Together they form a complete infrastructure automation stack. Many companies still manage large fleets of servers with Ansible.',
+    conceptGroups: [
+      {
+        title: 'Ansible Architecture',
+        items: ['Agentless design — SSH-based, no agent installation required', 'Control Node vs Managed Nodes', 'Inventory: static (/etc/ansible/hosts) and dynamic inventory', 'Connection types: SSH for Linux, WinRM for Windows', 'Python dependency on managed nodes', 'ansible.cfg — configuration file for default settings']
+      },
+      {
+        title: 'Playbooks & Tasks',
+        items: ['YAML structure of a playbook: hosts, become, tasks', 'Tasks: name, module, arguments', 'Modules: package, service, copy, template, file, command, shell, user', 'Handlers — run tasks only when notified by other tasks', 'Tags — run subsets of a playbook', 'Running specific tasks with --tags and --skip-tags', 'Ad-hoc commands: ansible all -m ping, ansible all -a "uptime"']
+      },
+      {
+        title: 'Variables & Templates',
+        items: ['Defining variables: in playbook, vars_files, host_vars, group_vars', 'Ansible facts — system info auto-collected (ansible_os_family, etc.)', 'Variable precedence — 22 levels, know the important ones', 'Jinja2 templating: {{ variable }}, conditionals, loops in templates', 'When condition — conditional task execution', 'Register and using task output in subsequent tasks', 'loop and with_items — iterate over lists']
+      },
+      {
+        title: 'Roles',
+        items: ['Role directory structure: tasks, handlers, templates, files, vars, defaults, meta', 'Ansible Galaxy — community roles repository', 'ansible-galaxy install — download community roles', 'Creating your own roles with ansible-galaxy init', 'Role dependencies in meta/main.yml']
+      },
+      {
+        title: 'Ansible Vault & Security',
+        items: ['ansible-vault encrypt — encrypt sensitive files', 'ansible-vault create, edit, view, decrypt', 'Using encrypted vars: --vault-password-file or --ask-vault-pass', 'Never commit unencrypted secrets to Git', 'SSH key management with Ansible']
+      },
+      {
+        title: 'Best Practices',
+        items: ['Idempotency — every playbook must be safe to run multiple times', 'Check mode (--check) — dry run without making changes', 'Diff mode (--diff) — show what would change', 'Limit execution: --limit hostname to run on subset of hosts', 'Testing with Molecule — unit test your Ansible roles', 'Keep tasks simple, use roles for organization']
+      }
+    ],
+    resources: [
+      {
+        category: '📖 Primary Resources',
+        items: [
+          { icon: '📗', title: 'Ansible Documentation — Official', url: 'https://docs.ansible.com', desc: 'Start with Getting Started, then Playbook Guide, then User Guide. Excellent official docs.', type: 'doc' },
+          { icon: '📘', title: 'Ansible for DevOps — Jeff Geerling (Free Chapters)', url: 'https://www.ansiblefordevops.com', desc: 'The best Ansible book. First chapters available free. Very practical, DevOps-focused.', type: 'free' },
+          { icon: '🎮', title: 'Ansible Galaxy — Community Roles', url: 'https://galaxy.ansible.com', desc: 'Browse, install, and learn from community-created Ansible roles. A great learning resource.', type: 'free' }
+        ]
+      },
+      {
+        category: '🎥 Video Courses',
+        items: [
+          { icon: '▶️', title: 'Ansible Tutorial — TechWorld with Nana', url: 'https://www.youtube.com/watch?v=1id6ERvfozo', desc: 'Complete Ansible tutorial from installation to roles and vault. Hands-on throughout.', type: 'free' },
+          { icon: '▶️', title: 'Ansible Full Course — freeCodeCamp', url: 'https://www.youtube.com/watch?v=EcnqJbxBcM0', desc: 'Comprehensive Ansible course covering playbooks, roles, vault, and real-world scenarios.', type: 'free' }
+        ]
+      },
+      {
+        category: '🎮 Practice',
+        items: [
+          { icon: '⚔️', title: 'KillerCoda — Ansible Scenarios', url: 'https://killercoda.com/learn', desc: 'Hands-on Ansible practice in browser. Target servers already set up — focus on writing playbooks.', type: 'practice' }
+        ]
+      }
+    ],
+    project: {
+      title: 'Project 11: Server Fleet Configuration',
+      desc: 'Write an Ansible playbook and role that fully configures a fresh Ubuntu server for your application stack.',
+      steps: ['Write an inventory file with your EC2 instances from Phase 7', 'Write a ping playbook to verify connectivity to all hosts', 'Create a role: common — install system packages, configure timezone, disable root SSH', 'Create a role: docker — install Docker, configure daemon, add user to docker group', 'Create a role: app_deploy — copy app files, set env vars, start systemd service', 'Use Jinja2 templates for config files with variable substitution', 'Encrypt database password with ansible-vault', 'Write a site.yml that applies all roles in order', 'Test with --check mode before running for real', 'Add Ansible playbook execution to your CI/CD pipeline for deployment']
+    },
+    interview: ['What is Ansible and how is it different from other config management tools?', 'What is the difference between a playbook and a role?', 'How does Ansible authenticate to remote servers?', 'What is idempotency and why does it matter in Ansible?', 'What are Ansible facts and how do you use them?', 'How do you protect sensitive data in Ansible?', 'What is a handler and when does it run?', 'How do you run a playbook on only one host?', 'What is Ansible Galaxy?', 'How do you test Ansible roles?']
+  },
+
+  {
+    id: 'phase-12',
+    num: 12,
+    title: 'DevSecOps — Security in the Pipeline',
+    subtitle: 'Shift security left — catch it before it ships',
+    duration: '2 weeks',
+    icon: '🔐',
+    color: '#F97316',
+    status: 'upcoming',
+    description: 'Security is everyone\'s responsibility in a DevOps team. DevSecOps integrates security checks into your pipeline so problems are caught early — not in production.',
+    why: 'Security breaches cost companies millions. DevOps engineers who understand security basics are significantly more valuable. Even junior engineers are expected to run security scanners in their pipelines.',
+    conceptGroups: [
+      {
+        title: 'Security Mindset',
+        items: ['What "shift-left" means — catch security issues at code time, not production', 'OWASP Top 10 — the most common web application vulnerabilities', 'Principle of Least Privilege — applied to code, not just IAM', 'Defense in depth — multiple layers of security controls', 'Security as Code — scanning integrated into pipelines, not an afterthought', 'Threat modeling basics — STRIDE framework']
+      },
+      {
+        title: 'Code & Dependency Scanning',
+        items: ['SAST (Static Application Security Testing) — scan code before running it', 'bandit — Python security linter (common in pipelines)', 'semgrep — multi-language SAST scanner', 'Dependency scanning — finding vulnerable libraries', 'pip-audit — scan Python dependencies', 'npm audit — scan Node.js dependencies', 'Snyk — commercial scanner with generous free tier', 'Dependabot — GitHub automatic dependency updates']
+      },
+      {
+        title: 'Container Security',
+        items: ['Trivy — scan Docker images for vulnerabilities', 'Grype — alternative container image scanner', 'Docker image best practices: non-root, minimal base, no secrets in layers', 'OPA (Open Policy Agent) — policy enforcement for containers', 'Falco — runtime security monitoring for containers', 'Signing container images with cosign (sigstore)']
+      },
+      {
+        title: 'Secret Management',
+        items: ['Never hardcode secrets in code or Dockerfiles', 'Git secret scanning: gitleaks, truffleHog — catch secrets before push', 'GitHub secret scanning — automatic detection', 'HashiCorp Vault — centralized secrets management', 'AWS Secrets Manager and Parameter Store', 'Kubernetes Secrets encryption at rest', 'Environment-specific secrets rotation']
+      },
+      {
+        title: 'Infrastructure Security',
+        items: ['Terraform security scanning with tfsec or checkov', 'AWS Security Hub — aggregated security findings', 'AWS Config — infrastructure compliance checking', 'CloudTrail — audit all API calls', 'VPC Flow Logs — network traffic analysis', 'GuardDuty — AWS threat detection', 'IAM Access Analyzer — find overly permissive policies']
+      },
+      {
+        title: 'Pipeline Security',
+        items: ['Pin GitHub Actions to SHA — prevent supply chain attacks', 'OIDC authentication — eliminate long-lived credentials in CI', 'Signed commits with GPG keys', 'Branch protection rules — require reviews and passing status checks', 'Dependency pinning in requirements.txt and package-lock.json', 'SBOM (Software Bill of Materials) — document all dependencies']
+      }
+    ],
+    resources: [
+      {
+        category: '📖 Learning Resources',
+        items: [
+          { icon: '🛡️', title: 'OWASP Top 10 — Official Guide', url: 'https://owasp.org/www-project-top-ten/', desc: 'The definitive list of the 10 most critical web security risks. Essential knowledge for every engineer.', type: 'free' },
+          { icon: '🔍', title: 'Trivy — Open Source Security Scanner', url: 'https://trivy.dev', desc: 'Scans containers, IaC, code for vulnerabilities. Learn to run it and integrate into pipelines.', type: 'free' },
+          { icon: '🔒', title: 'Snyk — Developer Security Platform', url: 'https://snyk.io', desc: 'Free tier includes container scanning, code scanning, dependency scanning. Integrate with GitHub.', type: 'free' },
+          { icon: '🔑', title: 'HashiCorp Vault Tutorials', url: 'https://developer.hashicorp.com/vault/tutorials', desc: 'Official Vault tutorials. Learn secrets management from the tool most enterprises use.', type: 'free' }
+        ]
+      },
+      {
+        category: '🎥 Video Learning',
+        items: [
+          { icon: '▶️', title: 'DevSecOps Tutorial — TechWorld with Nana', url: 'https://www.youtube.com/watch?v=ChoFVPIBjI8', desc: 'Complete DevSecOps course covering SAST, container scanning, and pipeline integration.', type: 'free' },
+          { icon: '▶️', title: 'HashiCorp Vault Tutorial — TechWorld with Nana', url: 'https://www.youtube.com/watch?v=j0dlsEBBfPw', desc: 'Practical Vault usage for managing secrets in DevOps pipelines and applications.', type: 'free' }
+        ]
+      }
+    ],
+    project: {
+      title: 'Project 12: Secure Pipeline',
+      desc: 'Add a complete security layer to your existing GitHub Actions pipeline.',
+      steps: ['Add bandit step: scan Python code for security issues', 'Add pip-audit step: scan dependencies for known CVEs', 'Add Trivy step: scan your Docker image, fail on CRITICAL vulnerabilities', 'Add gitleaks step: scan for accidentally committed secrets', 'Add tfsec step: scan your Terraform code for misconfigurations', 'Configure Dependabot in .github/dependabot.yml for automatic updates', 'Enable GitHub secret scanning on your repo', 'Pin all your GitHub Actions to SHA instead of tag versions', 'Set up Snyk integration with your GitHub repo', 'Write a security policy SECURITY.md in your repo']
+    },
+    interview: ['What is the OWASP Top 10?', 'What is the difference between SAST and DAST?', 'How do you prevent secrets from being committed to Git?', 'What is Trivy and how do you use it?', 'What is shift-left security?', 'How do you scan Terraform code for security issues?', 'What is a Software Bill of Materials (SBOM)?', 'How do you manage secrets in a Kubernetes cluster securely?', 'What is OIDC authentication in GitHub Actions?', 'What is the principle of least privilege and how do you apply it?']
+  },
+
+  {
+    id: 'phase-13',
+    num: 13,
+    title: 'Portfolio, Resume & Job Readiness',
+    subtitle: 'Turn your skills into offers',
+    duration: 'Ongoing',
+    icon: '🚀',
+    color: '#00D9A6',
+    status: 'upcoming',
+    description: 'You\'ve built real skills and real projects. Now package them in a way that employers can find and understand. A well-crafted portfolio beats a list of certifications every time.',
+    why: 'The gap between "learning DevOps" and "getting a DevOps job" is almost always portfolio and positioning. This phase ensures your work is visible, legible, and compelling to hiring managers.',
+    conceptGroups: [
+      {
+        title: 'GitHub Portfolio',
+        items: ['GitHub profile README — make it showcase your DevOps journey', 'Pin your 6 best repositories to your profile', 'Each repo needs: clear README with architecture diagram, what it does, how to run it', 'Add CI status badges to all project READMEs', 'Consistent commit history — show active learning, not just one-time pushes', 'Contributions graph — work consistently, not in bursts', 'Use GitHub Projects to organize your learning roadmap publicly']
+      },
+      {
+        title: 'The 5 Portfolio Projects to Complete',
+        items: ['Project A: CI/CD Pipeline — full GitHub Actions pipeline for a Python app with test, build, scan, deploy stages', 'Project B: Docker Application — multi-container app with Compose, pushed to Docker Hub', 'Project C: AWS Infrastructure as Code — 3-tier AWS app provisioned entirely with Terraform', 'Project D: Kubernetes Deployment — full K8s deployment with Helm, HPA, Ingress, and monitoring', 'Project E: DevSecOps Pipeline — security scanning integrated at every stage of CI/CD']
+      },
+      {
+        title: 'Certifications (Signal to Employers)',
+        items: ['AWS Cloud Practitioner — start here, demonstrates cloud foundation', 'AWS Solutions Architect Associate — highest value for junior DevOps', 'Certified Kubernetes Administrator (CKA) — best K8s cert, highly respected', 'HashiCorp Terraform Associate — if you use Terraform heavily', 'Linux Foundation Certified SysAdmin (LFCS) — validates Linux skills']
+      },
+      {
+        title: 'Resume Tips',
+        items: ['Lead with a strong technical summary (3-4 sentences)', 'List technologies by category: Cloud, CI/CD, Containers, IaC, Monitoring, Scripting', 'For each experience: quantify impact ("reduced deployment time from 45 to 8 minutes")', 'Include your GitHub URL prominently', 'Mention your learning projects as experience: "Personal DevOps Lab — 2024-present"', 'ATS-optimize: use exact keywords from job descriptions', 'Keep to one page until 5+ years of experience']
+      },
+      {
+        title: 'Interview Preparation',
+        items: ['Behavioral questions with STAR method: Situation, Task, Action, Result', 'Technical conceptual questions — know your WHY, not just HOW', 'System design basics: design a CI/CD pipeline, design a highly available web app', 'Live troubleshooting: practice debug broken K8s deployments in killercoda', 'Take-home projects: treat them like production code, write tests, add README', 'Ask good questions in interviews: deployment frequency, on-call process, team structure']
+      },
+      {
+        title: 'Communities & Networking',
+        items: ['DevOps subreddit: r/devops — read daily', 'CNCF Slack community: cloud native engineers', 'DevOps.com — industry news and articles', 'LinkedIn: follow DevOps engineers and companies, engage with content', 'Write about what you learn: blog, LinkedIn posts, Twitter/X threads', 'Local meetups: DevOps Days, cloud conferences (many have free/student tickets)', 'Contribute to open source: even fixing docs counts']
+      }
+    ],
+    resources: [
+      {
+        category: '📋 Career Resources',
+        items: [
+          { icon: '🗺️', title: 'DevOps Roadmap — roadmap.sh', url: 'https://roadmap.sh/devops', desc: 'Use this to verify your coverage. If you\'ve completed the core items, you\'re job-ready.', type: 'free' },
+          { icon: '💼', title: 'GitHub Profile Guide — Official Docs', url: 'https://docs.github.com/en/account-and-profile/setting-up-and-managing-your-github-profile/customizing-your-profile/about-your-profile', desc: 'How to set up your GitHub profile README to showcase your work.', type: 'free' },
+          { icon: '📝', title: 'DevOps Interview Questions — TechWorld with Nana', url: 'https://www.youtube.com/watch?v=MqKcPDdKKHE', desc: 'Real DevOps interview questions and how to answer them. Watch before every interview.', type: 'free' }
+        ]
+      },
+      {
+        category: '🤝 Communities',
+        items: [
+          { icon: '💬', title: 'r/devops — DevOps Subreddit', url: 'https://www.reddit.com/r/devops/', desc: 'Read daily. Ask questions. See what real DevOps engineers discuss. Invaluable community.', type: 'free' },
+          { icon: '☁️', title: 'CNCF Slack Community', url: 'https://slack.cncf.io', desc: 'The Cloud Native Computing Foundation Slack. Channels for Kubernetes, Helm, Prometheus, and more.', type: 'free' },
+          { icon: '📰', title: 'DevOps.com — Industry News', url: 'https://devops.com', desc: 'Industry news, articles, and webinars. Stay current with what\'s changing in DevOps.', type: 'free' },
+          { icon: '🎓', title: 'KodeKloud Engineer — Real-World Practice', url: 'https://kodekloud.com/engineer/', desc: 'Simulated DevOps job tasks with realistic scenarios. Premium but one of the best job prep tools.', type: 'paid' }
+        ]
+      },
+      {
+        category: '📜 Certification Paths',
+        items: [
+          { icon: '🏅', title: 'AWS Certification Path', url: 'https://aws.amazon.com/certification/', desc: 'Start: Cloud Practitioner → Solutions Architect Associate → DevOps Professional (optional)', type: 'paid' },
+          { icon: '🏆', title: 'CNCF Certifications (CKA, CKAD, CKS)', url: 'https://www.cncf.io/certification/', desc: 'CKA is most valuable for DevOps. CKAD for developer-focused, CKS for security-focused roles.', type: 'paid' }
+        ]
+      }
+    ],
+    project: {
+      title: 'Project 13: Your DevOps Portfolio',
+      desc: 'Polish and present everything you\'ve built as a professional portfolio that tells a compelling story.',
+      steps: ['Create a polished GitHub profile README with your tech stack, current learning, and links', 'Pin 5 project repos and give each an accurate, compelling description', 'For each project: write architecture diagram (draw.io), what problem it solves, what you learned', 'Add CI status badges to all READMEs', 'Record a 2-3 minute screen recording of your best project (Loom is free)', 'Update your LinkedIn with all new skills, add project descriptions to Experience', 'Write 3 LinkedIn posts sharing something you learned — start building public presence', 'Create a simple personal tech blog (GitHub Pages or dev.to) documenting your journey', 'Apply to 5 DevOps/Cloud Engineer positions per week', 'For each application: customize your resume to match the job description keywords']
+    },
+    interview: ['Walk me through your most complex DevOps project.', 'How would you design a CI/CD pipeline for a microservices application?', 'A deployment just failed in production. Walk me through how you diagnose it.', 'How do you decide between containerizing an application or running it on a VM?', 'What is your experience with on-call responsibilities and incident response?', 'How do you keep up with the rapidly changing DevOps tooling landscape?', 'Describe a time you automated a manual process. What was the impact?', 'How would you migrate a monolith to a microservices architecture?', 'What would you do in your first 30 days as a DevOps engineer at our company?', 'What certifications do you have and what are you studying for next?']
+  }
+];
+
+// ================= STORAGE =================
+function getKey(phaseId, idx) { return phaseId + '_' + idx; }
+function setDone(key, val) { try { localStorage.setItem(key, val ? '1' : ''); } catch(e) {} }
+function isDone(key) { try { return !!localStorage.getItem(key); } catch(e) { return false; } }
+function resetProgress() { if (confirm('Reset all progress? This cannot be undone.')) { try { localStorage.clear(); } catch(e) {} location.reload(); } }
+
+// ================= PROGRESS CALC =================
+function calcProgress() {
+  let total = 0, done = 0;
+  PHASES.forEach(p => {
+    p.conceptGroups.forEach(g => {
+      g.items.forEach((item, idx) => {
+        total++;
+        if (isDone(getKey(p.id, g.title + '_' + idx))) done++;
+      });
+    });
+    if (p.project) {
+      p.project.steps.forEach((s, idx) => {
+        total++;
+        if (isDone(getKey(p.id, 'proj_' + idx))) done++;
+      });
+    }
+  });
+  return { total, done, pct: total ? Math.round(done / total * 100) : 0 };
+}
+
+function updateGlobalProgress() {
+  const { total, done, pct } = calcProgress();
+  document.getElementById('global-bar').style.width = pct + '%';
+  document.getElementById('pct-label').textContent = pct + '%';
+  document.getElementById('stat-done').textContent = done;
+  document.getElementById('stat-total').textContent = total;
+  const phasesDone = PHASES.filter(p => calcPhaseProgress(p).pct === 100).length;
+  document.getElementById('stat-phases').textContent = phasesDone;
+}
+
+function calcPhaseProgress(p) {
+  let total = 0, done = 0;
+  p.conceptGroups.forEach(g => {
+    g.items.forEach((item, idx) => {
+      total++;
+      if (isDone(getKey(p.id, g.title + '_' + idx))) done++;
+    });
+  });
+  if (p.project) {
+    p.project.steps.forEach((s, idx) => {
+      total++;
+      if (isDone(getKey(p.id, 'proj_' + idx))) done++;
+    });
+  }
+  return { total, done, pct: total ? Math.round(done / total * 100) : 0 };
+}
+
+// ================= SIDEBAR =================
+function buildSidebar() {
+  const nav = document.getElementById('sidebar-nav');
+  nav.innerHTML = PHASES.map(p => {
+    const { pct } = calcPhaseProgress(p);
+    return `<a class="nav-item ${pct === 100 ? 'done' : ''}" href="#${p.id}" onclick="openPhase('${p.id}')">
+      <span class="nav-phase-num">P${p.num}</span>
+      <span class="nav-icon">${p.icon}</span>
+      <span class="nav-title">${p.title}</span>
+      <span class="nav-duration">${p.duration}</span>
+    </a>`;
+  }).join('');
+}
+
+// ================= RENDER =================
+function buildBadgeClass(status) {
+  if (status === 'partial') return 'badge-current';
+  if (status === 'foundation') return 'badge-current';
+  return 'badge-upcoming';
+}
+function buildBadgeText(status, pct) {
+  if (pct === 100) return '✓ Complete';
+  if (status === 'partial') return '◐ In Progress';
+  if (status === 'foundation') return 'Start Here';
+  return 'Upcoming';
+}
+
+function buildPhase(p) {
+  const { done, total, pct } = calcPhaseProgress(p);
+  const isOpen = p.num <= 1;
+  const badgeClass = pct === 100 ? 'badge-done-status' : buildBadgeClass(p.status);
+  const badgeText = buildBadgeText(p.status, pct);
+
+  // Concepts tab
+  const conceptsHtml = p.conceptGroups.map(g => `
+    <div class="concept-group">
+      <div class="concept-group-title">${g.title}</div>
+      ${g.items.map((item, idx) => {
+        const key = getKey(p.id, g.title + '_' + idx);
+        const checked = isDone(key);
+        return `<div class="concept-item">
+          <input type="checkbox" class="concept-cb" id="cb_${key}" ${checked ? 'checked' : ''} onchange="toggleConcept(this, '${key}')">
+          <label class="concept-label ${checked ? 'done' : ''}" for="cb_${key}">${item}</label>
+        </div>`;
+      }).join('')}
+    </div>`).join('');
+
+  // Resources tab
+  const resourcesHtml = p.resources.map(cat => `
+    <div class="resource-category">
+      <div class="resource-cat-title">${cat.category}</div>
+      <div class="resource-list">
+        ${cat.items.map(r => `
+          <a class="resource-item" href="${r.url}" target="_blank" rel="noopener">
+            <span class="resource-icon">${r.icon}</span>
+            <div class="resource-info">
+              <div class="resource-title">${r.title}</div>
+              <div class="resource-desc">${r.desc}</div>
+              <div class="resource-url">${r.url}</div>
+            </div>
+            <span class="resource-type type-${r.type}">${r.type.toUpperCase()}</span>
+          </a>`).join('')}
+      </div>
+    </div>`).join('');
+
+  // Project tab
+  const projectHtml = p.project ? `
+    <div class="project-card">
+      <div class="project-title">${p.project.title}</div>
+      <div class="project-desc">${p.project.desc}</div>
+      <ol class="project-steps">
+        ${p.project.steps.map((s, idx) => {
+          const key = getKey(p.id, 'proj_' + idx);
+          const checked = isDone(key);
+          return `<li>
+            <span class="step-num">${idx + 1}</span>
+            <span class="step-text" style="${checked ? 'text-decoration:line-through;color:var(--text3)' : ''}">${s}</span>
+            <input type="checkbox" class="concept-cb step-cb" id="step_${key}" ${checked ? 'checked' : ''} onchange="toggleConcept(this, '${key}')">
+          </li>`;
+        }).join('')}
+      </ol>
+    </div>` : '<p style="color:var(--text3);font-size:14px;">No dedicated project for this phase — see the setup guide above.</p>';
+
+  // Interview tab
+  const interviewHtml = `
+    <div class="interview-intro">These are real questions asked in DevOps interviews for the topics in this phase. Practice answering each out loud — not just thinking about the answer.</div>
+    ${p.interview.map((q, i) => `
+      <div class="interview-q">
+        <span class="q-num">Q${i + 1}</span>
+        <span class="q-text">${q}</span>
+      </div>`).join('')}`;
+
+  return `
+    <div class="phase-section ${isOpen ? 'open' : ''} ${p.status === 'partial' || p.status === 'foundation' ? 'current' : ''}" id="${p.id}">
+      <div class="phase-header" onclick="togglePhase('${p.id}')">
+        <span class="phase-icon-wrap">${p.icon}</span>
+        <div class="phase-header-text">
+          <div class="phase-title" style="color:${p.color}">Phase ${p.num}: ${p.title}</div>
+          <div class="phase-subtitle">${p.subtitle}</div>
+          <div class="phase-meta">
+            <span class="meta-badge badge-duration">⏱ ${p.duration}</span>
+            <span class="meta-badge ${badgeClass}">${badgeText}</span>
+            <div class="phase-progress-mini">
+              <div class="mini-bar"><div class="mini-bar-fill" id="minibar_${p.id}" style="width:${pct}%"></div></div>
+              <span class="mini-pct" id="minipct_${p.id}">${pct}%</span>
+            </div>
+          </div>
+        </div>
+        <span class="phase-expand-icon">▼</span>
+      </div>
+      <div class="phase-body">
+        <div class="tab-nav">
+          <button class="tab-btn active" onclick="switchTab(this, '${p.id}', 'overview')">📋 Overview</button>
+          <button class="tab-btn" onclick="switchTab(this, '${p.id}', 'concepts')">✅ Concepts</button>
+          <button class="tab-btn" onclick="switchTab(this, '${p.id}', 'resources')">🔗 Resources</button>
+          <button class="tab-btn" onclick="switchTab(this, '${p.id}', 'project')">🔨 Project</button>
+          <button class="tab-btn" onclick="switchTab(this, '${p.id}', 'interview')">💬 Interview</button>
+        </div>
+        <div class="tab-content">
+          <div class="tab-panel active" id="${p.id}_overview">
+            <div class="overview-grid">
+              <div class="overview-card">
+                <div class="overview-card-title">What this phase covers</div>
+                <div class="overview-card-text">${p.description}</div>
+              </div>
+              <div class="overview-card">
+                <div class="overview-card-title">Why this phase matters</div>
+                <div class="overview-card-text" style="color:var(--green);font-style:italic">${p.why}</div>
+              </div>
+            </div>
+            <div class="tip-box tip-mentor">
+              <div class="tip-label">🎓 Mentor Note</div>
+              <div class="tip-text">Duration is <strong>${p.duration}</strong>. Don't rush — move to the next phase only when you've completed the project milestone, not when you've finished watching videos. Doing > watching.</div>
+            </div>
+          </div>
+          <div class="tab-panel" id="${p.id}_concepts">${conceptsHtml}</div>
+          <div class="tab-panel" id="${p.id}_resources">${resourcesHtml}</div>
+          <div class="tab-panel" id="${p.id}_project">${projectHtml}</div>
+          <div class="tab-panel" id="${p.id}_interview">${interviewHtml}</div>
+        </div>
+      </div>
+    </div>`;
+}
+
+function render() {
+  document.getElementById('phases-container').innerHTML = PHASES.map(buildPhase).join('');
+  buildSidebar();
+  updateGlobalProgress();
+}
+
+// ================= INTERACTIONS =================
+function togglePhase(id) {
+  document.getElementById(id).classList.toggle('open');
+}
+function openPhase(id) {
+  document.getElementById(id).classList.add('open');
+}
+function switchTab(btn, phaseId, tab) {
+  const body = document.getElementById(phaseId).querySelector('.phase-body');
+  body.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  body.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  const panel = document.getElementById(phaseId + '_' + tab);
+  if (panel) panel.classList.add('active');
+}
+function toggleConcept(cb, key) {
+  setDone(key, cb.checked);
+  const label = document.querySelector(`label[for="cb_${key}"]`);
+  if (label) label.classList.toggle('done', cb.checked);
+  const stepText = cb.closest('li')?.querySelector('.step-text');
+  if (stepText) { stepText.style.textDecoration = cb.checked ? 'line-through' : ''; stepText.style.color = cb.checked ? 'var(--text3)' : ''; }
+  // update mini progress bars
+  PHASES.forEach(p => {
+    const { pct } = calcPhaseProgress(p);
+    const bar = document.getElementById('minibar_' + p.id);
+    const pctEl = document.getElementById('minipct_' + p.id);
+    if (bar) bar.style.width = pct + '%';
+    if (pctEl) pctEl.textContent = pct + '%';
+  });
+  buildSidebar();
+  updateGlobalProgress();
+}
+
+// ================= INIT =================
+render();
+</script>
+</body>
+</html>

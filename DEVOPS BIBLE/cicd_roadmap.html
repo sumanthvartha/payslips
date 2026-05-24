@@ -1,0 +1,1951 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CI/CD Pipeline — Complete Blueprint</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Syne:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap');
+
+  :root {
+    --bg: #0a0e1a;
+    --surface: #111827;
+    --surface2: #1a2235;
+    --border: #1e2d45;
+    --accent: #00d4ff;
+    --accent2: #7c3aed;
+    --accent3: #10b981;
+    --accent4: #f59e0b;
+    --accent5: #ef4444;
+    --text: #e2e8f0;
+    --text-muted: #64748b;
+    --text-dim: #94a3b8;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    font-size: 15px;
+    line-height: 1.7;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    background: linear-gradient(135deg, #0a0e1a 0%, #0d1b2e 50%, #0a0e1a 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 60px 40px 50px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -80px; right: -80px;
+    width: 400px; height: 400px;
+    background: radial-gradient(circle, rgba(0,212,255,0.07) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero::after {
+    content: '';
+    position: absolute;
+    bottom: -60px; left: 20%;
+    width: 300px; height: 300px;
+    background: radial-gradient(circle, rgba(124,58,237,0.06) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero-tag {
+    display: inline-block;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    border: 1px solid rgba(0,212,255,0.3);
+    padding: 4px 12px;
+    border-radius: 2px;
+    margin-bottom: 20px;
+  }
+  .hero h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(28px, 5vw, 48px);
+    font-weight: 800;
+    line-height: 1.1;
+    letter-spacing: -1px;
+    margin-bottom: 16px;
+  }
+  .hero h1 span { color: var(--accent); }
+  .hero p {
+    color: var(--text-dim);
+    font-size: 16px;
+    max-width: 560px;
+  }
+
+  /* ── TOC ── */
+  .toc {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 28px 32px;
+    margin: 40px 40px 0;
+  }
+  .toc-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 16px;
+  }
+  .toc-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 8px;
+  }
+  .toc-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--text-dim);
+    text-decoration: none;
+    font-size: 13px;
+    padding: 6px 0;
+    transition: color 0.2s;
+  }
+  .toc-item:hover { color: var(--accent); }
+  .toc-num {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--text-muted);
+    min-width: 24px;
+  }
+
+  /* ── LAYOUT ── */
+  .container { padding: 0 40px 80px; max-width: 960px; }
+
+  /* ── SECTION ── */
+  .section {
+    margin-top: 60px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+  }
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 28px;
+  }
+  .section-num {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    color: var(--accent);
+    background: rgba(0,212,255,0.08);
+    border: 1px solid rgba(0,212,255,0.2);
+    padding: 4px 10px;
+    border-radius: 4px;
+    white-space: nowrap;
+  }
+  .section h2 {
+    font-family: 'Syne', sans-serif;
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+  }
+
+  /* ── SUBSECTION ── */
+  .subsection { margin-top: 32px; }
+  .subsection h3 {
+    font-family: 'Syne', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .subsection h3::before {
+    content: '';
+    display: inline-block;
+    width: 3px; height: 16px;
+    background: var(--accent2);
+    border-radius: 2px;
+  }
+
+  /* ── TEXT ── */
+  p { color: var(--text-dim); margin-bottom: 14px; }
+  strong { color: var(--text); font-weight: 600; }
+
+  /* ── CODE BLOCK ── */
+  .code-block {
+    background: #0d1117;
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    border-radius: 6px;
+    padding: 20px 24px;
+    margin: 16px 0;
+    overflow-x: auto;
+  }
+  .code-block pre {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px;
+    line-height: 1.7;
+    color: #a8d8ea;
+    white-space: pre;
+  }
+  .code-block .comment { color: #4a5568; }
+  .code-block .key { color: #79c0ff; }
+  .code-block .val { color: #a5d6ff; }
+  .code-block .str { color: #a8d8ea; }
+  .code-block .kw { color: #ff7b72; }
+  .code-block .label { color: #d2a8ff; }
+
+  /* ── FLOW DIAGRAM ── */
+  .flow {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 28px 24px;
+    margin: 20px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+  }
+  .flow-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .flow-box {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 10px 18px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    color: var(--text);
+    text-align: center;
+    white-space: nowrap;
+  }
+  .flow-box.accent { border-color: var(--accent); color: var(--accent); background: rgba(0,212,255,0.05); }
+  .flow-box.green { border-color: var(--accent3); color: var(--accent3); background: rgba(16,185,129,0.05); }
+  .flow-box.purple { border-color: var(--accent2); color: #a78bfa; background: rgba(124,58,237,0.05); }
+  .flow-box.yellow { border-color: var(--accent4); color: var(--accent4); background: rgba(245,158,11,0.05); }
+  .flow-box.red { border-color: var(--accent5); color: var(--accent5); background: rgba(239,68,68,0.05); }
+  .flow-arrow {
+    color: var(--text-muted);
+    font-size: 18px;
+    line-height: 1;
+  }
+  .flow-down {
+    color: var(--text-muted);
+    font-size: 20px;
+    margin: 6px 0;
+    line-height: 1;
+  }
+
+  /* ── TABLE ── */
+  .table-wrap { overflow-x: auto; margin: 16px 0; }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13.5px;
+  }
+  th {
+    background: var(--surface2);
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    padding: 12px 16px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+  td {
+    padding: 11px 16px;
+    border-bottom: 1px solid rgba(30,45,69,0.5);
+    color: var(--text-dim);
+    vertical-align: top;
+  }
+  tr:hover td { background: rgba(255,255,255,0.015); }
+  td:first-child { color: var(--text); font-weight: 500; }
+
+  /* ── CALLOUT ── */
+  .callout {
+    border-radius: 6px;
+    padding: 16px 20px;
+    margin: 16px 0;
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+  }
+  .callout.info { background: rgba(0,212,255,0.06); border-left: 3px solid var(--accent); }
+  .callout.warn { background: rgba(245,158,11,0.06); border-left: 3px solid var(--accent4); }
+  .callout.danger { background: rgba(239,68,68,0.06); border-left: 3px solid var(--accent5); }
+  .callout.tip { background: rgba(16,185,129,0.06); border-left: 3px solid var(--accent3); }
+  .callout-icon { font-size: 16px; margin-top: 1px; flex-shrink: 0; }
+  .callout p { margin: 0; font-size: 14px; }
+  .callout.info p { color: #93c5fd; }
+  .callout.warn p { color: #fcd34d; }
+  .callout.danger p { color: #fca5a5; }
+  .callout.tip p { color: #6ee7b7; }
+
+  /* ── PILL LIST ── */
+  .pill-list { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0; }
+  .pill {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    padding: 4px 12px;
+    border-radius: 20px;
+    border: 1px solid;
+  }
+  .pill.blue { border-color: rgba(0,212,255,0.3); color: var(--accent); background: rgba(0,212,255,0.05); }
+  .pill.purple { border-color: rgba(124,58,237,0.3); color: #a78bfa; background: rgba(124,58,237,0.05); }
+  .pill.green { border-color: rgba(16,185,129,0.3); color: var(--accent3); background: rgba(16,185,129,0.05); }
+  .pill.yellow { border-color: rgba(245,158,11,0.3); color: var(--accent4); background: rgba(245,158,11,0.05); }
+
+  /* ── STEP LIST ── */
+  .step-list { display: flex; flex-direction: column; gap: 12px; margin: 16px 0; }
+  .step-item {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 14px 18px;
+  }
+  .step-num {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--accent);
+    background: rgba(0,212,255,0.08);
+    border: 1px solid rgba(0,212,255,0.2);
+    border-radius: 4px;
+    width: 28px; height: 28px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+  .step-content h4 { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+  .step-content p { font-size: 13.5px; margin: 0; }
+
+  /* ── ROADMAP ── */
+  .roadmap { display: flex; flex-direction: column; gap: 0; margin: 20px 0; }
+  .road-item {
+    display: flex;
+    gap: 20px;
+    align-items: stretch;
+  }
+  .road-line {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex-shrink: 0;
+    width: 32px;
+  }
+  .road-dot {
+    width: 14px; height: 14px;
+    border-radius: 50%;
+    border: 2px solid var(--accent);
+    background: var(--bg);
+    flex-shrink: 0;
+    margin-top: 18px;
+  }
+  .road-dot.done { background: var(--accent3); border-color: var(--accent3); }
+  .road-connector { flex: 1; width: 2px; background: var(--border); margin: 0 auto; }
+  .road-content {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 14px 18px;
+    margin-bottom: 12px;
+    flex: 1;
+  }
+  .road-level { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--accent2); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 4px; }
+  .road-title { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 15px; color: var(--text); margin-bottom: 6px; }
+  .road-desc { font-size: 13px; color: var(--text-dim); margin: 0; }
+
+  /* ── DIVIDER ── */
+  .divider { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
+
+  /* ── SCROLLBAR ── */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+  @media (max-width: 600px) {
+    .hero, .toc, .container { padding-left: 20px; padding-right: 20px; }
+    .toc { margin: 24px 20px 0; }
+    .flow-row { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-tag">Complete Blueprint</div>
+  <h1>CI/CD Pipeline<br><span>End-to-End Guide</span></h1>
+  <p>Everything you need to understand, build, and operate a production-grade CI/CD pipeline on AWS. Nothing left out.</p>
+</div>
+
+<!-- TOC -->
+<div class="toc">
+  <div class="toc-title">Table of Contents</div>
+  <div class="toc-grid">
+    <a class="toc-item" href="#s1"><span class="toc-num">01</span> What & Why CI/CD</a>
+    <a class="toc-item" href="#s2"><span class="toc-num">02</span> Core Concepts</a>
+    <a class="toc-item" href="#s3"><span class="toc-num">03</span> Tools Landscape</a>
+    <a class="toc-item" href="#s4"><span class="toc-num">04</span> Docker & Containers</a>
+    <a class="toc-item" href="#s5"><span class="toc-num">05</span> AWS Infrastructure</a>
+    <a class="toc-item" href="#s6"><span class="toc-num">06</span> Pipeline Stages Deep Dive</a>
+    <a class="toc-item" href="#s7"><span class="toc-num">07</span> GitHub Actions In Depth</a>
+    <a class="toc-item" href="#s8"><span class="toc-num">08</span> Secrets & Security</a>
+    <a class="toc-item" href="#s9"><span class="toc-num">09</span> Multiple Environments</a>
+    <a class="toc-item" href="#s10"><span class="toc-num">10</span> Deployment Strategies</a>
+    <a class="toc-item" href="#s11"><span class="toc-num">11</span> Rollback</a>
+    <a class="toc-item" href="#s12"><span class="toc-num">12</span> Monitoring & Alerts</a>
+    <a class="toc-item" href="#s13"><span class="toc-num">13</span> Infrastructure as Code</a>
+    <a class="toc-item" href="#s14"><span class="toc-num">14</span> DevSecOps</a>
+    <a class="toc-item" href="#s15"><span class="toc-num">15</span> Complete Real Example</a>
+    <a class="toc-item" href="#s16"><span class="toc-num">16</span> Learning Roadmap</a>
+  </div>
+</div>
+
+<div class="container">
+
+<!-- ═══════════════════════════════ SECTION 1 ═══════════════ -->
+<div class="section" id="s1">
+  <div class="section-header">
+    <span class="section-num">01</span>
+    <h2>What Is CI/CD & Why It Exists</h2>
+  </div>
+
+  <p><strong>Before CI/CD existed</strong>, teams would write code for weeks, then one day manually copy files to a server, run commands by hand, and pray it didn't break. If something broke, nobody knew which change caused it. Fixing it took hours. This was called "deployment day" and developers feared it.</p>
+
+  <p><strong>CI/CD solves this</strong> by making deployment automatic, frequent, and safe.</p>
+
+  <div class="subsection">
+    <h3>CI — Continuous Integration</h3>
+    <p>Every time a developer pushes code, the system automatically <strong>integrates it</strong> with everyone else's code, runs tests, and tells you immediately if something broke. You catch problems within minutes, not weeks.</p>
+    <div class="callout info">
+      <span class="callout-icon">💡</span>
+      <p><strong>Key idea:</strong> Integrate code changes small and often rather than in one giant batch. The word "continuous" means this happens on every single push — not once a week.</p>
+    </div>
+  </div>
+
+  <div class="subsection">
+    <h3>CD — Continuous Delivery vs Continuous Deployment</h3>
+    <p>People confuse these two. They are different:</p>
+    <div class="table-wrap">
+      <table>
+        <tr><th>Term</th><th>Meaning</th><th>Human involved?</th></tr>
+        <tr><td>Continuous Delivery</td><td>Code is always in a deployable state. You can deploy anytime by clicking a button.</td><td>Yes — human approves the final push</td></tr>
+        <tr><td>Continuous Deployment</td><td>Every change that passes tests is automatically deployed to production. No human needed.</td><td>No — fully automated</td></tr>
+      </table>
+    </div>
+    <p>Most companies use <strong>Continuous Delivery</strong> for production (with a human approval gate) and <strong>Continuous Deployment</strong> for dev/staging environments.</p>
+  </div>
+
+  <div class="subsection">
+    <h3>The Real-World Problem CI/CD Solves</h3>
+    <div class="table-wrap">
+      <table>
+        <tr><th>Without CI/CD</th><th>With CI/CD</th></tr>
+        <tr><td>Deploy once a month, big scary release</td><td>Deploy 10-50 times a day safely</td></tr>
+        <tr><td>Bugs found weeks after writing</td><td>Bugs found within minutes of push</td></tr>
+        <tr><td>"It works on my machine"</td><td>Tested in a clean environment every time</td></tr>
+        <tr><td>Manual steps, human errors</td><td>Automated, consistent, repeatable</td></tr>
+        <tr><td>1 week to roll back a bad release</td><td>Rollback in 2 minutes</td></tr>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════ SECTION 2 ═══════════════ -->
+<div class="section" id="s2">
+  <div class="section-header">
+    <span class="section-num">02</span>
+    <h2>Core Concepts You Must Know</h2>
+  </div>
+
+  <div class="subsection">
+    <h3>Pipeline</h3>
+    <p>A series of automated stages that your code passes through from push to production. Each stage must pass before the next one starts. Think of it as an <strong>assembly line with quality checks</strong>.</p>
+  </div>
+
+  <div class="subsection">
+    <h3>Stage / Job / Step</h3>
+    <div class="table-wrap">
+      <table>
+        <tr><th>Term</th><th>What it is</th><th>Example</th></tr>
+        <tr><td>Pipeline</td><td>The whole process</td><td>Everything from push to deploy</td></tr>
+        <tr><td>Stage</td><td>A group of related jobs</td><td>"Test stage", "Build stage", "Deploy stage"</td></tr>
+        <tr><td>Job</td><td>One unit of work that runs on one machine</td><td>"Run unit tests", "Build Docker image"</td></tr>
+        <tr><td>Step</td><td>A single command inside a job</td><td>"npm install", "docker build"</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="subsection">
+    <h3>Runner / Agent</h3>
+    <p>The <strong>machine that runs your pipeline</strong>. When you push code, GitHub spins up a fresh Linux/Windows/Mac machine, runs your pipeline steps on it, and destroys it when done. You never manage this machine yourself with GitHub Actions. With Jenkins, you manage your own machines (called agents).</p>
+  </div>
+
+  <div class="subsection">
+    <h3>Artifact</h3>
+    <p>The output of the build stage. Could be a Docker image, a .zip file, a .jar file. This artifact is what gets deployed — not the raw source code.</p>
+  </div>
+
+  <div class="subsection">
+    <h3>Trigger</h3>
+    <p>What <strong>starts</strong> the pipeline. Common triggers:</p>
+    <div class="pill-list">
+      <span class="pill blue">Push to main branch</span>
+      <span class="pill blue">Pull Request opened</span>
+      <span class="pill blue">Scheduled (every night at 2am)</span>
+      <span class="pill blue">Manual button click</span>
+      <span class="pill blue">Another pipeline finishes</span>
+    </div>
+  </div>
+
+  <div class="subsection">
+    <h3>Branch Strategy</h3>
+    <p>Your pipeline behaves differently depending on which branch code is pushed to. The most common pattern:</p>
+    <div class="table-wrap">
+      <table>
+        <tr><th>Branch</th><th>Pipeline behavior</th></tr>
+        <tr><td>feature/*</td><td>Run tests only — no deploy</td></tr>
+        <tr><td>develop</td><td>Run tests + deploy to DEV environment</td></tr>
+        <tr><td>main</td><td>Run tests + deploy to STAGING → wait for approval → deploy PRODUCTION</td></tr>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════ SECTION 3 ═══════════════ -->
+<div class="section" id="s3">
+  <div class="section-header">
+    <span class="section-num">03</span>
+    <h2>Tools Landscape</h2>
+  </div>
+
+  <p>There are many tools. Here is how they fit together and when to use each:</p>
+
+  <div class="subsection">
+    <h3>Pipeline Engines (The Brain)</h3>
+    <div class="table-wrap">
+      <table>
+        <tr><th>Tool</th><th>Best For</th><th>How it works</th><th>AWS fit</th></tr>
+        <tr><td>GitHub Actions</td><td>Most teams today</td><td>YAML file inside your repo. GitHub runs it on their machines.</td><td>⭐ Best choice — huge AWS plugin library</td></tr>
+        <tr><td>Jenkins</td><td>Large enterprises, banks</td><td>Runs on YOUR server. Highly customizable. Complex setup.</td><td>Works but more effort</td></tr>
+        <tr><td>AWS CodePipeline</td><td>100% AWS shops</td><td>Fully managed AWS service. Click to configure stages.</td><td>⭐ Native AWS, integrates directly</td></tr>
+        <tr><td>GitLab CI</td><td>Teams using GitLab</td><td>Built into GitLab. Similar YAML approach to GitHub Actions.</td><td>Good with some setup</td></tr>
+        <tr><td>CircleCI</td><td>Fast builds, startups</td><td>SaaS product, YAML based, known for speed.</td><td>Good</td></tr>
+      </table>
+    </div>
+    <div class="callout tip">
+      <span class="callout-icon">✅</span>
+      <p>For AWS: use <strong>GitHub Actions</strong> if you already use GitHub. Use <strong>AWS CodePipeline</strong> if you want everything inside AWS. Both are production-grade choices.</p>
+    </div>
+  </div>
+
+  <div class="subsection">
+    <h3>AWS Native CI/CD Tools</h3>
+    <div class="table-wrap">
+      <table>
+        <tr><th>AWS Tool</th><th>What it does</th><th>Equivalent to</th></tr>
+        <tr><td>CodeCommit</td><td>Git repository (like GitHub)</td><td>GitHub</td></tr>
+        <tr><td>CodeBuild</td><td>Runs your build commands</td><td>GitHub Actions runner</td></tr>
+        <tr><td>CodeDeploy</td><td>Deploys to EC2/ECS/Lambda</td><td>The deploy step</td></tr>
+        <tr><td>CodePipeline</td><td>Orchestrates all the above</td><td>The full pipeline engine</td></tr>
+        <tr><td>ECR</td><td>Stores Docker images</td><td>DockerHub (private)</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="subsection">
+    <h3>Testing Tools</h3>
+    <div class="table-wrap">
+      <table>
+        <tr><th>Language</th><th>Unit Testing</th><th>Code Coverage</th></tr>
+        <tr><td>Python</td><td>pytest, unittest</td><td>coverage.py</td></tr>
+        <tr><td>JavaScript/Node</td><td>Jest, Mocha</td><td>Istanbul/nyc</td></tr>
+        <tr><td>Java</td><td>JUnit, TestNG</td><td>JaCoCo</td></tr>
+        <tr><td>Go</td><td>go test</td><td>built-in</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="subsection">
+    <h3>Code Quality Tools</h3>
+    <div class="pill-list">
+      <span class="pill purple">SonarQube — code smell detection</span>
+      <span class="pill purple">ESLint — JavaScript linting</span>
+      <span class="pill purple">Pylint / flake8 — Python linting</span>
+      <span class="pill purple">Checkstyle — Java style</span>
+    </div>
+  </div>
+
+  <div class="subsection">
+    <h3>Security Scanning Tools</h3>
+    <div class="pill-list">
+      <span class="pill yellow">Trivy — Docker image vulnerability scanner</span>
+      <span class="pill yellow">Snyk — dependency vulnerability scanner</span>
+      <span class="pill yellow">OWASP Dependency-Check</span>
+      <span class="pill yellow">Checkov — IaC security scanner</span>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════ SECTION 4 ═══════════════ -->
+<div class="section" id="s4">
+  <div class="section-header">
+    <span class="section-num">04</span>
+    <h2>Docker & Containers (The Backbone)</h2>
+  </div>
+
+  <p>Almost every modern CI/CD pipeline uses Docker. You must understand this.</p>
+
+  <div class="subsection">
+    <h3>Why Docker in CI/CD?</h3>
+    <p>Your app needs specific software to run (Python 3.11, certain libraries, etc.). Docker packages your app + everything it needs into one <strong>container image</strong>. That image runs identically on your laptop, on the pipeline runner, and on AWS. No more "works on my machine."</p>
+  </div>
+
+  <div class="subsection">
+    <h3>Dockerfile — What It Is</h3>
+    <p>A text file that tells Docker how to build your image. Every line is a layer:</p>
+    <div class="code-block"><pre><span class="comment"># Start from official Python image (base layer)</span>
+<span class="kw">FROM</span> python:3.11-slim
+
+<span class="comment"># Set working directory inside container</span>
+<span class="kw">WORKDIR</span> /app
+
+<span class="comment"># Copy requirements first (for caching)</span>
+<span class="kw">COPY</span> requirements.txt .
+
+<span class="comment"># Install dependencies</span>
+<span class="kw">RUN</span> pip install -r requirements.txt
+
+<span class="comment"># Copy rest of your app code</span>
+<span class="kw">COPY</span> . .
+
+<span class="comment"># Tell Docker what port your app uses</span>
+<span class="kw">EXPOSE</span> 8000
+
+<span class="comment"># Command to start your app</span>
+<span class="kw">CMD</span> ["python", "app.py"]</pre></div>
+  </div>
+
+  <div class="subsection">
+    <h3>Docker Image vs Container</h3>
+    <div class="table-wrap">
+      <table>
+        <tr><th>Term</th><th>Analogy</th><th>Reality</th></tr>
+        <tr><td>Docker Image</td><td>A cake recipe + all ingredients boxed up</td><td>Read-only snapshot of your app + dependencies</td></tr>
+        <tr><td>Docker Container</td><td>The actual cake being baked and served</td><td>A running instance of an image</td></tr>
+      </table>
+    </div>
+    <p>Your CI/CD pipeline <strong>builds the image</strong> and stores it in ECR. AWS ECS then <strong>runs containers</strong> from that image.</p>
+  </div>
+
+  <div class="subsection">
+    <h3>Image Tagging Strategy</h3>
+    <p>Every image needs a unique tag so you know exactly what version is running:</p>
+    <div class="code-block"><pre><span class="comment"># Bad — "latest" tag makes rollback impossible</span>
+my-app:latest
+
+<span class="comment"># Good — use git commit SHA for exact traceability</span>
+my-app:a3f8c12
+
+<span class="comment"># Also good — semantic versioning</span>
+my-app:v1.4.2
+
+<span class="comment"># Best practice in pipelines — combine both</span>
+my-app:v1.4.2-a3f8c12</pre></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════ SECTION 5 ═══════════════ -->
+<div class="section" id="s5">
+  <div class="section-header">
+    <span class="section-num">05</span>
+    <h2>AWS Infrastructure Setup (One-Time)</h2>
+  </div>
+
+  <p>Before your pipeline can run, these AWS resources must exist. You create them once and the pipeline uses them forever.</p>
+
+  <div class="subsection">
+    <h3>Step 1 — Create ECR Repository</h3>
+    <p>ECR is AWS's private Docker registry. Your pipeline pushes images here.</p>
+    <div class="code-block"><pre><span class="comment"># AWS CLI command to create ECR repo</span>
+aws ecr create-repository \
+  --repository-name my-app \
+  --image-scanning-configuration scanOnPush=true \
+  --region us-east-1
+
+<span class="comment"># Result: you get a URL like:</span>
+<span class="str">123456789.dkr.ecr.us-east-1.amazonaws.com/my-app</span></pre></div>
+    <div class="callout info">
+      <span class="callout-icon">💡</span>
+      <p><strong>scanOnPush=true</strong> tells ECR to automatically scan your Docker image for security vulnerabilities every time you push it. Free and worth enabling.</p>
+    </div>
+  </div>
+
+  <div class="subsection">
+    <h3>Step 2 — Create ECS Cluster</h3>
+    <p>ECS is where your containers run. Three things to create:</p>
+    <div class="step-list">
+      <div class="step-item">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <h4>ECS Cluster</h4>
+          <p>The container group. Think of it as your data center. Name: <code>my-cluster</code></p>
+        </div>
+      </div>
+      <div class="step-item">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <h4>Task Definition</h4>
+          <p>Blueprint for your container. Specifies: which ECR image to use, CPU (e.g. 256 units), RAM (e.g. 512 MB), port mappings, environment variables, and IAM role.</p>
+        </div>
+      </div>
+      <div class="step-item">
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <h4>ECS Service</h4>
+          <p>Keeps N copies of your container running. If one crashes, it restarts automatically. Name: <code>my-service</code>. This is what the pipeline updates during deployment.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="subsection">
+    <h3>Step 3 — Create IAM User for Pipeline</h3>
+    <p>Your pipeline needs AWS credentials to push images and trigger deployments. Create a dedicated IAM user with minimum permissions:</p>
+    <div class="code-block"><pre><span class="comment"># Create user</span>
+aws iam create-user --user-name github-actions-deployer
+
+<span class="comment"># Attach only needed policies (least privilege)</span>
+aws iam attach-user-policy \
+  --user-name github-actions-deployer \
+  --policy-arn arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryPowerUser
+
+aws iam attach-user-policy \
+  --user-name github-actions-deployer \
+  --policy-arn arn:aws:iam::aws:policy/AmazonECS_FullAccess
+
+<span class="comment"># Create access keys — save these for GitHub Secrets</span>
+aws iam create-access-key --user-name github-actions-deployer</pre></div>
+    <div class="callout warn">
+      <span class="callout-icon">⚠️</span>
+      <p><strong>Never give this user AdministratorAccess.</strong> Only give it exactly the permissions it needs. This is called the <strong>Principle of Least Privilege</strong>.</p>
+    </div>
+  </div>
+
+  <div class="subsection">
+    <h3>Step 4 — Store Credentials in GitHub Secrets</h3>
+    <p>GitHub Repo → Settings → Secrets and Variables → Actions → New repository secret</p>
+    <div class="table-wrap">
+      <table>
+        <tr><th>Secret Name</th><th>Value</th></tr>
+        <tr><td>AWS_ACCESS_KEY_ID</td><td>From IAM user access keys</td></tr>
+        <tr><td>AWS_SECRET_ACCESS_KEY</td><td>From IAM user access keys</td></tr>
+        <tr><td>AWS_REGION</td><td>us-east-1 (or your region)</td></tr>
+        <tr><td>ECR_REPOSITORY</td><td>123456789.dkr.ecr.us-east-1.amazonaws.com/my-app</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="subsection">
+    <h3>Step 5 — VPC, Subnets & Security Groups for ECS</h3>
+    <p>ECS containers run inside your VPC. You need:</p>
+    <div class="pill-list">
+      <span class="pill blue">A VPC (default VPC works for learning)</span>
+      <span class="pill blue">2+ subnets across availability zones</span>
+      <span class="pill blue">Security group allowing inbound port 80/443</span>
+      <span class="pill blue">Application Load Balancer (for production)</span>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════ SECTION 6 ═══════════════ -->
+<div class="section" id="s6">
+  <div class="section-header">
+    <span class="section-num">06</span>
+    <h2>Pipeline Stages — Deep Dive</h2>
+  </div>
+
+  <p>Every production pipeline has these stages. Here is what each does in detail:</p>
+
+  <div class="flow">
+    <div class="flow-row">
+      <div class="flow-box accent">1. Source</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-box purple">2. Lint</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-box purple">3. Test</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-box yellow">4. Security Scan</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-box green">5. Build</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-box green">6. Push</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-box accent">7. Deploy DEV</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-box accent">8. Deploy Staging</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-box yellow">9. Approval</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-box green">10. Deploy Prod</div>
+    </div>
+  </div>
+
+  <div class="subsection">
+    <h3>Stage 1 — Source (Trigger)</h3>
+    <p>The pipeline starts when code is pushed. The runner clones the exact commit that triggered the pipeline. Every subsequent stage works on that exact snapshot of code.</p>
+  </div>
+
+  <div class="subsection">
+    <h3>Stage 2 — Lint / Code Quality</h3>
+    <p>Before even running tests, check that the code is <strong>formatted correctly and has no obvious errors</strong>. Linting catches syntax errors, unused variables, style violations. Fast and cheap to run.</p>
+    <div class="code-block"><pre><span class="comment"># Python example</span>
+- name: Lint with flake8
+  run: |
+    pip install flake8
+    flake8 . --max-line-length=120 --exclude=venv/
+
+<span class="comment"># JavaScript example</span>
+- name: Lint with ESLint
+  run: npx eslint src/ --ext .js,.jsx</pre></div>
+  </div>
+
+  <div class="subsection">
+    <h3>Stage 3 — Testing (Most Important Stage)</h3>
+    <p>Multiple types of tests run here:</p>
+    <div class="table-wrap">
+      <table>
+        <tr><th>Test Type</th><th>What it checks</th><th>Speed</th><th>Run in pipeline?</th></tr>
+        <tr><td>Unit tests</td><td>Individual functions in isolation</td><td>Very fast (seconds)</td><td>Always</td></tr>
+        <tr><td>Integration tests</td><td>Multiple components working together</td><td>Medium (minutes)</td><td>Always</td></tr>
+        <tr><td>End-to-end (E2E)</td><td>Full app flow like a real user (Selenium, Playwright)</td><td>Slow (10-30 min)</td><td>On staging only</td></tr>
+        <tr><td>Performance tests</td><td>Load testing, response times</td><td>Slow</td><td>On staging only</td></tr>
+      </table>
+    </div>
+    <div class="code-block"><pre><span class="comment"># Python pytest with coverage</span>
+- name: Run tests with coverage
+  run: |
+    pip install pytest pytest-cov
+    pytest tests/ --cov=src --cov-report=xml --cov-fail-under=80
+
+<span class="comment"># --cov-fail-under=80 means pipeline FAILS if coverage drops below 80%</span></pre></div>
+    <div class="callout info">
+      <span class="callout-icon">💡</span>
+      <p><strong>Code coverage</strong> = percentage of your code that tests actually execute. If it's below your threshold, the pipeline fails. This forces developers to write tests.</p>
+    </div>
+  </div>
+
+  <div class="subsection">
+    <h3>Stage 4 — Security Scanning</h3>
+    <p>Two types of security scans should run in every pipeline:</p>
+    <div class="table-wrap">
+      <table>
+        <tr><th>Scan Type</th><th>Tool</th><th>What it finds</th></tr>
+        <tr><td>SAST (Static Analysis)</td><td>Bandit (Python), SonarQube</td><td>Insecure code patterns (SQL injection, hardcoded passwords)</td></tr>
+        <tr><td>Dependency scan</td><td>Snyk, OWASP Dependency-Check</td><td>Known CVEs in your libraries (e.g. log4shell)</td></tr>
+        <tr><td>Container scan</td><td>Trivy, ECR built-in scanner</td><td>Vulnerabilities in OS packages inside your Docker image</td></tr>
+        <tr><td>IaC scan</td><td>Checkov, tfsec</td><td>Security misconfigurations in Terraform/CloudFormation</td></tr>
+      </table>
+    </div>
+    <div class="code-block"><pre><span class="comment"># Scan Docker image with Trivy</span>
+- name: Scan Docker image for vulnerabilities
+  uses: aquasecurity/trivy-action@master
+  with:
+    image-ref: '${{ env.ECR_URL }}:${{ github.sha }}'
+    format: 'table'
+    exit-code: '1'           <span class="comment"># Pipeline FAILS if CRITICAL vulnerabilities found</span>
+    severity: 'CRITICAL,HIGH'</pre></div>
+  </div>
+
+  <div class="subsection">
+    <h3>Stage 5 — Build (Create the Artifact)</h3>
+    <p>The code has passed all checks. Now build the Docker image. Use the git commit SHA as the image tag — this gives you full traceability.</p>
+    <div class="code-block"><pre>- name: Build Docker image
+  run: |
+    <span class="comment"># Tag with both commit SHA and "latest"</span>
+    docker build \
+      -t $ECR_URL:${{ github.sha }} \
+      -t $ECR_URL:latest \
+      --build-arg BUILD_DATE=$(date -u +%Y-%m-%dT%H:%M:%SZ) \
+      --build-arg VERSION=${{ github.sha }} \
+      .</pre></div>
+  </div>
+
+  <div class="subsection">
+    <h3>Stage 6 — Push to Registry</h3>
+    <div class="code-block"><pre><span class="comment"># Login to ECR first</span>
+- name: Login to ECR
+  run: |
+    aws ecr get-login-password --region $AWS_REGION | \
+    docker login --username AWS --password-stdin $ECR_URL
+
+<span class="comment"># Push image to ECR</span>
+- name: Push image
+  run: |
+    docker push $ECR_URL:${{ github.sha }}
+    docker push $ECR_URL:latest</pre></div>
+  </div>
+
+  <div class="subsection">
+    <h3>Stages 7–10 — Deploy (Covered in Sections 9 & 10)</h3>
+    <p>Deployment to multiple environments and deployment strategies are covered in detail in their own sections below.</p>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════ SECTION 7 ═══════════════ -->
+<div class="section" id="s7">
+  <div class="section-header">
+    <span class="section-num">07</span>
+    <h2>GitHub Actions — Deep Dive</h2>
+  </div>
+
+  <div class="subsection">
+    <h3>File Structure</h3>
+    <div class="code-block"><pre>your-repo/
+  ├── src/
+  ├── tests/
+  ├── Dockerfile
+  └── .github/
+       └── workflows/
+            ├── ci.yml          <span class="comment"># Runs on every PR — tests only</span>
+            ├── deploy-dev.yml  <span class="comment"># Deploys to dev on push to develop</span>
+            └── deploy-prod.yml <span class="comment"># Deploys to prod on push to main</span></pre></div>
+    <p>You can have <strong>multiple workflow files</strong>. Each handles a different scenario.</p>
+  </div>
+
+  <div class="subsection">
+    <h3>Workflow Syntax — Every Keyword Explained</h3>
+    <div class="code-block"><pre><span class="comment"># ── Name shown in GitHub UI ──</span>
+name: CI Pipeline
+
+<span class="comment"># ── When to run this workflow ──</span>
+on:
+  push:
+    branches: [main, develop]     <span class="comment"># On push to these branches</span>
+  pull_request:
+    branches: [main]              <span class="comment"># On PR targeting main</span>
+  schedule:
+    - cron: '0 2 * * *'          <span class="comment"># Every day at 2 AM UTC</span>
+  workflow_dispatch:              <span class="comment"># Allow manual trigger from UI</span>
+
+<span class="comment"># ── Environment variables available to ALL jobs ──</span>
+env:
+  AWS_REGION: us-east-1
+  ECR_URL: 123456789.dkr.ecr.us-east-1.amazonaws.com/my-app
+
+<span class="comment"># ── Jobs run in parallel by default ──</span>
+jobs:
+
+  <span class="comment"># Job 1</span>
+  test:
+    runs-on: ubuntu-latest        <span class="comment"># Machine type to use</span>
+    
+    strategy:
+      matrix:
+        python-version: [3.10, 3.11]  <span class="comment"># Run on multiple Python versions!</span>
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+      
+      - name: Cache dependencies    <span class="comment"># Speed up pipeline with caching</span>
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
+      
+      - name: Install deps
+        run: pip install -r requirements.txt
+      
+      - name: Run tests
+        run: pytest tests/ --cov=src
+
+  <span class="comment"># Job 2 — only runs after "test" job passes</span>
+  build:
+    needs: test                   <span class="comment"># Dependency on previous job</span>
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'  <span class="comment"># Only on main branch</span>
+    
+    outputs:                      <span class="comment"># Share data between jobs</span>
+      image-tag: ${{ steps.build.outputs.tag }}
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Build
+        id: build
+        run: |
+          docker build -t $ECR_URL:${{ github.sha }} .
+          echo "tag=${{ github.sha }}" >> $GITHUB_OUTPUT</pre></div>
+  </div>
+
+  <div class="subsection">
+    <h3>Contexts & Expressions</h3>
+    <p>GitHub Actions has built-in variables called <strong>contexts</strong>:</p>
+    <div class="table-wrap">
+      <table>
+        <tr><th>Context</th><th>Example</th><th>Value</th></tr>
+        <tr><td>github.sha</td><td>$&#123;&#123; github.sha &#125;&#125;</td><td>Commit hash that triggered the run</td></tr>
+        <tr><td>github.ref</td><td>$&#123;&#123; github.ref &#125;&#125;</td><td>Branch or tag name (refs/heads/main)</td></tr>
+        <tr><td>github.actor</td><td>$&#123;&#123; github.actor &#125;&#125;</td><td>Username who pushed the code</td></tr>
+        <tr><td>github.event_name</td><td>$&#123;&#123; github.event_name &#125;&#125;</td><td>"push", "pull_request", etc.</td></tr>
+        <tr><td>secrets.NAME</td><td>$&#123;&#123; secrets.MY_SECRET &#125;&#125;</td><td>Encrypted secret you stored in GitHub</td></tr>
+        <tr><td>env.NAME</td><td>$&#123;&#123; env.AWS_REGION &#125;&#125;</td><td>Environment variable</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="subsection">
+    <h3>Reusable Workflows</h3>
+    <p>If multiple pipelines share the same steps (like the deploy step), extract them into a <strong>reusable workflow</strong> and call it from others. Don't repeat yourself.</p>
+    <div class="code-block"><pre><span class="comment"># .github/workflows/reusable-deploy.yml</span>
+on:
+  workflow_call:                  <span class="comment"># Makes this workflow reusable</span>
+    inputs:
+      environment:
+        required: true
+        type: string
+    secrets:
+      AWS_ACCESS_KEY_ID:
+        required: true
+
+<span class="comment"># Call it from another workflow:</span>
+jobs:
+  deploy:
+    uses: ./.github/workflows/reusable-deploy.yml
+    with:
+      environment: production
+    secrets:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}</pre></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════ SECTION 8 ═══════════════ -->
+<div class="section" id="s8">
+  <div class="section-header">
+    <span class="section-num">08</span>
+    <h2>Secrets & Security Management</h2>
+  </div>
+
+  <div class="subsection">
+    <h3>Levels of Secrets in GitHub</h3>
+    <div class="table-wrap">
+      <table>
+        <tr><th>Level</th><th>Scope</th><th>Use when</th></tr>
+        <tr><td>Repository secrets</td><td>One repo only</td><td>Secrets for a single project</td></tr>
+        <tr><td>Environment secrets</td><td>One repo, one environment</td><td>Different AWS accounts per env (dev/prod)</td></tr>
+        <tr><td>Organization secrets</td><td>All repos in org</td><td>Shared credentials across many projects</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="subsection">
+    <h3>AWS OIDC — The Better Way (No Long-Lived Credentials)</h3>
+    <p>Storing AWS Access Keys as GitHub Secrets is okay but there's a <strong>better, more secure approach</strong> called <strong>OIDC (OpenID Connect)</strong>.</p>
+    <p>Instead of storing permanent AWS credentials, you configure AWS to <strong>trust GitHub's identity system</strong>. GitHub generates a short-lived token for each pipeline run. No permanent keys stored anywhere.</p>
+    <div class="code-block"><pre><span class="comment"># With OIDC — no secrets needed in GitHub!</span>
+- name: Configure AWS credentials
+  uses: aws-actions/configure-aws-credentials@v4
+  with:
+    role-to-assume: arn:aws:iam::123456789:role/GitHubActionsRole
+    aws-region: us-east-1
+    <span class="comment"># GitHub automatically handles the token exchange</span></pre></div>
+    <div class="callout tip">
+      <span class="callout-icon">✅</span>
+      <p>OIDC is the <strong>production best practice</strong>. Tokens expire after 1 hour. Even if stolen, they're useless quickly. No long-lived credentials anywhere.</p>
+    </div>
+  </div>
+
+  <div class="subsection">
+    <h3>AWS Secrets Manager for App Secrets</h3>
+    <p>Your application itself needs secrets (database passwords, API keys). Don't put these in environment variables hardcoded in ECS task definitions. Use <strong>AWS Secrets Manager</strong>:</p>
+    <div class="code-block"><pre><span class="comment"># In your ECS Task Definition, reference secrets from Secrets Manager</span>
+{
+  "secrets": [
+    {
+      "name": "DATABASE_PASSWORD",
+      "valueFrom": "arn:aws:secretsmanager:us-east-1:123:secret:prod/db-pass"
+    }
+  ]
+}
+<span class="comment"># ECS injects this as an environment variable at runtime</span>
+<span class="comment"># The actual value is never in your code or pipeline YAML</span></pre></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════ SECTION 9 ═══════════════ -->
+<div class="section" id="s9">
+  <div class="section-header">
+    <span class="section-num">09</span>
+    <h2>Multiple Environments</h2>
+  </div>
+
+  <p>This is one of the most important things real teams do that beginners miss.</p>
+
+  <div class="subsection">
+    <h3>The Three-Environment Setup</h3>
+    <div class="table-wrap">
+      <table>
+        <tr><th>Environment</th><th>Purpose</th><th>Who uses it</th><th>Deploy trigger</th></tr>
+        <tr><td>DEV</td><td>Latest code, may be unstable. Fast iteration.</td><td>Developers only</td><td>Auto on push to develop branch</td></tr>
+        <tr><td>STAGING</td><td>Exact copy of production. Final testing before release.</td><td>QA + Developers</td><td>Auto on push to main branch</td></tr>
+        <tr><td>PRODUCTION</td><td>Real users. Must be stable.</td><td>Everyone</td><td>Manual approval after staging</td></tr>
+      </table>
+    </div>
+    <div class="callout warn">
+      <span class="callout-icon">⚠️</span>
+      <p>Each environment should have its <strong>own AWS resources</strong> — own ECS cluster, own database, own secrets. Never share a database between staging and production.</p>
+    </div>
+  </div>
+
+  <div class="subsection">
+    <h3>Environment Promotion Flow</h3>
+    <div class="flow">
+      <div class="flow-row">
+        <div class="flow-box purple">feature branch</div>
+        <div class="flow-arrow">→ PR →</div>
+        <div class="flow-box accent">develop branch</div>
+        <div class="flow-arrow">→ merge →</div>
+        <div class="flow-box green">main branch</div>
+      </div>
+      <div class="flow-down">↓</div>
+      <div class="flow-row">
+        <div class="flow-box purple">Tests only</div>
+        <div class="flow-arrow" style="opacity:0">→</div>
+        <div class="flow-box accent">Auto deploy to DEV</div>
+        <div class="flow-arrow" style="opacity:0">→</div>
+        <div class="flow-box green">Auto deploy to STAGING</div>
+      </div>
+      <div class="flow-down">↓</div>
+      <div class="flow-row">
+        <div class="flow-box yellow">Manual Approval</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-box green">Auto deploy to PROD</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="subsection">
+    <h3>GitHub Environments — The Right Tool for This</h3>
+    <p>GitHub has a built-in concept called <strong>Environments</strong>. You configure each environment with its own secrets and protection rules:</p>
+    <div class="code-block"><pre><span class="comment"># GitHub Repo → Settings → Environments → Create "production"</span>
+<span class="comment"># Set: Required reviewers = [your name or team]</span>
+<span class="comment"># Set: Wait timer = 5 minutes (cooldown before deploy)</span>
+
+<span class="comment"># In your workflow YAML:</span>
+jobs:
+  deploy-prod:
+    environment: production      <span class="comment"># GitHub pauses here, waits for approval</span>
+    steps:
+      - name: Deploy to production ECS
+        run: |
+          aws ecs update-service \
+            --cluster prod-cluster \
+            --service prod-service \
+            --force-new-deployment</pre></div>
+  </div>
+
+  <div class="subsection">
+    <h3>Environment-Specific Variables</h3>
+    <div class="code-block"><pre><span class="comment"># Each environment has different values for the same variable name</span>
+<span class="comment"># DEV environment secrets:</span>
+ECS_CLUSTER = dev-cluster
+DATABASE_URL = dev-db.rds.amazonaws.com
+
+<span class="comment"># STAGING environment secrets:</span>
+ECS_CLUSTER = staging-cluster
+DATABASE_URL = staging-db.rds.amazonaws.com
+
+<span class="comment"># PRODUCTION environment secrets:</span>
+ECS_CLUSTER = prod-cluster
+DATABASE_URL = prod-db.rds.amazonaws.com
+
+<span class="comment"># Same pipeline code, different behaviour per environment</span></pre></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════ SECTION 10 ═══════════════ -->
+<div class="section" id="s10">
+  <div class="section-header">
+    <span class="section-num">10</span>
+    <h2>Deployment Strategies</h2>
+  </div>
+
+  <p>How you replace the old version with the new one matters enormously for uptime. There are four main strategies:</p>
+
+  <div class="subsection">
+    <h3>1. Recreate (Basic — Avoid in Production)</h3>
+    <p>Stop all old containers. Start all new ones. There is <strong>downtime</strong> during the switch.</p>
+    <div class="code-block"><pre>[Old v1] [Old v1] [Old v1]
+         STOP ALL
+         ↓ (downtime gap)
+[New v2] [New v2] [New v2]
+         START ALL</pre></div>
+    <p style="color:#ef4444">❌ Users get errors during deployment. Only use for non-critical apps or dev environments.</p>
+  </div>
+
+  <div class="subsection">
+    <h3>2. Rolling Update (ECS Default)</h3>
+    <p>Replace old containers one by one. At any moment, some users hit old version, some hit new.</p>
+    <div class="code-block"><pre>[Old v1] [Old v1] [Old v1]
+         ↓ (rolling)
+[New v2] [Old v1] [Old v1]
+[New v2] [New v2] [Old v1]
+[New v2] [New v2] [New v2]</pre></div>
+    <div class="callout info">
+      <span class="callout-icon">💡</span>
+      <p>✅ No downtime. But v1 and v2 run simultaneously for a while — your API must handle both versions gracefully. ECS does this automatically with <code>--force-new-deployment</code>.</p>
+    </div>
+    <div class="code-block"><pre><span class="comment"># ECS rolling update configuration in Task Definition</span>
+{
+  "deploymentConfiguration": {
+    "minimumHealthyPercent": 50,   <span class="comment"># Keep at least 50% running during deploy</span>
+    "maximumPercent": 200          <span class="comment"># Can briefly run 200% capacity</span>
+  }
+}</pre></div>
+  </div>
+
+  <div class="subsection">
+    <h3>3. Blue/Green Deployment (Gold Standard)</h3>
+    <p>Run two identical environments: <strong>Blue</strong> (current live) and <strong>Green</strong> (new version). Switch traffic instantly. If green has problems, switch back to blue instantly.</p>
+    <div class="code-block"><pre>Load Balancer
+      │
+      ├── Blue (v1) ← 100% traffic (LIVE)
+      └── Green (v2) ← 0% traffic (NEW, ready)
+
+      ↓ After health checks pass:
+
+Load Balancer
+      ├── Blue (v1) ← 0% traffic (kept for rollback)
+      └── Green (v2) ← 100% traffic (NOW LIVE)</pre></div>
+    <div class="callout tip">
+      <span class="callout-icon">✅</span>
+      <p>Zero downtime. Instant rollback if something goes wrong — just flip traffic back to Blue. AWS CodeDeploy + ECS supports this natively.</p>
+    </div>
+    <div class="code-block"><pre><span class="comment"># GitHub Actions — deploy with CodeDeploy Blue/Green</span>
+- name: Deploy Blue/Green via CodeDeploy
+  run: |
+    aws deploy create-deployment \
+      --application-name my-app \
+      --deployment-group-name my-deployment-group \
+      --revision revisionType=AppSpecContent,content="..." \
+      --deployment-config-name CodeDeployDefault.ECSAllAtOnce</pre></div>
+  </div>
+
+  <div class="subsection">
+    <h3>4. Canary Deployment</h3>
+    <p>Send a small % of real traffic to the new version. Watch for errors. If stable, gradually increase to 100%.</p>
+    <div class="code-block"><pre>Step 1:  95% → v1  |  5% → v2 (canary)
+         Wait 10 min, watch error rates
+         
+Step 2:  50% → v1  |  50% → v2
+         Wait 10 min
+         
+Step 3:  0% → v1   |  100% → v2
+         Decommission v1</pre></div>
+    <p>AWS App Mesh or AWS CodeDeploy Canary can automate this. If error rate spikes at any step, it automatically stops and rolls back.</p>
+  </div>
+
+  <div class="subsection">
+    <h3>Choosing the Right Strategy</h3>
+    <div class="table-wrap">
+      <table>
+        <tr><th>Strategy</th><th>Complexity</th><th>Downtime</th><th>Rollback speed</th><th>Use for</th></tr>
+        <tr><td>Recreate</td><td>Low</td><td>Yes</td><td>Slow</td><td>Dev env, non-critical</td></tr>
+        <tr><td>Rolling</td><td>Medium</td><td>No</td><td>Medium</td><td>Most apps</td></tr>
+        <tr><td>Blue/Green</td><td>High</td><td>No</td><td>Instant</td><td>Production APIs</td></tr>
+        <tr><td>Canary</td><td>High</td><td>No</td><td>Automatic</td><td>High-traffic production</td></tr>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════ SECTION 11 ═══════════════ -->
+<div class="section" id="s11">
+  <div class="section-header">
+    <span class="section-num">11</span>
+    <h2>Rollback Strategy</h2>
+  </div>
+
+  <p>Bad deployments happen even with good pipelines. You need a plan to get back quickly.</p>
+
+  <div class="subsection">
+    <h3>Method 1 — Re-deploy Previous Image Tag</h3>
+    <p>Since you tagged every image with a git commit SHA, you always know which image is which version. Rolling back = deploying the previous image tag.</p>
+    <div class="code-block"><pre><span class="comment"># Emergency rollback — deploy previous commit's image</span>
+aws ecs update-service \
+  --cluster prod-cluster \
+  --service prod-service \
+  --task-definition prod-task:42    <span class="comment"># previous task definition revision</span>
+  --force-new-deployment</pre></div>
+  </div>
+
+  <div class="subsection">
+    <h3>Method 2 — Automated Health Check Rollback</h3>
+    <p>Configure ECS to automatically roll back if the new deployment fails health checks:</p>
+    <div class="code-block"><pre><span class="comment"># In ECS Service configuration:</span>
+{
+  "deploymentConfiguration": {
+    "deploymentCircuitBreaker": {
+      "enable": true,
+      "rollback": true     <span class="comment"># Auto rollback if health checks fail!</span>
+    }
+  }
+}</pre></div>
+    <div class="callout tip">
+      <span class="callout-icon">✅</span>
+      <p><strong>Enable this always.</strong> If 3 consecutive health checks fail on the new containers, ECS automatically stops the deployment and rolls back to the previous version. No human needed.</p>
+    </div>
+  </div>
+
+  <div class="subsection">
+    <h3>Method 3 — Blue/Green Instant Rollback</h3>
+    <p>If using Blue/Green deployment, just shift traffic back to Blue. Takes 10 seconds. This is why Blue/Green is preferred for critical services.</p>
+  </div>
+
+  <div class="subsection">
+    <h3>Rollback Pipeline</h3>
+    <p>Create a dedicated <strong>manual rollback workflow</strong> in GitHub Actions that anyone can trigger in an emergency with a specific image tag:</p>
+    <div class="code-block"><pre>name: Emergency Rollback
+
+on:
+  workflow_dispatch:            <span class="comment"># Manual trigger from GitHub UI</span>
+    inputs:
+      image_tag:
+        description: 'Image tag to rollback to (e.g. a3f8c12)'
+        required: true
+
+jobs:
+  rollback:
+    runs-on: ubuntu-latest
+    environment: production     <span class="comment"># Still requires approval</span>
+    steps:
+      - name: Rollback ECS to specific image
+        run: |
+          <span class="comment"># Update task definition with old image tag</span>
+          aws ecs update-service \
+            --cluster prod-cluster \
+            --service prod-service \
+            --force-new-deployment</pre></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════ SECTION 12 ═══════════════ -->
+<div class="section" id="s12">
+  <div class="section-header">
+    <span class="section-num">12</span>
+    <h2>Monitoring & Alerting</h2>
+  </div>
+
+  <p>Deploying code is not the end. You need to know if your deployed app is <strong>actually healthy</strong>.</p>
+
+  <div class="subsection">
+    <h3>Pipeline Notifications</h3>
+    <p>Your team needs to know when pipelines succeed or fail:</p>
+    <div class="code-block"><pre><span class="comment"># Send Slack notification on pipeline failure</span>
+- name: Notify Slack on failure
+  if: failure()                 <span class="comment"># Only runs if a previous step failed</span>
+  uses: slackapi/slack-github-action@v1
+  with:
+    payload: |
+      {
+        "text": "❌ Deploy FAILED on ${{ github.ref }} by ${{ github.actor }}\n${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+      }
+  env:
+    SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
+
+<span class="comment"># Send on success</span>
+- name: Notify Slack on success
+  if: success()
+  uses: slackapi/slack-github-action@v1
+  with:
+    payload: '{"text": "✅ Deploy to PRODUCTION succeeded"}'</pre></div>
+  </div>
+
+  <div class="subsection">
+    <h3>AWS CloudWatch — Application Monitoring</h3>
+    <p>After deployment, CloudWatch watches your app:</p>
+    <div class="table-wrap">
+      <table>
+        <tr><th>What to Monitor</th><th>CloudWatch Metric</th><th>Alert if...</th></tr>
+        <tr><td>Error rate</td><td>5xx HTTP errors</td><td>Spikes after deployment</td></tr>
+        <tr><td>Response time</td><td>Target response time</td><td>Increases above threshold</td></tr>
+        <tr><td>CPU usage</td><td>ECS CPUUtilization</td><td>Consistently above 80%</td></tr>
+        <tr><td>Memory</td><td>ECS MemoryUtilization</td><td>Consistently above 85%</td></tr>
+        <tr><td>Container health</td><td>ECS running task count</td><td>Drops below desired count</td></tr>
+      </table>
+    </div>
+    <div class="callout info">
+      <span class="callout-icon">💡</span>
+      <p>Create <strong>CloudWatch Alarms</strong> for each metric. When an alarm triggers → SNS → Slack/email. This way you know about production problems before users complain.</p>
+    </div>
+  </div>
+
+  <div class="subsection">
+    <h3>Application Logs in CloudWatch</h3>
+    <p>Configure your ECS task to send container logs to CloudWatch Logs automatically:</p>
+    <div class="code-block"><pre><span class="comment"># In ECS Task Definition — log configuration</span>
+{
+  "logConfiguration": {
+    "logDriver": "awslogs",
+    "options": {
+      "awslogs-group": "/ecs/my-app",
+      "awslogs-region": "us-east-1",
+      "awslogs-stream-prefix": "ecs"
+    }
+  }
+}</pre></div>
+    <p>Now every <code>print()</code> / <code>console.log()</code> from your app appears in CloudWatch Logs. You can search across all container instances in one place.</p>
+  </div>
+
+  <div class="subsection">
+    <h3>Health Check Endpoint</h3>
+    <p>Your app should have a <code>/health</code> endpoint that returns 200 OK when healthy. ECS and load balancers hit this to decide if your container should receive traffic:</p>
+    <div class="code-block"><pre><span class="comment"># Simple Python Flask health endpoint</span>
+@app.route('/health')
+def health():
+    return {"status": "healthy", "version": os.getenv("VERSION")}, 200</pre></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════ SECTION 13 ═══════════════ -->
+<div class="section" id="s13">
+  <div class="section-header">
+    <span class="section-num">13</span>
+    <h2>Infrastructure as Code (IaC)</h2>
+  </div>
+
+  <p>In everything above, I said "go to AWS Console and click to create ECR, ECS, etc." That works for learning, but real teams <strong>never click the console</strong>. Instead they write code to define infrastructure.</p>
+
+  <div class="subsection">
+    <h3>Why IaC?</h3>
+    <div class="table-wrap">
+      <table>
+        <tr><th>Manual Console Clicks</th><th>Infrastructure as Code</th></tr>
+        <tr><td>Can't reproduce exactly — "what did I configure last month?"</td><td>Entire setup is in version-controlled files</td></tr>
+        <tr><td>Creating dev/staging/prod copies is painful</td><td>Run same code 3 times = 3 identical environments</td></tr>
+        <tr><td>One person knows how it's set up</td><td>Whole team can read and change it</td></tr>
+        <tr><td>Disaster recovery is hard</td><td>Rebuild entire infrastructure in 10 minutes</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="subsection">
+    <h3>Terraform — The Most Common IaC Tool</h3>
+    <p>Terraform lets you define AWS infrastructure in <code>.tf</code> files. It figures out what to create, update, or delete.</p>
+    <div class="code-block"><pre><span class="comment"># main.tf — Create ECR repo with Terraform</span>
+resource "aws_ecr_repository" "my_app" {
+  name                 = "my-app"
+  image_tag_mutability = "IMMUTABLE"    <span class="comment"># Tags can't be overwritten</span>
+
+  image_scanning_configuration {
+    scan_on_push = true
+  }
+}
+
+<span class="comment"># Create ECS Cluster</span>
+resource "aws_ecs_cluster" "main" {
+  name = "my-cluster"
+}
+
+<span class="comment"># Output the ECR URL for use in pipelines</span>
+output "ecr_url" {
+  value = aws_ecr_repository.my_app.repository_url
+}</pre></div>
+    <div class="code-block"><pre><span class="comment"># Run these commands to apply:</span>
+terraform init      <span class="comment"># Download AWS provider plugin</span>
+terraform plan      <span class="comment"># Show what WILL be created/changed (dry run)</span>
+terraform apply     <span class="comment"># Actually create the infrastructure</span>
+terraform destroy   <span class="comment"># Delete everything (be careful!)</span></pre></div>
+  </div>
+
+  <div class="subsection">
+    <h3>IaC Goes Through CI/CD Too</h3>
+    <p>Your Terraform code also has its own pipeline:</p>
+    <div class="flow">
+      <div class="flow-row">
+        <div class="flow-box accent">Push Terraform code</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-box purple">terraform validate</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-box purple">terraform plan</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-box yellow">Human reviews plan</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-box green">terraform apply</div>
+      </div>
+    </div>
+    <p>Nobody runs Terraform manually on their laptop for production. It always goes through the pipeline.</p>
+  </div>
+
+  <div class="subsection">
+    <h3>Alternatives to Terraform</h3>
+    <div class="table-wrap">
+      <table>
+        <tr><th>Tool</th><th>Language</th><th>Best for</th></tr>
+        <tr><td>Terraform</td><td>HCL</td><td>Multi-cloud, most popular</td></tr>
+        <tr><td>AWS CloudFormation</td><td>YAML/JSON</td><td>AWS-only, native AWS service</td></tr>
+        <tr><td>AWS CDK</td><td>Python/TypeScript</td><td>Developers who prefer real code over YAML</td></tr>
+        <tr><td>Pulumi</td><td>Python/TypeScript/Go</td><td>Teams wanting full programming language for IaC</td></tr>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════ SECTION 14 ═══════════════ -->
+<div class="section" id="s14">
+  <div class="section-header">
+    <span class="section-num">14</span>
+    <h2>DevSecOps — Security Built Into the Pipeline</h2>
+  </div>
+
+  <p>Security is not a separate step at the end. It is built into every stage of the pipeline. This approach is called <strong>DevSecOps</strong> or "shift left security" (move security checks earlier in the process).</p>
+
+  <div class="subsection">
+    <h3>Security at Each Stage</h3>
+    <div class="table-wrap">
+      <table>
+        <tr><th>Stage</th><th>Security Check</th><th>Tool</th></tr>
+        <tr><td>Code push</td><td>Pre-commit hooks — block secrets being committed</td><td>git-secrets, detect-secrets</td></tr>
+        <tr><td>Lint stage</td><td>SAST — find insecure code patterns</td><td>Bandit (Python), Semgrep</td></tr>
+        <tr><td>Test stage</td><td>Dependency vulnerability scan</td><td>Snyk, OWASP Dependency-Check</td></tr>
+        <tr><td>Build stage</td><td>Docker image vulnerability scan</td><td>Trivy, AWS ECR scanning</td></tr>
+        <tr><td>IaC stage</td><td>Misconfiguration scan</td><td>Checkov, tfsec</td></tr>
+        <tr><td>Runtime</td><td>Anomaly detection, runtime threats</td><td>AWS GuardDuty</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="subsection">
+    <h3>Pre-commit Hook — Prevent Secrets in Code</h3>
+    <div class="code-block"><pre><span class="comment"># Install on developer machine — runs BEFORE every commit</span>
+pip install pre-commit detect-secrets
+
+<span class="comment"># .pre-commit-config.yaml</span>
+repos:
+  - repo: https://github.com/Yelp/detect-secrets
+    hooks:
+      - id: detect-secrets
+        args: ['--baseline', '.secrets.baseline']
+  
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    hooks:
+      - id: check-yaml
+      - id: end-of-file-fixer
+      - id: trailing-whitespace</pre></div>
+    <div class="callout danger">
+      <span class="callout-icon">🚨</span>
+      <p>If a developer accidentally commits an AWS key or database password, it's in git history forever even if deleted later. Pre-commit hooks prevent this from happening at all.</p>
+    </div>
+  </div>
+
+  <div class="subsection">
+    <h3>AWS GuardDuty — Runtime Protection</h3>
+    <p>GuardDuty continuously monitors your AWS account for suspicious activity — unusual API calls, data exfiltration attempts, compromised EC2 instances. Enable it with one click in AWS Console. It runs passively and alerts you if anything looks malicious.</p>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════ SECTION 15 ═══════════════ -->
+<div class="section" id="s15">
+  <div class="section-header">
+    <span class="section-num">15</span>
+    <h2>Complete Real-World Example — End to End</h2>
+  </div>
+
+  <p>Let's put everything together. A Python web app. GitHub → GitHub Actions → ECR → ECS. Full production-grade pipeline.</p>
+
+  <div class="subsection">
+    <h3>Project Structure</h3>
+    <div class="code-block"><pre>my-python-app/
+  ├── src/
+  │    └── app.py
+  ├── tests/
+  │    └── test_app.py
+  ├── terraform/
+  │    ├── main.tf          <span class="comment"># ECR, ECS, IAM, VPC</span>
+  │    └── variables.tf
+  ├── Dockerfile
+  ├── requirements.txt
+  └── .github/
+       └── workflows/
+            ├── ci.yml       <span class="comment"># PRs — test only</span>
+            └── cd.yml       <span class="comment"># main branch — full deploy</span></pre></div>
+  </div>
+
+  <div class="subsection">
+    <h3>ci.yml — Runs on Every Pull Request</h3>
+    <div class="code-block"><pre>name: CI — Test on Pull Request
+
+on:
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Cache pip
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/pip
+          key: pip-${{ hashFiles('requirements.txt') }}
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Lint with flake8
+        run: |
+          pip install flake8
+          flake8 src/ tests/
+
+      - name: Security scan with bandit
+        run: |
+          pip install bandit
+          bandit -r src/ -ll
+
+      - name: Run tests with coverage
+        run: |
+          pytest tests/ --cov=src --cov-report=xml --cov-fail-under=80
+
+      - name: Scan dependencies
+        uses: snyk/actions/python@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}</pre></div>
+  </div>
+
+  <div class="subsection">
+    <h3>cd.yml — Full Deploy on Push to Main</h3>
+    <div class="code-block"><pre>name: CD — Build and Deploy
+
+on:
+  push:
+    branches: [main]
+
+env:
+  AWS_REGION: us-east-1
+  ECR_URL: 123456789.dkr.ecr.us-east-1.amazonaws.com/my-app
+
+jobs:
+  <span class="comment"># ── Job 1: Test (same as CI) ──</span>
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v4
+        with: { python-version: '3.11' }
+      - run: pip install -r requirements.txt
+      - run: pytest tests/ --cov=src --cov-fail-under=80
+
+  <span class="comment"># ── Job 2: Build & Push Image ──</span>
+  build:
+    needs: test
+    runs-on: ubuntu-latest
+    outputs:
+      image-tag: ${{ github.sha }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure AWS credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::123456789:role/GitHubActionsRole
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login to ECR
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build Docker image
+        run: docker build -t $ECR_URL:${{ github.sha }} .
+
+      - name: Scan image with Trivy
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: '${{ env.ECR_URL }}:${{ github.sha }}'
+          exit-code: '1'
+          severity: 'CRITICAL'
+
+      - name: Push to ECR
+        run: docker push $ECR_URL:${{ github.sha }}
+
+  <span class="comment"># ── Job 3: Deploy to Staging ──</span>
+  deploy-staging:
+    needs: build
+    runs-on: ubuntu-latest
+    environment: staging
+
+    steps:
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::123456789:role/GitHubActionsRole
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Update ECS task definition with new image
+        id: task-def
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: staging-task-def.json
+          container-name: my-app
+          image: ${{ env.ECR_URL }}:${{ needs.build.outputs.image-tag }}
+
+      - name: Deploy to staging ECS
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+        with:
+          task-definition: ${{ steps.task-def.outputs.task-definition }}
+          service: staging-service
+          cluster: staging-cluster
+          wait-for-service-stability: true   <span class="comment"># Wait until healthy</span>
+
+      - name: Notify Slack — staging deployed
+        uses: slackapi/slack-github-action@v1
+        with:
+          payload: '{"text": "✅ Staging deploy succeeded — awaiting prod approval"}'
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
+
+  <span class="comment"># ── Job 4: Deploy to Production (requires approval) ──</span>
+  deploy-production:
+    needs: deploy-staging
+    runs-on: ubuntu-latest
+    environment: production       <span class="comment"># Pauses here for human approval in GitHub</span>
+
+    steps:
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::123456789:role/GitHubActionsRole
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Update ECS task definition
+        id: task-def
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: prod-task-def.json
+          container-name: my-app
+          image: ${{ env.ECR_URL }}:${{ needs.build.outputs.image-tag }}
+
+      - name: Deploy to production ECS (Blue/Green)
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+        with:
+          task-definition: ${{ steps.task-def.outputs.task-definition }}
+          service: prod-service
+          cluster: prod-cluster
+          codedeploy-appspec: appspec.yml   <span class="comment"># Blue/Green via CodeDeploy</span>
+          wait-for-service-stability: true
+
+      - name: Notify Slack — production deployed
+        if: success()
+        uses: slackapi/slack-github-action@v1
+        with:
+          payload: '{"text": "🚀 Production deploy succeeded — ${{ github.sha }}"}'
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
+
+      - name: Notify Slack — production FAILED
+        if: failure()
+        uses: slackapi/slack-github-action@v1
+        with:
+          payload: '{"text": "🔥 Production deploy FAILED — ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"}'
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}</pre></div>
+  </div>
+
+  <div class="subsection">
+    <h3>The Full Picture — What Happens When You Push</h3>
+    <div class="step-list">
+      <div class="step-item">
+        <div class="step-num">1</div>
+        <div class="step-content"><h4>git push to main</h4><p>GitHub detects the push and reads .github/workflows/cd.yml</p></div>
+      </div>
+      <div class="step-item">
+        <div class="step-num">2</div>
+        <div class="step-content"><h4>GitHub spins up a Linux machine</h4><p>Fresh ubuntu-latest VM is provisioned in GitHub's cloud infrastructure.</p></div>
+      </div>
+      <div class="step-item">
+        <div class="step-num">3</div>
+        <div class="step-content"><h4>Tests run</h4><p>Lint, security scan, unit tests, coverage check. If any fail — pipeline stops. Nothing deploys.</p></div>
+      </div>
+      <div class="step-item">
+        <div class="step-num">4</div>
+        <div class="step-content"><h4>Docker image built and scanned</h4><p>Image built with commit SHA as tag. Trivy scans for vulnerabilities. If CRITICAL found — pipeline stops.</p></div>
+      </div>
+      <div class="step-item">
+        <div class="step-num">5</div>
+        <div class="step-content"><h4>Image pushed to ECR</h4><p>123456789.dkr.ecr.us-east-1.amazonaws.com/my-app:a3f8c12 is now stored in AWS.</p></div>
+      </div>
+      <div class="step-item">
+        <div class="step-num">6</div>
+        <div class="step-content"><h4>Staging deployment</h4><p>ECS task definition updated with new image. ECS pulls image from ECR. Rolling update starts. Pipeline waits until all staging containers are healthy.</p></div>
+      </div>
+      <div class="step-item">
+        <div class="step-num">7</div>
+        <div class="step-content"><h4>Slack alert sent</h4><p>"Staging deployed successfully — awaiting production approval."</p></div>
+      </div>
+      <div class="step-item">
+        <div class="step-num">8</div>
+        <div class="step-content"><h4>Pipeline pauses — approval gate</h4><p>GitHub sends email/Slack to approvers. Approver logs into GitHub, reviews staging, clicks "Approve". QA team tests staging for 30 minutes.</p></div>
+      </div>
+      <div class="step-item">
+        <div class="step-num">9</div>
+        <div class="step-content"><h4>Production deployment</h4><p>Blue/Green deployment via CodeDeploy. New containers (Green) start up. Load balancer switches traffic from Blue to Green. Health checks pass.</p></div>
+      </div>
+      <div class="step-item">
+        <div class="step-num">10</div>
+        <div class="step-content"><h4>Slack success alert</h4><p>"🚀 Production deploy succeeded — a3f8c12". CloudWatch monitoring your app for the next hour for any anomalies.</p></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════ SECTION 16 ═══════════════ -->
+<div class="section" id="s16">
+  <div class="section-header">
+    <span class="section-num">16</span>
+    <h2>Your Learning Roadmap</h2>
+  </div>
+
+  <p>Now you have the complete picture. Here is how to learn it in a structured way:</p>
+
+  <div class="roadmap">
+    <div class="road-item">
+      <div class="road-line">
+        <div class="road-dot done"></div>
+        <div class="road-connector"></div>
+      </div>
+      <div class="road-content">
+        <div class="road-level">Level 0 — Complete ✅</div>
+        <div class="road-title">Theory & Concepts</div>
+        <div class="road-desc">You understand what CI/CD is, why it exists, the terminology, and the full pipeline picture. This is where you are now.</div>
+      </div>
+    </div>
+    <div class="road-item">
+      <div class="road-line">
+        <div class="road-dot"></div>
+        <div class="road-connector"></div>
+      </div>
+      <div class="road-content">
+        <div class="road-level">Level 1 — First Hands-On</div>
+        <div class="road-title">Build a Basic Pipeline</div>
+        <div class="road-desc">Create a simple Python or Node.js app. Write a Dockerfile. Set up GitHub Actions to run tests on every push. Get the green checkmark working. AWS free tier.</div>
+      </div>
+    </div>
+    <div class="road-item">
+      <div class="road-line">
+        <div class="road-dot"></div>
+        <div class="road-connector"></div>
+      </div>
+      <div class="road-content">
+        <div class="road-level">Level 2 — Add AWS</div>
+        <div class="road-title">Deploy to ECS</div>
+        <div class="road-desc">Create ECR + ECS cluster + IAM user manually in AWS Console. Add build + push + deploy steps to your pipeline. Watch a real deployment happen.</div>
+      </div>
+    </div>
+    <div class="road-item">
+      <div class="road-line">
+        <div class="road-dot"></div>
+        <div class="road-connector"></div>
+      </div>
+      <div class="road-content">
+        <div class="road-level">Level 3 — Multiple Environments</div>
+        <div class="road-title">Dev → Staging → Production</div>
+        <div class="road-desc">Split your pipeline into stages. Create dev and staging environments. Add GitHub Environment protection rules and the manual approval gate.</div>
+      </div>
+    </div>
+    <div class="road-item">
+      <div class="road-line">
+        <div class="road-dot"></div>
+        <div class="road-connector"></div>
+      </div>
+      <div class="road-content">
+        <div class="road-level">Level 4 — Security & Quality</div>
+        <div class="road-title">Add Testing, Scanning & OIDC</div>
+        <div class="road-desc">Add Trivy scanning, code coverage thresholds, pre-commit hooks. Replace AWS access keys with OIDC. Add Slack notifications.</div>
+      </div>
+    </div>
+    <div class="road-item">
+      <div class="road-line">
+        <div class="road-dot"></div>
+        <div class="road-connector"></div>
+      </div>
+      <div class="road-content">
+        <div class="road-level">Level 5 — Advanced Deployments</div>
+        <div class="road-title">Blue/Green + Rollback + Monitoring</div>
+        <div class="road-desc">Implement Blue/Green with CodeDeploy. Add ECS deployment circuit breaker. Set up CloudWatch alarms. Add the emergency rollback workflow.</div>
+      </div>
+    </div>
+    <div class="road-item">
+      <div class="road-line">
+        <div class="road-dot"></div>
+        <div class="road-connector"></div>
+      </div>
+      <div class="road-content">
+        <div class="road-level">Level 6 — Infrastructure as Code</div>
+        <div class="road-title">Terraform Everything</div>
+        <div class="road-desc">Stop clicking the AWS Console. Write Terraform for all your AWS resources. Build a separate IaC pipeline. Your entire infrastructure is now in git.</div>
+      </div>
+    </div>
+    <div class="road-item">
+      <div class="road-line">
+        <div class="road-dot"></div>
+        <div class="road-connector"></div>
+      </div>
+      <div class="road-content">
+        <div class="road-level">Level 7 — Production Grade</div>
+        <div class="road-title">The Full Package</div>
+        <div class="road-desc">Reusable workflows, canary deployments, AWS GuardDuty, Cost monitoring, multi-region deployments, disaster recovery runbooks. This is senior-level DevOps.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout tip" style="margin-top: 32px;">
+    <span class="callout-icon">🎯</span>
+    <p><strong>One rule:</strong> Build everything yourself on a real AWS account. Reading is 10% of learning. The other 90% is breaking things and fixing them. Start with Level 1 today — it takes only 2 hours and changes everything.</p>
+  </div>
+
+  <hr class="divider">
+
+  <div style="text-align: center; padding: 20px 0;">
+    <div style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: var(--text-muted); letter-spacing: 2px;">
+      CI/CD PIPELINE — COMPLETE BLUEPRINT
+    </div>
+    <div style="font-family: 'Syne', sans-serif; font-size: 13px; color: var(--text-muted); margin-top: 6px;">
+      16 Sections · Everything you need · Nothing left out
+    </div>
+  </div>
+
+</div><!-- end container -->
+</body>
+</html>
